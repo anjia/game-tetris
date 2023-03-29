@@ -1,0 +1,146 @@
+/* 环境变量 */
+body {
+    --color: black;
+    --bg: white;
+    --size: 20px;
+    --bd-size: 2px;
+    --btn-size: 75px;
+
+    color: var(--color);
+    background-color: var(--bg);
+}
+
+h1,
+dl {
+    margin: 0;
+}
+
+button {
+    background-color: var(--color);
+    color: var(--bg);
+    border-radius: 6px;
+}
+
+
+/* 内容区 */
+main {
+    width: 410px;
+    margin: auto;
+    border-radius: 30px;
+    border: 3px solid currentColor;
+    padding: 30px 20px;
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.game {
+    display: flex;
+    gap: 20px;
+}
+
+.grid {
+    display: grid;
+    gap: var(--bd-size);
+}
+
+.grid>div {
+    box-sizing: border-box;
+    border: var(--bd-size) solid currentColor;
+    background-color: currentColor;
+    box-shadow: inset 0 0 0px var(--bd-size) var(--bg);
+    opacity: 0.2;
+}
+
+.grid>div.light {
+    opacity: 1;
+}
+
+.grid>div.blink {
+    opacity: 1;
+    animation-name: blinkblink;
+    animation-duration: .2s;
+    animation-iteration-count: 3;
+}
+
+@keyframes blinkblink {
+    0% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
+
+
+/* CSS 应该和 JS 在一起 */
+#grid {
+    grid-template-rows: repeat(20, var(--size));
+    grid-template-columns: repeat(10, var(--size));
+    padding: 3px;
+    border: 2px solid currentColor;
+}
+
+
+.info {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+#btn-start::before {
+    content: attr(data-start);
+}
+
+#btn-start.pause::before {
+    content: attr(data-pause);
+}
+
+/* 形状：O I T J L S Z */
+#next {
+    grid-template-rows: repeat(4, var(--size));
+    grid-template-columns: repeat(2, var(--size));
+}
+
+.shape-O .o,
+.shape-I .i,
+.shape-T .t,
+.shape-J .j,
+.shape-L .l,
+.shape-S .s,
+.shape-Z .z {
+    opacity: 1;
+}
+
+/* 操作区：按钮 */
+.op {
+    box-sizing: border-box;
+    display: flex;
+    justify-content: center;
+}
+
+.btn {
+    display: grid;
+    grid-template-columns: repeat(2, var(--btn-size));
+    grid-template-rows: repeat(2, var(--btn-size));
+    font-size: small;
+    line-height: var(--btn-size);
+    text-align: center;
+    gap: 6px;
+    transform: rotate(45deg);
+    transform-origin: var(--btn-size) var(--btn-size);
+    padding: calc(var(--btn-size) / 2) 0;
+}
+
+.btn>button {
+
+    border-radius: 50%;
+    transform: rotate(-45deg);
+}

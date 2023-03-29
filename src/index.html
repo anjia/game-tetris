@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>俄罗斯方块</title>
+    <link rel="stylesheet" href="index.css">
+</head>
+
+<body>
+    <main class="cont">
+        <h1>俄罗斯方块</h1>
+        <div class="game">
+            <div class="grid" id="grid"></div>
+            <div class="info">
+                <dl>
+                    <dt>最高分</dt>
+                    <dd>8810000</dd>
+                    <dt>当前分</dt>
+                    <dd>14800</dd>
+                    <dt>消除行</dt>
+                    <dd>20</dd>
+                    <dt>级别</dt>
+                    <dd>1</dd>
+                    <dt>下一个</dt>
+                    <dd>
+                        <div class="grid" id="next">
+                            <div class="o i t l s"></div>
+                            <div class="o j z"></div>
+                            <div class="o i t l s z"></div>
+                            <div class="o t j s z"></div>
+                            <div class="i t j l z"></div>
+                            <div class="j l s"></div>
+                            <div class="i"></div>
+                            <div></div>
+                        </div>
+                    </dd>
+                </dl>
+                <div>
+                    <div>10:00</div>
+                    <button id="btn-replay">重玩</button> <button id="btn-start" data-start="开始" data-pause="暂停"></button>
+                </div>
+            </div>
+        </div>
+        </div>
+        <div class="op">
+            <div class="btn">
+                <button id="btn-rotate">旋转</button>
+                <button id="btn-right">右移</button>
+                <button id="btn-left">左移</button>
+                <button id="btn-down">直接掉落</button>
+            </div>
+        </div>
+    </main>
+
+
+    <script src="index.js" type="module"></script>
+</body>
+
+</html>
