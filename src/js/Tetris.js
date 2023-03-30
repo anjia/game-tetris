@@ -13,50 +13,47 @@ class Tetirs {
         this.rows = option.rows
         this.columns = option.columns
 
-        // UI 渲染
-        this.render = new Render({
-            rows: this.rows,
-            columns: this.columns
-        })
-
         // 数据层
         this.model = new Model({
             rows: this.rows,
             columns: this.columns
         })
 
-        // 其它实例属性
         this.status;    // 状态
-        this.next;      // 下一个形状
         this.current;   // 当前形状
         this.timer;     // 降落的计时器
         this.theLevel;      // 本轮级别
         this.theScore;      // 本轮得分
         this.theClearRows;  // 本轮消除行数
+        this.next = this.model.next  // 下一个形状
+        this.maxScore = parseInt(window.localStorage.getItem('max') || 0)  // 最高分
 
-        // 最高得分
-        this.maxScore = parseInt(window.localStorage.getItem('max') || 0)
-        this.render.max = this.maxScore
+        // UI 渲染
+        this.render = new Render({
+            rows: this.rows,
+            columns: this.columns,
+            next: this.next.name,
+            max: this.maxScore
+        })
 
         // 初始化数据
         this.init()
     }
     init() {
         this.status = 0
-        this.#paintNext() // 绘制下一个形状，this.next
         this.current = null
         this.#clearTimer()
         this.theLevel = 1
         this.theScore = 0
         this.theClearRows = 0
-        this.#paintTheInfo()
     }
 
     reset() {
-        this.render.reset()
-        this.model.reset()
-        this.init()
         this.#clearScreen()
+        this.init()
+        this.model.reset()
+        this.render.reset()
+        this.#updateNext()
     }
 
     get ispreparing() {
@@ -115,16 +112,29 @@ class Tetirs {
     /**
      * private methods
      */
-    #paintTheInfo() {
-        // 若有改变，再绘制
+    #updateTheInfo(to) {
+        this.theClearRows = to.clears
         this.render.clearRows = this.theClearRows
+
+        this.theScore = to.score
         this.render.score = this.theScore
-        this.render.level = this.theLevel
-        this.render.max = this.maxScore
+
+        if (to.level !== this.theLevel) {
+            this.theLevel = to.level
+            this.render.level = this.theLevel
+        }
+        if (to.score > this.maxScore) {
+            this.maxScore = to.score
+            window.localStorage.setItem('max', this.maxScore)
+            this.render.max = this.maxScore
+        }
     }
-    #paintNext() {
-        this.next = this.model.next
-        this.render.next = this.next.name
+    #updateNext() {
+        const x = this.model.next
+        if (x.name !== this.next.name) {
+            this.next = x
+            this.render.next = this.next.name
+        }
     }
     #clearTimer() {
         clearTimeout(this.timer)  // this.timer 依然有值，只是不触发了而已
@@ -151,7 +161,7 @@ class Tetirs {
 
     #startNext() {
         this.current = this.next.points
-        this.#paintNext()
+        this.#updateNext()
 
         // 判断起始位置，若有空间则绘制+下落，否则结束游戏
         if (this.model.canStart(this.current)) {
@@ -178,21 +188,18 @@ class Tetirs {
                         this.#updateRow(row, 2)
                     }
 
-                    // 更新数据
-                    this.theClearRows += fullRows.length
-                    this.theScore += this.constructor.SCORE[fullRows.length]
-                    if (this.theScore >= this.constructor.LEVEL[this.theLevel]) {
-                        this.theLevel++
-                    }
-                    if (this.theScore > this.maxScore) {
-                        this.maxScore = this.theScore
-                        window.localStorage.setItem('max', this.maxScore)
+                    // 重新计算新数据
+                    const clears = this.theClearRows + fullRows.length
+                    const score = this.theScore + this.constructor.SCORE[fullRows.length]
+                    let level = this.theLevel
+                    if (score >= this.constructor.LEVEL[level]) {
+                        level++
                     }
 
-                    // 动画结束后，重新赋值+开始下一个
+                    // 动画结束后，重新赋值
                     setTimeout(() => {
                         this.render.updateGrid(data, maxRow)
-                        this.#paintTheInfo()
+                        this.#updateTheInfo({ score, level, clears })
                         this.#startNext()
                     }, 600)
 
