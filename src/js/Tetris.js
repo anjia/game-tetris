@@ -2,6 +2,12 @@ import Render from './Render.js'
 import Model from './Model.js'
 
 class Tetirs {
+    // 一次性消 1-2-3-4 行，每行单价 100-150-200-250
+    static SCORE = [0, 100, 300, 600, 1000]
+    static LEVEL = [0, 2000, 4000, 8000, +Infinity]
+    static INTERVAL = [0, 800, 700, 600, 500]    // 降落的间隔（速度）
+
+
     constructor(option) {
         // 接收参数
         this.rows = option.rows
@@ -24,7 +30,13 @@ class Tetirs {
         this.next;      // 下一个形状
         this.current;   // 当前形状
         this.timer;     // 降落的计时器
-        this.interval;  // 降落的间隔 800
+        this.theLevel;      // 本轮级别
+        this.theScore;      // 本轮得分
+        this.theClearRows;  // 本轮消除行数
+
+        // 最高得分
+        this.maxScore = parseInt(window.localStorage.getItem('max') || 0)
+        this.render.max = this.maxScore
 
         // 初始化数据
         this.init()
@@ -34,7 +46,10 @@ class Tetirs {
         this.#paintNext() // 绘制下一个形状，this.next
         this.current = null
         this.#clearTimer()
-        this.interval = 800
+        this.theLevel = 1
+        this.theScore = 0
+        this.theClearRows = 0
+        this.#paintTheInfo()
     }
 
     reset() {
@@ -100,9 +115,16 @@ class Tetirs {
     /**
      * private methods
      */
+    #paintTheInfo() {
+        // 若有改变，再绘制
+        this.render.clearRows = this.theClearRows
+        this.render.score = this.theScore
+        this.render.level = this.theLevel
+        this.render.max = this.maxScore
+    }
     #paintNext() {
         this.next = this.model.next
-        this.render.next(this.next.name)
+        this.render.next = this.next.name
     }
     #clearTimer() {
         clearTimeout(this.timer)  // this.timer 依然有值，只是不触发了而已
@@ -155,11 +177,25 @@ class Tetirs {
                     for (let row of fullRows) {
                         this.#updateRow(row, 2)
                     }
+
+                    // 更新数据
+                    this.theClearRows += fullRows.length
+                    this.theScore += this.constructor.SCORE[fullRows.length]
+                    if (this.theScore >= this.constructor.LEVEL[this.theLevel]) {
+                        this.theLevel++
+                    }
+                    if (this.theScore > this.maxScore) {
+                        this.maxScore = this.theScore
+                        window.localStorage.setItem('max', this.maxScore)
+                    }
+
                     // 动画结束后，重新赋值+开始下一个
                     setTimeout(() => {
                         this.render.updateGrid(data, maxRow)
+                        this.#paintTheInfo()
                         this.#startNext()
                     }, 600)
+
                 } else {
                     this.#startNext()
                 }
@@ -173,7 +209,7 @@ class Tetirs {
     #continueFalling() {
         this.timer = setTimeout(() => {
             this.#falling()
-        }, this.interval)
+        }, this.constructor.INTERVAL[this.theLevel])
     }
 
     #renderNext(to) {

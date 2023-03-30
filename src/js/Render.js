@@ -6,9 +6,20 @@ class Render {
         this.rows = option.rows
         this.columns = option.columns
 
+        // 实例数据
+        this.dataNext = '';
+        this.dataLevel = 1;
+        this.dataScore = 0;
+        this.dataClearRows = 0;
+        this.dataMax = 0;
+
         // 相关 DOM
         this.domGrid = $.getById('grid')
         this.domNext = $.getById('next')
+        this.domMax = $.getById('max')
+        this.domScore = $.getById('score')
+        this.domClearRows = $.getById('clears')
+        this.domLevel = $.getById('level')
         this.btnStart = $.getById('btn-start')
 
         // 初始化 UI
@@ -19,14 +30,42 @@ class Render {
         $.innerHTML(this.domGrid, arr.join(''))
     }
 
+    set next(x) {
+        if (this.dataNext !== x) {
+            $.setClass(this.domNext, 'grid shape-' + x)
+            this.dataNext = x
+        }
+    }
+    set level(x) {
+        if (this.dataLevel !== x) {
+            $.innerHTML(this.domLevel, x)
+            this.dataLevel = x
+        }
+    }
+    set score(x) {
+        if (this.dataScore !== x) {
+            $.innerHTML(this.domScore, x)
+            this.dataScore = x
+        }
+    }
+    set clearRows(x) {
+        if (this.dataClearRows !== x) {
+            $.innerHTML(this.domClearRows, x)
+            this.dataClearRows = x
+        }
+    }
+    set max(x) {
+        if (this.dataMax !== x) {
+            $.innerHTML(this.domMax, x)
+            this.dataMax = x
+        }
+    }
+
     reset() {
         $.setClass(this.btnStart, '')
     }
     start() {
         $.toggleClass(this.btnStart, 'pause')
-    }
-    next(name) {
-        $.setClass(this.domNext, 'grid shape-' + name)
     }
 
     updateGrid(data, max = 0) {
