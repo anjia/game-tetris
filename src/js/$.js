@@ -6,6 +6,10 @@ function innerHTML(obj, str) {
     obj.innerHTML = str
 }
 
+function innerText(obj, str) {
+    obj.innerText = str
+}
+
 function toggleClass(obj, name) {
     let flag = false
     let newList = []
@@ -28,4 +32,4 @@ function setClass(obj, name) {
     obj.className = name
 }
 
-export default { getById, innerHTML, toggleClass, setClass }
+export default { getById, innerText, innerHTML, toggleClass, setClass }

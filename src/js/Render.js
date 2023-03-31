@@ -3,7 +3,7 @@ import $ from './$.js'
 class Render {
     constructor(option) {
         // 相关 DOM
-        this.domGrid = $.getById('grid')
+        this.domGrid = $.getById('panel')
         this.domNext = $.getById('next')
         this.domMax = $.getById('max')
         this.domScore = $.getById('score')
@@ -26,16 +26,16 @@ class Render {
     }
 
     set max(x) {
-        $.innerHTML(this.domMax, x)
+        $.innerText(this.domMax, x)
     }
     set score(x) {
-        $.innerHTML(this.domScore, x)
+        $.innerText(this.domScore, x)
     }
     set clearRows(x) {
-        $.innerHTML(this.domClearRows, x)
+        $.innerText(this.domClearRows, x)
     }
     set level(x) {
-        $.innerHTML(this.domLevel, x)
+        $.innerText(this.domLevel, x)
     }
     set next(x) {
         $.setClass(this.domNext, 'grid shape-' + x)

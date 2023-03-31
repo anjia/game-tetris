@@ -8,6 +8,7 @@ body {
 
     color: var(--color);
     background-color: var(--bg);
+    font-family: Courier, monospace;
 }
 
 h1,
@@ -36,7 +37,7 @@ h1 {
     margin-bottom: 30px;
 }
 
-.game {
+.wrap {
     display: flex;
     gap: 20px;
 }
@@ -81,7 +82,7 @@ h1 {
 
 
 /* CSS 应该和 JS 在一起 */
-#grid {
+#panel {
     grid-template-rows: repeat(20, var(--size));
     grid-template-columns: repeat(10, var(--size));
     padding: 3px;
