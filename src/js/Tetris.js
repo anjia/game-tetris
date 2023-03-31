@@ -82,30 +82,36 @@ class Tetirs {
         }
     }
     horizontal(dir) {
-        const { msg, next } = this.model.getHorizontalPos(this.current, dir)
-        if (msg === 'success') {
-            this.#renderNext(next)
-        }
-        if (this.ispausing) {
-            this.start()
+        if (!this.ispreparing) {
+            const { msg, next } = this.model.getHorizontalPos(this.current, dir)
+            if (msg === 'success') {
+                this.#renderNext(next)
+            }
+            if (this.ispausing) {
+                this.start()
+            }
         }
     }
     down() {
-        const { msg, next } = this.model.getDownPos(this.current)
-        if (msg === 'success') {
-            this.#renderNext(next)
-        }
-        if (this.ispausing) {
-            this.start()
+        if (!this.ispreparing) {
+            const { msg, next } = this.model.getDownPos(this.current)
+            if (msg === 'success') {
+                this.#renderNext(next)
+            }
+            if (this.ispausing) {
+                this.start()
+            }
         }
     }
     rotate() {
-        const { msg, next } = this.model.getRotatePos(this.current)
-        if (msg === 'success') {
-            this.#renderNext(next)
-        }
-        if (this.ispausing) {
-            this.start()
+        if (!this.ispreparing) {
+            const { msg, next } = this.model.getRotatePos(this.current)
+            if (msg === 'success') {
+                this.#renderNext(next)
+            }
+            if (this.ispausing) {
+                this.start()
+            }
         }
     }
 

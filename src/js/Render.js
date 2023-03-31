@@ -1,15 +1,30 @@
-import $ from './$.js'
-
 class Render {
+
+    static #toggleClass(obj, name) {
+        let flag = false
+        let newList = []
+        for (let item of obj.classList) {
+            if (item === name) {
+                flag = true
+            } else {
+                newList.push(item)
+            }
+        }
+        if (flag === false) {
+            newList.push(name)
+        }
+        obj.className = newList.join(' ')
+    }
+
     constructor(option) {
         // 相关 DOM
-        this.domGrid = $.getById('panel')
-        this.domNext = $.getById('next')
-        this.domMax = $.getById('max')
-        this.domScore = $.getById('score')
-        this.domClearRows = $.getById('clears')
-        this.domLevel = $.getById('level')
-        this.btnStart = $.getById('btn-start')
+        this.domGrid = document.getElementById('panel')
+        this.domNext = document.getElementById('next')
+        this.domMax = document.getElementById('max')
+        this.domScore = document.getElementById('score')
+        this.domClearRows = document.getElementById('clears')
+        this.domLevel = document.getElementById('level')
+        this.btnStart = document.getElementById('btn-start')
 
         // 接收参数
         this.rows = option.rows
@@ -22,33 +37,33 @@ class Render {
         for (let i = 0; i < this.rows * this.columns; i++) {
             arr.push('<div></div>')
         }
-        $.innerHTML(this.domGrid, arr.join(''))
+        this.domGrid.innerHTML = arr.join('')
     }
 
     set max(x) {
-        $.innerText(this.domMax, x)
+        this.domMax.innerText = x
     }
     set score(x) {
-        $.innerText(this.domScore, x)
+        this.domScore.innerText = x
     }
     set clearRows(x) {
-        $.innerText(this.domClearRows, x)
+        this.domClearRows.innerText = x
     }
     set level(x) {
-        $.innerText(this.domLevel, x)
+        this.domLevel.innerText = x
     }
     set next(x) {
-        $.setClass(this.domNext, 'grid shape-' + x)
+        this.domNext.className = 'grid shape-' + x
     }
 
     reset() {
         this.score = 0
         this.clearRows = 0
         this.level = 1
-        $.setClass(this.btnStart, '')
+        this.btnStart.className = ''
     }
     start() {
-        $.toggleClass(this.btnStart, 'pause')
+        this.constructor.#toggleClass(this.btnStart, 'pause')
     }
 
     updateGrid(data, max = 0) {
@@ -61,7 +76,7 @@ class Render {
     }
     updateCell(i, mode) {
         const flag = ['', 'light', 'blink']
-        $.setClass(this.domGrid.children[i], flag[mode])
+        this.domGrid.children[i].className = flag[mode]
     }
 }
 
