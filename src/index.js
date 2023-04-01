@@ -1,30 +1,41 @@
-import Tetirs from './js/Tetris.js'
+import Model from './js/Model.js'
+import View from '/js/Render.js'
+import Controller from './js/Tetris.js'
 
 // 游戏面板 20*10
-const rows = 20
-const columns = 10
+const panel = {
+    rows: 20,
+    columns: 10
+}
 
 // 俄罗斯方块
-const tetirs = new Tetirs({ rows, columns })
+const model = new Model(panel)
+const view = new View(panel)
+const controller = new Controller({
+    rows: panel.rows,
+    columns: panel.columns,
+    model: model,
+    view: view
+})
 
 // 绑定事件
 getById('btn-start').addEventListener('click', (e) => {
-    tetirs.start()
+    controller.start()
 })
 getById('btn-replay').addEventListener('click', (e) => {
-    tetirs.reset()
+    controller.reset()
 })
 getById('btn-right').addEventListener('click', (e) => {
-    tetirs.horizontal(1)
+    controller.horizontal(1)
 })
 getById('btn-left').addEventListener('click', (e) => {
-    tetirs.horizontal(-1)
+    controller.horizontal(-1)
 })
 getById('btn-down').addEventListener('click', (e) => {
-    tetirs.down()
+    controller.down()
 })
 getById('btn-rotate').addEventListener('click', (e) => {
-    tetirs.rotate()
+    controller.rotate()
 })
 
 function getById(id) {

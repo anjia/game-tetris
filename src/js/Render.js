@@ -17,6 +17,10 @@ class Render {
     }
 
     constructor(option) {
+        // 接收参数
+        this.rows = option.rows
+        this.columns = option.columns
+
         // 相关 DOM
         this.domGrid = document.getElementById('panel')
         this.domNext = document.getElementById('next')
@@ -25,12 +29,6 @@ class Render {
         this.domClearRows = document.getElementById('clears')
         this.domLevel = document.getElementById('level')
         this.btnStart = document.getElementById('btn-start')
-
-        // 接收参数
-        this.rows = option.rows
-        this.columns = option.columns
-        this.next = option.next
-        this.max = option.max
 
         // 初始化 UI
         let arr = []

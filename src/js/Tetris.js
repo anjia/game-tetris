@@ -1,40 +1,31 @@
-import Render from './Render.js'
-import Model from './Model.js'
-
 class Tetirs {
     // 一次性消 1-2-3-4 行，每行单价 100-150-200-250
     static SCORE = [0, 100, 300, 600, 1000]
     static LEVEL = [0, 2000, 4000, 8000, +Infinity]
     static INTERVAL = [0, 800, 700, 600, 500]    // 降落的间隔（速度）
 
-
     constructor(option) {
         // 接收参数
         this.rows = option.rows
         this.columns = option.columns
+        this.model = option.model    // 数据层
+        this.render = option.view    // ui 渲染层
 
-        // 数据层
-        this.model = new Model({
-            rows: this.rows,
-            columns: this.columns
-        })
+        // 下一个形状
+        this.next = this.model.next
+        this.render.next = this.next.name
 
+        // 最高分
+        this.maxScore = parseInt(window.localStorage.getItem('max') || 0)
+        this.render.max = this.maxScore
+
+        // 其它实例数据
         this.status;    // 状态
         this.current;   // 当前形状
         this.timer;     // 降落的计时器
         this.theLevel;      // 本轮级别
         this.theScore;      // 本轮得分
         this.theClearRows;  // 本轮消除行数
-        this.next = this.model.next  // 下一个形状
-        this.maxScore = parseInt(window.localStorage.getItem('max') || 0)  // 最高分
-
-        // UI 渲染
-        this.render = new Render({
-            rows: this.rows,
-            columns: this.columns,
-            next: this.next.name,
-            max: this.maxScore
-        })
 
         // 初始化数据
         this.init()
