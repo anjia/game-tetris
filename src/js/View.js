@@ -1,4 +1,4 @@
-class Render {
+class CSSView {
 
     static #toggleClass(obj, name) {
         let flag = false
@@ -78,4 +78,4 @@ class Render {
     }
 }
 
-export default Render
+export default CSSView

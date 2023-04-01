@@ -1,23 +1,30 @@
 class Tetirs {
-    // 一次性消 1-2-3-4 行，每行单价 100-150-200-250
-    static SCORE = [0, 100, 300, 600, 1000]
-    static LEVEL = [0, 2000, 4000, 8000, +Infinity]
-    static INTERVAL = [0, 800, 700, 600, 500]    // 降落的间隔（速度）
+    // 一次性消 1-2-3-4 行时的得分
+    static SCORE = [0, 100, 300, 700, 1500]
+    static INTERVAL = [0, 800, 650, 500, 370, 250, 200]   // 降落的间隔（速度），共 6 级
+    static LEVELLINES = [0]  // 之所以用数组，是想用比大小替代取余 `Math.ceil(消除总行数 % 20)`
+    static {
+        // 每消除 20 行就升一级，同时增加降落速度 
+        const clearLines = 20
+        for (let i = 1; i < this.INTERVAL.length; i++) {
+            this.LEVELLINES[i] = this.LEVELLINES[i - 1] + clearLines
+        }
+    }
 
     constructor(option) {
         // 接收参数
         this.rows = option.rows
         this.columns = option.columns
         this.model = option.model    // 数据层
-        this.render = option.view    // ui 渲染层
+        this.view = option.view    // ui 渲染层
 
         // 下一个形状
         this.next = this.model.next
-        this.render.next = this.next.name
+        this.view.next = this.next.name
 
         // 最高分
         this.maxScore = parseInt(window.localStorage.getItem('max') || 0)
-        this.render.max = this.maxScore
+        this.view.max = this.maxScore
 
         // 其它实例数据
         this.status;    // 状态
@@ -43,7 +50,7 @@ class Tetirs {
         this.#clearScreen()
         this.init()
         this.model.reset()
-        this.render.reset()
+        this.view.reset()
         this.#updateNext()
     }
 
@@ -58,7 +65,7 @@ class Tetirs {
     }
 
     start() {
-        this.render.start()
+        this.view.start()
 
         if (this.isplaying) {
             this.status = 2
@@ -109,28 +116,31 @@ class Tetirs {
     /**
      * private methods
      */
+    // { score, clears }
     #updateTheInfo(to) {
-        this.theClearRows = to.clears
-        this.render.clearRows = this.theClearRows
-
+        // 当前分
         this.theScore = to.score
-        this.render.score = this.theScore
-
-        if (to.level !== this.theLevel) {
-            this.theLevel = to.level
-            this.render.level = this.theLevel
-        }
+        this.view.score = this.theScore
+        // 最高分
         if (to.score > this.maxScore) {
             this.maxScore = to.score
             window.localStorage.setItem('max', this.maxScore)
-            this.render.max = this.maxScore
+            this.view.max = this.maxScore
+        }
+        // 消除行
+        this.theClearRows = to.clears
+        this.view.clearRows = this.theClearRows
+        // 级别
+        if (this.theClearRows >= this.constructor.LEVELLINES[this.theLevel] && (this.theLevel + 1 < this.constructor.LEVELLINES.length)) {
+            this.theLevel++
+            this.view.level = this.theLevel
         }
     }
     #updateNext() {
         const x = this.model.next
         if (x.name !== this.next.name) {
             this.next = x
-            this.render.next = this.next.name
+            this.view.next = this.next.name
         }
     }
     #clearTimer() {
@@ -188,15 +198,11 @@ class Tetirs {
                     // 重新计算新数据
                     const clears = this.theClearRows + fullRows.length
                     const score = this.theScore + this.constructor.SCORE[fullRows.length]
-                    let level = this.theLevel
-                    if (score >= this.constructor.LEVEL[level]) {
-                        level++
-                    }
 
                     // 动画结束后，重新赋值
                     setTimeout(() => {
-                        this.render.updateGrid(data, maxRow)
-                        this.#updateTheInfo({ score, level, clears })
+                        this.view.updateGrid(data, maxRow)
+                        this.#updateTheInfo({ score, clears })
                         this.#startNext()
                     }, 600)
 
@@ -230,14 +236,14 @@ class Tetirs {
         for (let p of points) {
             if (p[0] >= 0) {
                 const i = p[0] * this.columns + p[1]
-                this.render.updateCell(i, mode)
+                this.view.updateCell(i, mode)
             }
         }
     }
     #updateRow(row, mode) {
         const start = row * this.columns
         for (let j = 0; j < this.columns; j++) {
-            this.render.updateCell(start + j, mode)
+            this.view.updateCell(start + j, mode)
         }
     }
 }

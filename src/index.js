@@ -1,6 +1,6 @@
 import Model from './js/Model.js'
-import View from '/js/Render.js'
-import Controller from './js/Tetris.js'
+import View from '/js/View.js'
+import Controller from './js/Controller.js'
 
 // 游戏面板 20*10
 const panel = {
