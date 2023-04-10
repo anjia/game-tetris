@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>俄罗斯方块</title>
+
+    <link rel="stylesheet" href="./style/common.css">
+    <link rel="stylesheet" href="./style/vs.css">
+
+    <link rel="preload" href="./custom-element/grid.css" as="style">
+    <link rel="preload" href="./custom-element/game-handler.css" as="style">
+
+    <script src="./custom-element/index.js" type="module"></script>
+</head>
+
+<body>
+    <main id="main">
+        <h1>俄罗斯方块</h1>
+        <div class="wrap">
+            <div id="person1">
+                <div class="g-box">
+                    <total-score type="2"></total-score>
+                </div>
+                <div class="g-flex">
+                    <clear-lines class="g-item g-box"></clear-lines>
+                    <next-shape class="g-item g-box" name="O"></next-shape>
+                </div>
+                <div class="g-box">
+                    <game-panel></game-panel>
+                </div>
+                <div class="g-box">
+                    <win-counter value="2" max="3"></win-counter>
+                </div>
+                <div>
+                    <button id="btn-replay">重玩</button>
+                    <button id="btn-start" data-start="开始" data-pause="暂停"></button>
+                </div>
+                <game-handler></game-handler>
+            </div>
+            <div class="text">VS</div>
+            <div id="person2"></div>
+        </div>
+    </main>
+    <script src="./vs.js" type="module"></script>
+</body>
+
+</html>

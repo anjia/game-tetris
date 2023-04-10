@@ -1,0 +1,11 @@
+:root {
+    --vs-width: 80%;
+    --win-size: calc(var(--size) / 1.5)
+}
+
+.wrap {
+    display: flex;
+    justify-content: space-between;
+    width: var(--vs-width);
+    margin: 0 auto;
+}

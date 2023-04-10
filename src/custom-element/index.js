@@ -1,0 +1,6 @@
+import './game-handler.js'
+import './clear-lines.js'
+import './game-panel.js'
+import './next-shape.js'
+import './total-score.js'
+import './win-counter.js'
