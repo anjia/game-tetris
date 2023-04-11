@@ -1,0 +1,18 @@
+.diff {
+    position: relative;
+    color: green;
+}
+
+.diff::before {
+    content: '+';
+    position: absolute;
+    transform: translateX(-100%);
+}
+
+.diff.less {
+    color: red;
+}
+
+.diff.less::before {
+    content: '-';
+}
