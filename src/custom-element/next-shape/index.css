@@ -1,3 +1,5 @@
+@import url('../style/grid.css');
+
 .grid {
     grid-template-rows: repeat(2, var(--size));
     grid-template-columns: repeat(4, var(--size));

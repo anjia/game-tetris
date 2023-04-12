@@ -34,7 +34,6 @@ customElements.define('next-shape', class extends HTMLElement {
         let shadow = this.attachShadow({ mode: 'open' })
 
         // style
-        shadow.appendChild(createLink('./custom-element/style/grid.css'))
         shadow.appendChild(createLink('./custom-element/next-shape/index.css'))
 
         // html
