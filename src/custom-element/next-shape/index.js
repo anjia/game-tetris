@@ -1,4 +1,4 @@
-import all from '../core/shape/all.js'
+import all from '../../core/shape/all.js'
 
 customElements.define('next-shape', class extends HTMLElement {
 
@@ -34,7 +34,7 @@ customElements.define('next-shape', class extends HTMLElement {
 
         const link = document.createElement('link')
         link.setAttribute('rel', 'stylesheet')
-        link.setAttribute('href', './custom-element/grid.css')
+        link.setAttribute('href', './custom-element/style/grid.css')
         shadow.appendChild(link)
 
         const style = document.createElement('style')

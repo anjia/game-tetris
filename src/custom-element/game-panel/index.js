@@ -6,7 +6,7 @@ customElements.define('game-panel', class extends HTMLElement {
 
         const link = document.createElement('link')
         link.setAttribute('rel', 'stylesheet')
-        link.setAttribute('href', './custom-element/grid.css')
+        link.setAttribute('href', './custom-element/style/grid.css')
         shadow.appendChild(link)
 
         const style = document.createElement('style')

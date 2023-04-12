@@ -1,8 +1,8 @@
-customElements.define('game-handler', class extends HTMLElement {
+customElements.define('op-handler', class extends HTMLElement {
     constructor() {
         super()
         let shadow = this.attachShadow({ mode: 'open' })
-        shadow.innerHTML = `<link rel="stylesheet" href="./custom-element/game-handler.css">
+        shadow.innerHTML = `<link rel="stylesheet" href="./custom-element/op-handler/index.css">
 <div class="area">
     <button id="btn-rotate">旋转</button>
     <button id="btn-right">右移</button>

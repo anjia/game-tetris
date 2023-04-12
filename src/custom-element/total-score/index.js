@@ -27,7 +27,7 @@ customElements.define('total-score', class extends HTMLElement {
         // css
         const link = document.createElement('link')
         link.setAttribute('rel', 'stylesheet')
-        link.setAttribute('href', './custom-element/total-score.css')
+        link.setAttribute('href', './custom-element/total-score/index.css')
         shadow.appendChild(link)
 
         // html
