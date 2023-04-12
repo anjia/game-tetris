@@ -1,3 +1,5 @@
+import { createLink } from '../utility.js'
+
 customElements.define('total-score', class extends HTMLElement {
 
     static MAX = 999999
@@ -25,10 +27,7 @@ customElements.define('total-score', class extends HTMLElement {
         let shadow = this.attachShadow({ mode: 'open' })
 
         // css
-        const link = document.createElement('link')
-        link.setAttribute('rel', 'stylesheet')
-        link.setAttribute('href', './custom-element/total-score/index.css')
-        shadow.appendChild(link)
+        shadow.appendChild(createLink('./custom-element/total-score/index.css'))
 
         // html
         const text = document.createTextNode('SCORE')

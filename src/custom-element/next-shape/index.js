@@ -1,4 +1,5 @@
 import all from '../../core/shape/all.js'
+import { createLink } from '../utility.js'
 
 customElements.define('next-shape', class extends HTMLElement {
 
@@ -32,34 +33,11 @@ customElements.define('next-shape', class extends HTMLElement {
         // 构造 shadow DOM
         let shadow = this.attachShadow({ mode: 'open' })
 
-        const link = document.createElement('link')
-        link.setAttribute('rel', 'stylesheet')
-        link.setAttribute('href', './custom-element/style/grid.css')
-        shadow.appendChild(link)
+        // style
+        shadow.appendChild(createLink('./custom-element/style/grid.css'))
+        shadow.appendChild(createLink('./custom-element/next-shape/index.css'))
 
-        const style = document.createElement('style')
-        style.textContent = `
-.grid {
-    grid-template-rows: repeat(2, var(--size));
-    grid-template-columns: repeat(4, var(--size));
-    justify-content: center;
-}
-
-.grid>span {
-    opacity: 0.1;
-}
-
-.shape-O .O,
-.shape-I .I,
-.shape-T .T,
-.shape-J .J,
-.shape-L .L,
-.shape-S .S,
-.shape-Z .Z {
-    opacity: 1;
-}`
-        shadow.appendChild(style)
-
+        // html
         this.container = document.createElement('section')
         this.container.setAttribute('class', `grid shape-${this.name}`)
         let innerHTML = ''

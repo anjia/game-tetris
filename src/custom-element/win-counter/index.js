@@ -1,3 +1,5 @@
+import { createLink } from '../utility.js'
+
 customElements.define('win-counter', class extends HTMLElement {
 
     static get observedAttributes() {
@@ -17,30 +19,7 @@ customElements.define('win-counter', class extends HTMLElement {
         let shadow = this.attachShadow({ mode: 'open' })
 
         // style
-        const style = document.createElement('style')
-        style.textContent = `
-ul {
-    display: flex;
-    justify-content: center;
-    gap: var(--gap);
-    padding: 5px 0;
-    list-style: none;
-    margin: 0;
-}
-
-ul>li {
-    width: var(--win-size);
-    height: var(--win-size);
-    border-radius: 50%;
-    background-color: currentColor;
-    opacity: 0.2;
-}
-
-ul>li.s {
-    opacity: 1;
-}
-`
-        shadow.appendChild(style)
+        shadow.appendChild(createLink('./custom-element/win-counter/index.css'))
 
         // html
         this.container = document.createElement('ul')
