@@ -4,9 +4,22 @@ class Context {
 
     constructor(option) {
         // 接收参数
+        this.id = option.id
         this.rows = option.rows
         this.columns = option.columns
-        this.id = option.id
+        this.shaper = option.shaper
+
+        // shadow DOM
+        // const shadow = this.attachShadow({ mode: 'open' })
+        // const template = document.getElementById('temp-vs')
+        // template.content.firstElementChild.cloneNode(true)
+        // let container = document.createElement('div')
+        // container.id = this.id
+        // container.appendChild(document.createElement('div').appendChild(document.createElement('total-score')))
+
+        // shadow.appendChild(container)
+
+
 
         this.panel = new Panel({
             rows: this.rows,
@@ -54,7 +67,7 @@ class Context {
     }
 
 
-    toggleClass(obj, name) {
+    #toggleClass(obj, name) {
         let flag = false
         let newList = []
         for (let item of obj.classList) {

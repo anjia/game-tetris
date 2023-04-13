@@ -6,45 +6,60 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>俄罗斯方块</title>
+    <style>
+        :root {
+            --color: black;
+            --bg: white;
+            --size: 18px;
+            --gap: 2px;
+            --btn-size: 75px;
 
-    <link rel="stylesheet" href="./style/common.css">
-    <link rel="stylesheet" href="./style/vs.css">
+            /* vs */
+            --vs-width: 80%;
+            --win-size: calc(var(--size) / 1.5)
+        }
 
-    <!-- <link rel="preload" href="./custom-element/grid.css" as="style">
-    <link rel="preload" href="./custom-element/game-handler.css" as="style"> -->
+        body {
+            color: var(--color);
+            background-color: var(--bg);
+            font-family: Courier, monospace;
+        }
 
-    <script src="./custom-element/index.js" type="module"></script>
+        h1 {
+            text-align: center;
+        }
+    </style>
+
+    <script src="./custom-element/game-tetris/index.js" type="module"></script>
 </head>
 
 <body>
     <main id="main">
         <h1>俄罗斯方块</h1>
-        <div class="wrap">
-            <div id="person1">
-                <div class="g-box">
-                    <total-score type="2" score="1000" vs="200"></total-score>
-                </div>
-                <div class="g-flex">
-                    <clear-lines class="g-item g-box" value="3"></clear-lines>
-                    <next-shape class="g-item g-box" name="O"></next-shape>
-                </div>
-                <div class="g-box">
-                    <game-panel></game-panel>
-                </div>
-                <div class="g-box">
-                    <win-counter value="2" max="3"></win-counter>
-                </div>
-                <div>
-                    <button id="btn-replay">重玩</button>
-                    <button id="btn-start" data-start="开始" data-pause="暂停"></button>
-                </div>
-                <op-handler></op-handler>
-            </div>
-            <div class="text">VS</div>
-            <div id="person2"></div>
-        </div>
+        <game-tetris type="2" context-template-id="temp-vs"></game-tetris>
     </main>
-    <script src="./vs.js" type="module"></script>
+
+    <template id="temp-vs">
+        <div class="box">
+            <total-score type="2"></total-score>
+        </div>
+        <div class="flex">
+            <clear-lines class="flex-item box"></clear-lines>
+            <next-shape class="flex-item box"></next-shape>
+        </div>
+        <div class="box">
+            <grid-panel></grid-panel>
+        </div>
+        <div class="box">
+            <win-counter value="0" max="3"></win-counter>
+        </div>
+        <div>
+            <button class="btn-replay">重玩</button>
+            <button class="btn-start" data-start="开始" data-pause="暂停"></button>
+        </div>
+        <op-handler></op-handler>
+        </div>
+    </template>
 </body>
 
 </html>

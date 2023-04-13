@@ -1,9 +1,4 @@
-:root {
-    --vs-width: 80%;
-    --win-size: calc(var(--size) / 1.5)
-}
-
-.wrap {
+:host {
     display: flex;
     justify-content: space-between;
     width: var(--vs-width);

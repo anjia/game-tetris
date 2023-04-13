@@ -1,4 +1,4 @@
-import { createLink } from '../utility.js'
+import { createLink } from '../js/utility.js'
 
 customElements.define('win-counter', class extends HTMLElement {
 

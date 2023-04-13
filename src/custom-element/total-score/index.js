@@ -1,4 +1,4 @@
-import { createLink } from '../utility.js'
+import { createLink } from '../js/utility.js'
 
 customElements.define('total-score', class extends HTMLElement {
 
@@ -13,6 +13,8 @@ customElements.define('total-score', class extends HTMLElement {
 
     constructor() {
         super()
+
+        console.log('total-score constructor()')
 
         // 实例数据
         this.type = this.getAttribute('type') || '2'

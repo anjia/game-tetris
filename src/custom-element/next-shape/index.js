@@ -1,5 +1,5 @@
-import all from '../../core/shape/all.js'
-import { createLink } from '../utility.js'
+import all from '../js/shape/all.js'
+import { createLink } from '../js/utility.js'
 
 customElements.define('next-shape', class extends HTMLElement {
 

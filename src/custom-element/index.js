@@ -1,6 +1,0 @@
-import './clear-lines/index.js'
-import './game-panel/index.js'
-import './next-shape/index.js'
-import './op-handler/index.js'
-import './total-score/index.js'
-import './win-counter/index.js'

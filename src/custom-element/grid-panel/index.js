@@ -1,6 +1,6 @@
-import { createLink } from '../utility.js'
+import { createLink } from '../js/utility.js'
 
-customElements.define('game-panel', class extends HTMLElement {
+customElements.define('grid-panel', class extends HTMLElement {
     constructor() {
         super()
 
@@ -11,8 +11,7 @@ customElements.define('game-panel', class extends HTMLElement {
         let shadow = this.attachShadow({ mode: 'open' })
 
         // style
-        shadow.appendChild(createLink('./custom-element/style/grid.css'))
-        shadow.appendChild(createLink('./custom-element/game-panel/index.css'))
+        shadow.appendChild(createLink('./custom-element/grid-panel/index.css'))
 
         // html
         this.container = document.createElement('section')
@@ -23,5 +22,28 @@ customElements.define('game-panel', class extends HTMLElement {
         }
         this.container.innerHTML = innerHTML
         shadow.appendChild(this.container)
+    }
+
+    start() {
+
+    }
+    pause() {
+
+    }
+    left() {
+
+    }
+    right() {
+
+    }
+    down() {
+
+    }
+    rotate() {
+
+    }
+
+    set shape(x) {
+
     }
 })
