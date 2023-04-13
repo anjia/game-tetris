@@ -3,13 +3,10 @@ import All from './all.js'
 class Producer {
     constructor() {
         // 实例属性
-        this.nameList = []
+        this.total = All.length
         this.nextList = []
-
-        for (let i = 0; i < All.length; i++) {
-            this.nameList.push(All[i].name)
-        }
     }
+
     next(start = 0) {
         if (start < 0) {
             start = 0
@@ -18,11 +15,10 @@ class Producer {
             start = this.nextList.length
         }
         if (start === this.nextList.length) {
-            const num = this.#getRandomInt(this.nameList.length)
-            this.nextList.push(this.nameList[num])
+            const num = this.#getRandomInt(this.total)
+            this.nextList.push(num)
         }
-        console.log(this.nextList, this.nextList[start])
-        return new this.nextList[start]()
+        return this.nextList[start]
     }
 
     #getRandomInt(max) {
