@@ -1,3 +1,5 @@
+import { subtract } from '../utility.js'
+
 class Shape {
 
     // private fields
@@ -15,6 +17,7 @@ class Shape {
         this.columns;
         this.data;
         this.container;
+        this.maxRow;
     }
 
     set panel(x) {
@@ -24,10 +27,10 @@ class Shape {
         this.columns = x.columns
         this.data = x.data
         this.container = x.container
-        this.maxRow = x.maxRow
+        this.maxRow = this.rows - 1
     }
 
-    canStart() {
+    get entered() {
         let result = true
         for (let p of this.points) {
             if (p[0] === 0 && this.data[p[0]][p[1]] === 1) {
@@ -38,15 +41,47 @@ class Shape {
         return result
     }
 
-    canFall() {
-        let result = {
-            msg: '',
-            next: null,
-            maxRow: this.maxRow,
-            fullRows: [],
-            data: null
+    get included() {
+        let result = true
+        for (let p of this.points) {
+            if (p[0] < 0) {
+                result = false
+                break
+            }
+        }
+        return result
+    }
+
+    fixed() {
+        // 固定形状的同时，记录更新了那几行
+        let updateRows = new Set()
+        for (let p of this.points) {
+            if (p[0] >= 0) {
+                this.data[p[0]][p[1]] = 1
+                updateRows.add(p[0])
+                if (p[0] < this.maxRow) {
+                    this.maxRow = p[0]
+                }
+            }
         }
 
+        // 判断是否有满行
+        let fullRows = []
+        for (let row of updateRows) {
+            let j = 0
+            while (j < this.columns && this.#isCellFilled(row, j)) j++
+            // 满行的
+            if (j === this.columns) {
+                fullRows.push(row)
+                this.#clearFullRows(row)
+            }
+        }
+
+        // 返回它消除的行数
+        return fullRows.length
+    }
+
+    down() {
         let next = []
         for (let p of this.points) {
             let nextI = p[0] + 1
@@ -61,53 +96,32 @@ class Shape {
             }
             next.push([nextI, nextJ])
         }
-
-        // 下落正常，返回
-        if (next.length === 4) {
-            result.msg = 'continue'
-            this.points = next
-        } else {
-            // 不能再落了，则定位在此处
-            result.msg = 'done'
-            let updateRows = new Set()
-            for (let p of this.points) {
-                if (p[0] >= 0) {
-                    this.data[p[0]][p[1]] = 1
-                    updateRows.add(p[0])
-                    if (p[0] < this.maxRow) {
-                        this.maxRow = p[0]
-                    }
-                } else {
-                    // 形状没有画全
-                    result.msg = 'gameover'
-                    this.reset()
-                    break
-                }
-            }
-            result.maxRow = this.maxRow
-
-            // 判断是否有满行的
-            if (result.msg === 'done') {
-                for (let row of updateRows) {
-                    let j = 0
-                    while (j < this.columns && this.#isCellFilled(row, j)) j++
-                    if (j === this.columns) {
-                        result.fullRows.push(row)
-                    }
-                }
-                // if (result.fullRows.length) {
-                //     this.clearRows += result.fullRows.length
-                //     this.#clearFullRows(result.fullRows)
-                // }
-                result.data = this.data
-            }
-        }
-
-        return result
+        return next.length === 4 ? next : []
     }
+
+
+
 
     #isCellFilled(i, j) {
         return i >= 0 && i < this.rows && j >= 0 && j < this.columns && this.data[i][j] === 1
+    }
+    #clearFullRows(fullRows) {
+        // 原地排序，从小-大
+        fullRows.sort((a, b) => {
+            if (a > b) return 1
+            else if (a < b) return -1
+            return 0
+        })
+        // 从小到大，依次消除
+        for (let row of fullRows) {
+            for (let i = row; i >= this.maxRow; i--) {
+                const srcI = i - 1
+                for (let j = 0; j < this.columns; j++) {
+                    this.data[i][j] = ((srcI >= 0 && srcI >= this.maxRow) ? this.data[srcI][j] : 0)
+                }
+            }
+            this.maxRow++
+        }
     }
 
 
@@ -121,7 +135,27 @@ class Shape {
             }
         }
     }
+    to(next) {
+        // 在 this.current 中但不在 next 中的，置灰
+        this.#updatePoints(subtract(this.points, next), 0)
 
+        // 在 next 中但不在 this.current 中的，置亮
+        this.#updatePoints(subtract(next, this.points), 1)
+
+        this.points = next
+    }
+
+
+
+    #updatePoints(points, mode) {
+        if (!points.length) return
+        for (let p of points) {
+            if (p[0] >= 0) {
+                const i = p[0] * this.columns + p[1]
+                this.#updateCell(i, mode)
+            }
+        }
+    }
     #updateCell(i, mode) {
         const flag = ['', 'light', 'blink']
         this.container.children[i].className = flag[mode]
@@ -134,9 +168,6 @@ class Shape {
 
     }
     right() {
-
-    }
-    down() {
 
     }
     rotate() {

@@ -10,7 +10,6 @@ customElements.define('grid-panel', class extends HTMLElement {
     #status;           // 状态
     #timer;            // 降落的计时器
     #speed;            // 降落的速度
-    #maxRow;           // 楼盖的最高行数
 
     constructor() {
         super()
@@ -54,7 +53,6 @@ customElements.define('grid-panel', class extends HTMLElement {
             }
         }
         // 其它实例数据
-        this.#maxRow = this.rows - 1
         this.#status = 0
     }
 
@@ -117,8 +115,7 @@ customElements.define('grid-panel', class extends HTMLElement {
                 rows: this.rows,
                 columns: this.columns,
                 data: this.#data,
-                container: this.#container,
-                maxRow: this.#maxRow
+                container: this.#container
             }
             this.#speed = speed
             this.#startNext()
@@ -138,51 +135,36 @@ customElements.define('grid-panel', class extends HTMLElement {
     #startNext() {
         console.log('grid-panel start(), this.shape=', this.shape)
 
-        // 判断起始位置，若有空间则绘制+下落，否则结束游戏
-        if (this.shape.canStart()) {
+        // 若 shape 可以入场，则绘制+继续下落
+        if (this.shape.entered) {
             this.shape.draw()
             this.#continueFalling()
         } else {
-            // TODO. 向父容器发送事件 'gameover'
-            this.reset()  // gameover
+            this.gameover()  // 否则，gameover
         }
     }
 
     #falling() {
-        // 若可以继续降落，则更新 UI
-        const { msg, next, maxRow, fullRows, data } = this.shape.canFall()
-        switch (msg) {
-            case 'continue':
-                this.shape.draw()
-                this.#continueFalling()
-                break
-            case 'done':
-                // // 清空满行的
-                // if (fullRows.length) {
-                //     // 统一闪，耗时 0.6s
-                //     for (let row of fullRows) {
-                //         this.#updateRow(row, 2)
-                //     }
-
-                //     // 重新计算新数据
-                //     const clears = this.theClearRows + fullRows.length
-                //     const score = this.theScore + this.constructor.SCORE[fullRows.length]
-
-                //     // 动画结束后，重新赋值
-                //     setTimeout(() => {
-                //         this.view.updateGrid(data, maxRow)
-                //         this.#updateTheInfo({ score, clears })
-                //         this.#startNext()
-                //     }, 600)
-
-                // } else {
-                //     this.#startNext()
-                // }
-                break
-            case 'gameover':
-                this.reset()
-                break
+        const next = this.shape.down()  // 向下走一格
+        // 若 shape 能继续走，则更新UI+继续下落
+        if (next.length) {
+            this.shape.to(next)
+            this.#continueFalling()
+        } else {
+            // 否则就定位在此处，若 shape 能被画全则落定
+            if (this.shape.included) {
+                // 固定形状时，返回它消除的行数
+                const clearRows = this.shape.fixed()
+                // TODO. 告诉父容器有消行得分，父容器更新行数+分数+下一个
+            } else {
+                this.gameover()  // 否则，gameover
+            }
         }
+    }
+
+    gameover() {
+        // TODO. 向父容器发送事件 'gameover'
+        this.reset()
     }
 
     #continueFalling() {

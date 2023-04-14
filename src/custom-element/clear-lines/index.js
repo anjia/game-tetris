@@ -58,4 +58,10 @@ customElements.define('clear-lines', class extends HTMLElement {
         this.level = 0
         this.lines = 0
     }
+
+    add(x) {
+        if (x) {
+            this.lines = this.lines + x
+        }
+    }
 })
