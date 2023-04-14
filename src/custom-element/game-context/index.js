@@ -5,18 +5,18 @@ import '../grid-panel/index.js'
 import '../win-counter/index.js'
 import '../op-handler/index.js'
 
+import ShapeProducer from '../js/shape/Producer.js'
 import { createLink } from '../js/utility.js'
 
 customElements.define('game-context', class extends HTMLElement {
+
+    static shaper = new ShapeProducer()  // shape 生产者
+
     constructor() {
         super()
 
         // 实例属性
-        this.rows = 20
-        this.columns = 10
-        this.comShaper = null
-        this.shapeNameList = null
-        this.shapeList = []
+        this.shapeCounter = 0   // shape 的消费计数
 
         this.domScore = null
         this.domClears = null
@@ -55,24 +55,33 @@ customElements.define('game-context', class extends HTMLElement {
         div = document.createElement('div')
         div.className = 'box'
         this.domWin = document.createElement('win-counter')
-        this.domWin.setAttribute('value', '0')
-        this.domWin.setAttribute('max', '3')
         div.appendChild(this.domWin)
         shadow.appendChild(div)
 
         this.btnHandler = document.createElement('op-handler')
         shadow.appendChild(this.btnHandler)
+
+        // 初始化数据
+        this.#getNewNext()
     }
 
-    connectedCallback() {
-        console.log('game-context connectedCallback()')
-        console.log('=== this.innerHTML', this.innerHTML)
+    start() {
+        this.domPanel.start()
     }
 
-    set shaper(x) {
-        this.comShaper = x
-        const next = this.comShaper.next(0)
-        this.domNext.next = next
+    pause() {
+        this.domPanel.pause()
     }
 
+    reset() {
+        this.domScore.reset()
+        this.domClears.reset()
+        this.domPanel.reset()
+        this.domWin.reset()
+    }
+
+    #getNewNext() {
+        this.domNext.shape = (this.constructor.shaper).next(this.shapeCounter)
+        this.shapeCounter++
+    }
 })

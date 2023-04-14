@@ -3,17 +3,13 @@ import { createLink } from '../js/utility.js'
 
 customElements.define('next-shape', class extends HTMLElement {
 
-    static get observedAttributes() {
-        return ['index']
-    }
+    // private fields
+    #container = null  // DOM
+    #shapeList = []    // 形状对象列表
+    #cur = 0;          // 形状的当前下标
 
     constructor() {
         super()
-
-        // 实例数据
-        this.container = null  // DOM
-        this.shapeList = []    // 形状对象列表
-        this.cur;              // 形状的当前下标
 
         // 处理数据：所有的形状
         let arr = []
@@ -21,7 +17,7 @@ customElements.define('next-shape', class extends HTMLElement {
             arr.push([])
         }
         for (let shape of all) {
-            this.shapeList.push(new shape())
+            this.#shapeList.push(new shape())
             const matrix = shape.matrix
             for (let i = 0; i < matrix.length; i++) {
                 for (let j = 0; j < matrix[i].length; j++) {
@@ -36,30 +32,26 @@ customElements.define('next-shape', class extends HTMLElement {
         let shadow = this.attachShadow({ mode: 'open' })
         shadow.appendChild(createLink('./custom-element/next-shape/index.css'))
 
-        this.container = document.createElement('section')
-        this.container.setAttribute('class', 'grid')
+        this.#container = document.createElement('section')
+        this.#container.setAttribute('class', 'grid')
         let innerHTML = ''
         for (let item of arr) {
             innerHTML += '<span class="' + item.join(' ') + '"></span>'
         }
-        this.container.innerHTML = innerHTML
-        shadow.appendChild(this.container)
+        this.#container.innerHTML = innerHTML
+        shadow.appendChild(this.#container)
     }
 
-    set next(x) {
-        if (x && x !== this.cur) {
-            this.cur = x
-            this.container.className = 'grid shape-' + this.shapeList[this.cur].constructor.name
-        }
+    // 获取 shape object
+    get shape() {
+        return this.#shapeList[this.#cur]
     }
 
-    get next() {
-        return this.shapeList[this.cur]
-    }
-
-    attributeChangedCallback(name, oldValue, newValue) {
-        if (name === 'index') {
-            this.next = newValue
+    // 设置 shape 下标
+    set shape(x) {
+        if (x && x !== this.#cur) {
+            this.#cur = x
+            this.#container.className = 'grid shape-' + this.#shapeList[this.#cur].constructor.name
         }
     }
 })

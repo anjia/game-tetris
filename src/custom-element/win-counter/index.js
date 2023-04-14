@@ -2,79 +2,61 @@ import { createLink } from '../js/utility.js'
 
 customElements.define('win-counter', class extends HTMLElement {
 
-    static get observedAttributes() {
-        return ['value', 'max']
-    }
+    // private fields
+    #min = 0
+    #max = 0
+    #win = 0
+    #container = null
 
     constructor() {
         super()
 
-        // 实例属性
-        this.min = 0
-        this.max = 0
-        this.value = 0
-        this.container = null
-
         // shadow root
         let shadow = this.attachShadow({ mode: 'open' })
-
-        // style
         shadow.appendChild(createLink('./custom-element/win-counter/index.css'))
 
         // html
-        this.container = document.createElement('ul')
-        shadow.appendChild(this.container)
+        this.#container = document.createElement('ul')
+        shadow.appendChild(this.#container)
 
         // 初始化
-        this.#updateMax(3)
+        this.max = 3
+        this.win = 0
     }
 
-
-    attributeChangedCallback(name, oldValue, newValue) {
-        // console.log('attributeChangedCallback:', name, oldValue, newValue)
-        if (newValue === null) {
-            newValue = 0
+    set win(x) {
+        if (x === this.#win || x < this.#min || x > this.#max) return
+        this.#win = x
+        for (let i = 0; i < this.#win; i++) {
+            this.#container.children[i].className = 's'
         }
-        switch (name) {
-            case 'value':
-                this.#updateValue(newValue)
-                break
-            case 'max':
-                this.#updateMax(newValue)
-                break
+        for (let i = this.#win; i < this.#max; i++) {
+            this.#container.children[i].className = ''
         }
     }
 
-    #updateValue(x) {
-        if (x === this.value || x < this.min || x > this.max) return
-        console.log('值变了, value', x)
-        this.value = x
-        for (let i = 0; i < this.value; i++) {
-            this.container.children[i].className = 's'
-        }
-        for (let i = this.value; i < this.max; i++) {
-            this.container.children[i].className = ''
-        }
-    }
-    #updateMax(x) {
-        if (x === this.max || x < this.min) return
-        console.log('值变了, max', x)
-        if (x > this.max) {
+    set max(x) {
+        if (x === this.#max || x < this.#min) return
+        if (x > this.#max) {
             let innerHTML = ''
-            for (let i = this.max; i < x; i++) {
+            for (let i = this.#max; i < x; i++) {
                 innerHTML += '<li></li>'
             }
-            this.container.insertAdjacentHTML('beforeend', innerHTML)
-            this.max = x
+            this.#container.insertAdjacentHTML('beforeend', innerHTML)
+            this.#max = x
         } else {
-            for (let i = this.max - 1; i >= x; i--) {
-                this.container.children[i].remove()
+            for (let i = this.#max - 1; i >= x; i--) {
+                this.#container.children[i].remove()
             }
-            this.max = x
-            if (this.value > this.max) {
-                this.value = this.max
-                this.setAttribute('value', this.value)
+            this.#max = x
+            if (this.#win > this.#max) {
+                this.#win = this.#max
+                this.setAttribute('value', this.#win)
             }
         }
+    }
+
+    reset() {
+        this.win = 0
     }
 })

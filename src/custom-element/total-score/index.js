@@ -1,46 +1,37 @@
-import { createLink } from '../js/utility.js'
+import { createLink, showNumber } from '../js/utility.js'
 
 customElements.define('total-score', class extends HTMLElement {
 
-    static MAX = 999999
+    static SCORE = [0, 100, 300, 700, 1500]  // 一次性消 1-2-3-4 行时的得分
+    static MAX = 999999                      // 最大得分
+    static LEN = 6                           // UI 显示的最大长度
 
-    static get observedAttributes() {
-        return ['score', 'vs']
-    }
-    static #show(x) {
-        return String(x).padStart(6, '0')
-    }
+    // private fields
+    #type
+    #score;
+    #vs;
+    #diff;
+    #domScore = null;
+    #domDiff = null;
 
     constructor() {
         super()
 
-        console.log('total-score constructor()')
-
-        // 实例数据
-        this.type = this.getAttribute('type') || '2'
-        this.domScore = document.createElement('div')
-        this.dataScore;
-
-        this.domDiff = null
-        this.dataDiff;
-        this.dataVS;
+        // 获取属性参数
+        this.#type = this.getAttribute('type') || '2'
 
         // 构造 shadow DOM
         let shadow = this.attachShadow({ mode: 'open' })
-
-        // css
         shadow.appendChild(createLink('./custom-element/total-score/index.css'))
 
         // html
         const text = document.createTextNode('SCORE')
         shadow.appendChild(text)
-        if (this.type === '2') {
-            this.score = this.getAttribute('score')
-            shadow.appendChild(this.domScore)
-
-            this.domDiff = document.createElement('div')
-            this.vs = this.getAttribute('vs') || this.score
-            shadow.appendChild(this.domDiff)
+        if (this.#type === '2') {
+            this.#domScore = document.createElement('div')
+            this.#domDiff = document.createElement('div')
+            shadow.appendChild(this.#domScore)
+            shadow.appendChild(this.#domDiff)
         } else {
             const max = document.createElement('div')
             max.innerText = '最高分 000000'
@@ -49,53 +40,51 @@ customElements.define('total-score', class extends HTMLElement {
             shadow.appendChild(max)
             shadow.appendChild(total)
         }
+
+        // 重置（初始化）数据
+        this.reset()
     }
 
     get score() {
-        return this.dataScore
+        return this.#score
     }
+
     get vs() {
-        return this.dataVS
+        return this.#vs
     }
 
     set score(x) {
         x = parseInt(x) || 0
-        if (x === this.dataScore) return
+        if (x === this.#score) return
         if (x > this.constructor.MAX) {
             x = this.constructor.MAX
-            this.setAttribute('score', x)
         }
-        this.dataScore = x
-        this.domScore.innerText = this.constructor.#show(this.dataScore)
-    }
-    set vs(x) {
-        x = parseInt(x) || 0
-        if (this.type !== '2' || x === this.dataVS) return
-        this.dataVS = x
+        this.#score = x
+        this.#domScore.innerText = showNumber(this.#score, this.constructor.LEN)
         this.#updateDiff()
     }
 
-    #updateDiff() {
-        const dist = this.dataScore - this.dataVS
-        if (dist === this.dataDiff) return
-        if (dist >= 0) {
-            this.domDiff.className = 'diff'
-        } else {
-            this.domDiff.className = 'diff less'
-        }
-        this.dataDiff = dist
-        this.domDiff.innerText = this.constructor.#show(Math.abs(dist))
+    set vs(x) {
+        x = parseInt(x) || 0
+        if (this.#type !== '2' || x === this.#vs) return
+        this.#vs = x
+        this.#updateDiff()
     }
 
-    attributeChangedCallback(name, oldValue, newValue) {
-        switch (name) {
-            case 'score':
-                this.score = newValue
-                this.#updateDiff()
-                break
-            case 'vs':
-                this.vs = newValue
-                break
+    reset() {
+        this.score = 0
+        this.vs = 0
+    }
+
+    #updateDiff() {
+        const dist = this.#score - this.#vs
+        if (dist === this.#diff) return
+        if (dist >= 0) {
+            this.#domDiff.className = 'diff'
+        } else {
+            this.#domDiff.className = 'diff less'
         }
+        this.#diff = dist
+        this.#domDiff.innerText = showNumber(Math.abs(dist), this.constructor.LEN)
     }
 })
