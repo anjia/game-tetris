@@ -3,30 +3,22 @@ import { createLink } from '../js/utility.js'
 
 
 customElements.define('grid-panel', class extends HTMLElement {
+
+    // private fields
+    #data = null       // 二维数组，20*10
+    #container = null  // DOM
+    #status;           // 状态
+    #timer;            // 降落的计时器
+    #speed;            // 降落的速度
+    #maxRow;           // 楼盖的最高行数
+
     constructor() {
         super()
 
         // 实例属性
-        this.container = null
         this.rows = 20
         this.columns = 10
-        this.shape = null    // 当前形状
-
-        // 数据
-        this.data = null
-        this.maxRow;    // 楼盖的最高行数
-        this.timer;     // 降落的计时器
-        this.status;    // 状态
-        this.current;   // 当前形状
-
-        this.data = new Array(this.rows)
-        for (let i = 0; i < this.rows; i++) {
-            this.data[i] = new Array(this.columns)
-        }
-
-        // const col2 = parseInt(this.columns / 2)
-        // const col1 = col2 - 1
-
+        this.shape = null   // 当前形状
 
         // shadow DOM
         let shadow = this.attachShadow({ mode: 'open' })
@@ -35,39 +27,171 @@ customElements.define('grid-panel', class extends HTMLElement {
         shadow.appendChild(createLink('./custom-element/grid-panel/index.css'))
 
         // html
-        this.container = document.createElement('section')
-        this.container.setAttribute('class', 'grid')
+        this.#container = document.createElement('section')
+        this.#container.setAttribute('class', 'grid')
         let innerHTML = ''
         for (let i = 0; i < this.rows * this.columns; i++) {
             innerHTML += '<span></span>'
         }
-        this.container.innerHTML = innerHTML
-        shadow.appendChild(this.container)
+        this.#container.innerHTML = innerHTML
+        shadow.appendChild(this.#container)
+
+        // 二维数组，申请空间
+        this.#data = new Array(this.rows)
+        for (let i = 0; i < this.rows; i++) {
+            this.#data[i] = new Array(this.columns)
+        }
+
+        // 初始化数据
+        this.#init()
     }
+
+    #init() {
+        // grid data 全部填充 0
+        for (let i = 0; i < this.rows; i++) {
+            for (let j = 0; j < this.columns; j++) {
+                this.#data[i][j] = 0
+            }
+        }
+        // 其它实例数据
+        this.#maxRow = this.rows - 1
+        this.#status = 0
+    }
+
     reset() {
-        // this.panel.reset()
-        // this.maxRow = this.rows - 1
-        // this.clearRows = 0
-        // this.#clearScreen()
+        this.#init()
+        this.#clearTimer()
+        this.#resetScreen()
     }
 
-    start() {
-        // if (this.isplaying) {
-        //     this.status = 2
-        //     this.#clearTimer()
-        // } else {
-        //     if (this.ispreparing) {
-        //         this.#startNext()
-        //     } else if (this.ispausing) {
-        //         this.#falling()
-        //     }
-        //     this.status = 1
-        // }
-        // console.log('grid-panel, this.shape=', this.shape)
+    #clearTimer() {
+        clearTimeout(this.#timer)  // this.#timer 依然有值，只是不触发了而已
     }
+
+    #resetScreen() {
+        this.#startResetScreen(this.rows - 1, -1, 1)
+    }
+    #startResetScreen(row, add, mode) {
+        if (add === 1 && row === this.rows) {
+            return
+        }
+
+        this.#updateRow(row, mode)
+
+        setTimeout(() => {
+            let nextRow = row + add
+            if (add === -1 && nextRow < 0) {
+                this.#startResetScreen(0, 1, 0)
+            } else {
+                this.#startResetScreen(nextRow, add, mode)
+            }
+        }, 30)
+    }
+    #updateRow(row, mode) {
+        const start = row * this.columns
+        for (let j = 0; j < this.columns; j++) {
+            this.#updateCell(start + j, mode)
+        }
+    }
+    #updateCell(i, mode) {
+        const flag = ['', 'light', 'blink']
+        this.#container.children[i].className = flag[mode]
+    }
+
+    get ispreparing() {
+        return this.#status === 0
+    }
+    get isplaying() {
+        return this.#status === 1
+    }
+    get ispausing() {
+        return this.#status === 2
+    }
+
+    start(shape, speed) {
+        if (this.isplaying) {
+            return
+        } else if (this.ispreparing) {
+            this.shape = shape
+            this.shape.panel = {
+                rows: this.rows,
+                columns: this.columns,
+                data: this.#data,
+                container: this.#container,
+                maxRow: this.#maxRow
+            }
+            this.#speed = speed
+            this.#startNext()
+        } else if (this.ispausing) {
+            this.#falling()
+        }
+        this.#status = 1
+    }
+
     pause() {
-
+        if (this.isplaying) {
+            this.#status = 2
+            this.#clearTimer()
+        }
     }
+
+    #startNext() {
+        console.log('grid-panel start(), this.shape=', this.shape)
+
+        // 判断起始位置，若有空间则绘制+下落，否则结束游戏
+        if (this.shape.canStart()) {
+            this.shape.draw()
+            this.#continueFalling()
+        } else {
+            // TODO. 向父容器发送事件 'gameover'
+            this.reset()  // gameover
+        }
+    }
+
+    #falling() {
+        // 若可以继续降落，则更新 UI
+        const { msg, next, maxRow, fullRows, data } = this.shape.canFall()
+        switch (msg) {
+            case 'continue':
+                this.shape.draw()
+                this.#continueFalling()
+                break
+            case 'done':
+                // // 清空满行的
+                // if (fullRows.length) {
+                //     // 统一闪，耗时 0.6s
+                //     for (let row of fullRows) {
+                //         this.#updateRow(row, 2)
+                //     }
+
+                //     // 重新计算新数据
+                //     const clears = this.theClearRows + fullRows.length
+                //     const score = this.theScore + this.constructor.SCORE[fullRows.length]
+
+                //     // 动画结束后，重新赋值
+                //     setTimeout(() => {
+                //         this.view.updateGrid(data, maxRow)
+                //         this.#updateTheInfo({ score, clears })
+                //         this.#startNext()
+                //     }, 600)
+
+                // } else {
+                //     this.#startNext()
+                // }
+                break
+            case 'gameover':
+                this.reset()
+                break
+        }
+    }
+
+    #continueFalling() {
+        this.#timer = setTimeout(() => {
+            this.#falling()
+        }, this.#speed)
+    }
+
+
     left() {
 
     }
@@ -80,217 +204,4 @@ customElements.define('grid-panel', class extends HTMLElement {
     rotate() {
 
     }
-
-    // horizontal(dir) {
-    //     if (!this.ispreparing) {
-    //         const { msg, next } = this.model.getHorizontalPos(this.current, dir)
-    //         if (msg === 'success') {
-    //             this.#renderNext(next)
-    //         }
-    //         if (this.ispausing) {
-    //             this.start()
-    //         }
-    //     }
-    // }
-    // down() {
-    //     if (!this.ispreparing) {
-    //         const { msg, next } = this.model.getDownPos(this.current)
-    //         if (msg === 'success') {
-    //             this.#renderNext(next)
-    //         }
-    //         if (this.ispausing) {
-    //             this.start()
-    //         }
-    //     }
-    // }
-    // rotate() {
-    //     if (!this.ispreparing) {
-    //         const { msg, next } = this.model.getRotatePos(this.current)
-    //         if (msg === 'success') {
-    //             this.#renderNext(next)
-    //         }
-    //         if (this.ispausing) {
-    //             this.start()
-    //         }
-    //     }
-    // }
-
-    // get ispreparing() {
-    //     return this.status === 0
-    // }
-    // get isplaying() {
-    //     return this.status === 1
-    // }
-    // get ispausing() {
-    //     return this.status === 2
-    // }
-    // #toggleClass(obj, name) {
-    //     let flag = false
-    //     let newList = []
-    //     for (let item of obj.classList) {
-    //         if (item === name) {
-    //             flag = true
-    //         } else {
-    //             newList.push(item)
-    //         }
-    //     }
-    //     if (flag === false) {
-    //         newList.push(name)
-    //     }
-    //     obj.className = newList.join(' ')
-    // }
-
-    // reset() {
-    //     for (let i = 0; i < this.rows; i++) {
-    //         for (let j = 0; j < this.columns; j++) {
-    //             this.data[i][j] = 0
-    //         }
-    //     }
-    // }
-    // updateGrid(data, max = 0) {
-    //     for (let i = max; i < this.rows; i++) {
-    //         const start = i * this.columns
-    //         for (let j = 0; j < this.columns; j++) {
-    //             this.updateCell(start + j, data[i][j])
-    //         }
-    //     }
-    // }
-    // updateCell(i, mode) {
-    //     const flag = ['', 'light', 'blink']
-    //     this.domGrid.children[i].className = flag[mode]
-    // }
-
-    // subtract(arr1, arr2) {
-    //     return subtract(arr1, arr2)
-    // }
-    // subtract(arr1, arr2) {
-    //     // arr1 - arr2
-    //     let result = []
-    //     for (let p1 of arr1) {
-    //         let exist = false
-    //         for (let p2 of arr2) {
-    //             if (p1[0] === p2[0] && p1[1] === p2[1]) {
-    //                 exist = true
-    //                 break
-    //             }
-    //         }
-    //         if (!exist) result.push(p1)
-    //     }
-    //     return result
-    // }
-    // canStart(points) {
-    //     let result = true
-    //     for (let p of points) {
-    //         if (p[0] === 0 && this.data[p[0]][p[1]] === 1) {
-    //             result = false
-    //             this.reset()
-    //             break
-    //         }
-    //     }
-    //     return result
-    // }
-    // canFall(points) {
-    //     let result = {
-    //         msg: '',
-    //         next: null,
-    //         maxRow: this.maxRow,
-    //         fullRows: [],
-    //         data: null
-    //     }
-
-    //     let next = []
-    //     for (let p of points) {
-    //         let nextI = p[0] + 1
-    //         let nextJ = p[1]
-
-    //         // 降落到底了
-    //         if (nextI === this.rows) {
-    //             break
-    //         } else if (this.#isCellFilled(nextI, nextJ)) {
-    //             // 被卡住了，不能再落了
-    //             break
-    //         }
-    //         next.push([nextI, nextJ])
-    //     }
-
-    //     // 下落正常，返回
-    //     if (next.length === 4) {
-    //         result.msg = 'continue'
-    //         result.next = next
-    //     } else {
-    //         // 不能再落了，则定位在此处
-    //         result.msg = 'done'
-    //         let updateRows = new Set()
-    //         for (let p of points) {
-    //             if (p[0] >= 0) {
-    //                 this.data[p[0]][p[1]] = 1
-    //                 updateRows.add(p[0])
-    //                 if (p[0] < this.maxRow) {
-    //                     this.maxRow = p[0]
-    //                 }
-    //             } else {
-    //                 // 形状没有画全
-    //                 result.msg = 'gameover'
-    //                 this.reset()
-    //                 break
-    //             }
-    //         }
-    //         result.maxRow = this.maxRow
-
-    //         // 判断是否有满行的
-    //         if (result.msg === 'done') {
-    //             for (let row of updateRows) {
-    //                 let j = 0
-    //                 while (j < this.columns && this.#isCellFilled(row, j)) j++
-    //                 if (j === this.columns) {
-    //                     result.fullRows.push(row)
-    //                 }
-    //             }
-    //             if (result.fullRows.length) {
-    //                 this.clearRows += result.fullRows.length
-    //                 this.#clearFullRows(result.fullRows)
-    //             }
-    //             result.data = this.data
-    //         }
-    //     }
-
-    //     return result
-    // }
-
-
-    // /**
-    //  * private methods
-    //  */
-    // #isCellFilled(i, j) {
-    //     return i >= 0 && i < this.rows && j >= 0 && j < this.columns && this.data[i][j] === 1
-    // }
-    // #clearFullRows(fullRows) {
-    //     // 原地排序，从小-大
-    //     fullRows.sort((a, b) => {
-    //         if (a > b) return 1
-    //         else if (a < b) return -1
-    //         return 0
-    //     })
-    //     // 从小到大，依次消除
-    //     for (let row of fullRows) {
-    //         for (let i = row; i >= this.maxRow; i--) {
-    //             const srcI = i - 1
-    //             for (let j = 0; j < this.columns; j++) {
-    //                 this.data[i][j] = ((srcI >= 0 && srcI >= this.maxRow) ? this.data[srcI][j] : 0)
-    //             }
-    //         }
-    //         this.maxRow++
-
-    //         // console.log('消行', row)
-    //         // console.log(this.data)
-    //         // console.log('盖楼最高层（现在）', this.maxRow)
-    //     }
-    // }
-
-
-    // // 
-    // #draw() {
-
-    // }
-
 })

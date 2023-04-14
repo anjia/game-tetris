@@ -66,7 +66,7 @@ customElements.define('game-context', class extends HTMLElement {
     }
 
     start() {
-        this.domPanel.start()
+        this.domPanel.start(this.domNext.shape, this.domClears.speed)
     }
 
     pause() {
