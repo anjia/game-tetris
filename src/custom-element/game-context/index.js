@@ -5,7 +5,7 @@ import '../grid-panel/index.js'
 import '../win-counter/index.js'
 import '../op-handler/index.js'
 
-import ShapeProducer from '../js/shape/Producer.js'
+import ShapeProducer from '../js/tetris/Producer.js'
 import { createLink } from '../js/utility.js'
 
 customElements.define('game-context', class extends HTMLElement {

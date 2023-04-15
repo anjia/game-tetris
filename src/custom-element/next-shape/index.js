@@ -1,4 +1,4 @@
-import all from '../js/shape/all.js'
+import all from '../js/tetris/all.js'
 import { createLink } from '../js/utility.js'
 
 customElements.define('next-shape', class extends HTMLElement {
