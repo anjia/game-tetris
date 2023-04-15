@@ -1,6 +1,6 @@
-import Shape from './Shape.js'
+import Tetris from './Tetris.js'
 
-class S extends Shape {
+class S extends Tetris {
     static matrix = [
         [0, 1, 1, 0],
         [1, 1, 0, 0]
