@@ -32,6 +32,7 @@ class Producer {
             const num = this.constructor.#getRandomInt(this.#total)
             this.#List.push(num)
         }
+        // console.log(this.#List)
         return this.#List[start]
     }
 }

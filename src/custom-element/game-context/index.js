@@ -62,12 +62,39 @@ customElements.define('game-context', class extends HTMLElement {
         this.btnHandler = document.createElement('op-handler')
         shadow.appendChild(this.btnHandler)
 
+        // 监听子元素的事件
+        this.domPanel.addEventListener('next', (e) => {
+            this.start()
+        })
+        this.domPanel.addEventListener('clear', (e) => {
+            const lines = e.detail.lines
+            this.domClears.add(lines)
+            this.domScore.clear(lines)
+        })
+        this.domPanel.addEventListener('gameover', (e) => {
+            this.reset()
+        })
+        this.btnHandler.addEventListener('rotate', () => {
+            this.domPanel.rotate()
+        })
+        this.btnHandler.addEventListener('right', () => {
+            this.domPanel.right()
+        })
+        this.btnHandler.addEventListener('left', () => {
+            this.domPanel.left()
+        })
+        this.btnHandler.addEventListener('down', () => {
+            this.domPanel.down()
+        })
+
+
         // 初始化数据
         this.#getNewNext()
     }
 
     start() {
         this.domPanel.start(this.domNext.shape, this.domClears.speed)
+        this.#getNewNext()
     }
 
     pause() {

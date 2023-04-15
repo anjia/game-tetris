@@ -81,6 +81,10 @@ customElements.define('total-score', class extends HTMLElement {
         this.vs = 0
     }
 
+    clear(lines) {
+        this.score = this.score + this.constructor.SCORE[lines]
+    }
+
     #updateDiff() {
         const dist = this.#score - this.#vs
         if (dist === this.#diff) return

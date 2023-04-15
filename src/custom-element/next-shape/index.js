@@ -49,7 +49,7 @@ customElements.define('next-shape', class extends HTMLElement {
 
     // 设置 shape 下标
     set shape(x) {
-        if (x && x !== this.#cur) {
+        if (x !== this.#cur) {
             this.#cur = x
             this.#container.className = 'grid shape-' + this.#shapeList[this.#cur].constructor.name
         }

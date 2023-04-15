@@ -10,6 +10,16 @@ customElements.define('grid-panel', class extends HTMLElement {
     #speed;            // 降落的速度
     #maxRow;           // 楼盖的最高层
 
+    // 私有属性-事件相关
+    #eventClearsDetail = {
+        'lines': undefined  // 消的行数
+    }
+    #eventGameover = new Event('gameover')
+    #eventNext = new Event('next')
+    #eventClears = new CustomEvent('clear', {
+        detail: this.#eventClearsDetail
+    })
+
     constructor() {
         super()
 
@@ -69,15 +79,15 @@ customElements.define('grid-panel', class extends HTMLElement {
     }
 
     reset() {
-        this.#init()
         this.#clearTimer()
         this.#resetScreen()
+        this.#init()
     }
 
     start(shape, speed) {
-        if (this.isplaying) {
-            return
-        } else if (this.ispreparing) {
+        if (this.ispausing) {
+            this.#falling()
+        } else {
             this.shape = shape
             this.shape.reset()
             this.shape.panel = {
@@ -88,8 +98,7 @@ customElements.define('grid-panel', class extends HTMLElement {
             }
             this.#speed = speed
             this.#startNext()
-        } else if (this.ispausing) {
-            this.#falling()
+
         }
         this.#status = 1
     }
@@ -102,35 +111,56 @@ customElements.define('grid-panel', class extends HTMLElement {
     }
 
     left() {
-
+        if (!this.ispreparing) {
+            this.shape.left()
+            if (this.ispausing) {
+                this.#falling()
+            }
+        }
     }
+
     right() {
-
+        if (!this.ispreparing) {
+            this.shape.right()
+            if (this.ispausing) {
+                this.#falling()
+            }
+        }
     }
+
     down() {
-
+        if (!this.ispreparing) {
+            this.shape.down()
+            if (this.ispausing) {
+                this.#falling()
+            }
+        }
     }
+
     rotate() {
-
+        if (!this.ispreparing) {
+            this.shape.rotate()
+            if (this.ispausing) {
+                this.#falling()
+            }
+        }
     }
 
-    gameover() {
-        // TODO. 向父容器发送事件 'gameover'
-        this.reset()
-    }
 
     /**
      * 私有方法
      */
     #startNext() {
-        console.log('grid-panel start(), this.shape=', this.shape)
-
         // 若 shape 可以入场开始，则继续下落，否则 gameover
         if (this.shape.start()) {
             this.#continueFalling()
         } else {
-            this.gameover()
+            this.#gameover()
         }
+    }
+
+    #gameover() {
+        this.dispatchEvent(this.#eventGameover)
     }
 
     #falling() {
@@ -141,19 +171,46 @@ customElements.define('grid-panel', class extends HTMLElement {
             // 若 shape 能被成功合并，则判断是否有满行
             const fullRows = this.#getFullRows()
             if (fullRows.length) {
-                this.#clearDataRows(fullRows)
-                this.#clearUIRows(fullRows)  // 统一闪，耗时 0.6s
 
-                // TODO. 告诉父容器有消行得分，父容器更新行数+分数+下一个
-                // // 动画结束后，重新赋值
-                // setTimeout(() => {
-                //     this.#startNext()
-                // }, 600)
+                this.#blinkFullRows(fullRows)  // 统一闪，耗时 0.6s
+
+                // 通知父容器有消行得分
+                this.#eventClearsDetail.lines = fullRows.length
+                this.dispatchEvent(this.#eventClears)
+
+                // 动画结束后，重新赋值
+                setTimeout(() => {
+                    this.#clearFullRows(fullRows)        // 统一清除
+                    this.dispatchEvent(this.#eventNext)  // 通知父容器开始下一个
+                }, 600)
             } else {
-                // this.#startNext()
+                this.dispatchEvent(this.#eventNext)
             }
         } else {
-            this.gameover()  // 否则，gameover
+            this.#gameover()  // 否则，gameover
+        }
+    }
+
+    #clearFullRows(fullRows) {
+        const from = this.#maxRow
+        const to = fullRows[fullRows.length - 1]
+
+        // 清除数据
+        for (let row of fullRows) {
+            for (let i = row; i >= this.#maxRow; i--) {
+                const srcI = i - 1
+                for (let j = 0; j < this.columns; j++) {
+                    this.#data[i][j] = ((srcI >= 0 && srcI >= this.#maxRow) ? this.#data[srcI][j] : 0)
+                }
+            }
+            this.#maxRow++
+        }
+        // 清除UI
+        for (let i = from; i <= to; i++) {
+            const start = i * this.columns
+            for (let j = 0; j < this.columns; j++) {
+                this.#updateCell(start + j, this.#data[i][j])
+            }
         }
     }
 
@@ -183,29 +240,18 @@ customElements.define('grid-panel', class extends HTMLElement {
                 fullRows.push(row)
             }
         }
-        return fullRows
-    }
-
-    #clearDataRows(fullRows) {
         // 原地排序，从小-大
         fullRows.sort((a, b) => {
             if (a > b) return 1
             else if (a < b) return -1
             return 0
         })
-        // 从小到大，依次消除
-        for (let row of fullRows) {
-            for (let i = row; i >= this.#maxRow; i--) {
-                const srcI = i - 1
-                for (let j = 0; j < this.columns; j++) {
-                    this.#data[i][j] = ((srcI >= 0 && srcI >= this.#maxRow) ? this.#data[srcI][j] : 0)
-                }
-            }
-            this.#maxRow++
-        }
+        return fullRows
     }
 
-    #clearUIRows(fullRows) {
+
+
+    #blinkFullRows(fullRows) {
         for (let row of fullRows) {
             this.#updateRow(row, 2)
         }

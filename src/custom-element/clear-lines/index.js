@@ -57,7 +57,7 @@ customElements.define('clear-lines', class extends HTMLElement {
     }
 
     reset() {
-        this.level = 0
+        this.level = 1
         this.lines = 0
     }
 

@@ -2,7 +2,21 @@ class Shape {
     // 静态属性
     static matrix;  // 形状的 next 矩阵
 
-    // 静态方法（私有的，如何调？）
+    // 静态方法
+    static rotateMatrix = []; // 旋转矩阵，逆时针旋转 90°
+    static {
+        for (let n = 2; n <= 4; n++) {
+            let factor = []
+            for (let i = n - 1; i >= 0; i--) {
+                let j = n - 1 - i
+                for (let k = 0; k < n; k++) {
+                    factor.push([i - k, j - k])
+                }
+            }
+            this.rotateMatrix[n] = factor
+        }
+    }
+
     static subtract(arr1, arr2) {
         // arr1 - arr2
         let result = []
@@ -17,6 +31,56 @@ class Shape {
             if (!exist) result.push(p1)
         }
         return result
+    }
+
+    static getShapeDetail(points) {
+        let rows = new Set()
+        let columns = new Set()
+        for (let p of points) {
+            rows.add(p[0])
+            columns.add(p[1])
+        }
+
+        const n = Math.max(rows.size, columns.size)
+        let r = Math.floor(n / 2)
+        let center = [this.getCenterIndex(rows), this.getCenterIndex(columns)]
+
+        // 修正中心点 center 或半径 r
+        if (n % 2) {
+            // 奇数时，若行多（中点必然是个点）则修正列号，否则修正行号
+            if (rows.size > columns.size) {
+                this.fixCenterIndex(points, center, [rows, columns], 1)
+            } else {
+                this.fixCenterIndex(points, center, [rows, columns], 0)
+            }
+        } else {
+            r--
+        }
+
+        const origin = [center[0] - r, center[1] - r]
+        return { n, origin }
+    }
+    static getCenterIndex(set, mode) {
+        const n = set.size
+        let sum = 0
+        for (let num of set) {
+            sum += num
+        }
+        // 默认向下取整（默认向下走，eg. I）
+        return mode === 'ceil' ? Math.ceil(sum / n) : Math.floor(sum / n)
+    }
+    static fixCenterIndex(points, center, rowcolumn, pos) {
+        let left = 0
+        let right = 0
+        for (let p of points) {
+            if (p[pos] <= center[pos]) left++
+            else right++
+        }
+        // < 可覆盖 T L J
+        // = 可覆盖 S Z
+        if (left <= right) {
+            center[pos] = this.getCenterIndex(rowcolumn[pos], 'ceil')
+        }
     }
 
     // 私有属性
@@ -85,19 +149,60 @@ class Shape {
     }
 
     down() {
-
+        let result = []
+        let cur = this.points
+        while (true) {
+            let next = []
+            for (let p of cur) {
+                let nextI = p[0] + 1
+                let nextJ = p[1]
+                if (nextI >= this.#rows || this.#isCellFilled(nextI, nextJ)) {
+                    break
+                }
+                next.push([nextI, nextJ])
+            }
+            if (next.length === 4) {
+                cur = next
+                result = next
+            } else {
+                break
+            }
+        }
+        if (result.length) {
+            this.#to(result)
+        }
+        return result
     }
 
     left() {
-
+        return this.#horizon(-1)
     }
 
     right() {
-
+        return this.#horizon(1)
     }
 
     rotate() {
+        let result = []
+        const { n, origin } = this.constructor.getShapeDetail(this.points)
+        const factor = this.constructor.rotateMatrix[n]
+        let next = []
+        for (let p of this.points) {
+            const dist = (p[0] - origin[0]) * n + (p[1] - origin[1])
+            let nextI = p[0] + factor[dist][0]
+            let nextJ = p[1] + factor[dist][1]
 
+            if (nextI >= this.rows || nextJ < 0 || nextJ >= this.columns || this.#isCellFilled(nextI, nextJ)) {
+                break
+            } else {
+                next.push([nextI, nextJ])
+            }
+        }
+        if (next.length === 4) {
+            this.#to(next)
+            result = next
+        }
+        return result
     }
 
     merged() {
@@ -117,6 +222,25 @@ class Shape {
     }
 
     // 私有方法
+    #horizon(dx) {
+        let result = []
+        let next = []
+        for (let p of this.points) {
+            let nextI = p[0]
+            let nextJ = p[1] + dx
+
+            // 若左右到边界了 或左右被卡住了，则左右位置不动
+            if (nextJ < 0 || nextJ >= this.#columns || this.#isCellFilled(nextI, nextJ)) {
+                break
+            }
+            next.push([nextI, nextJ])
+        }
+        if (next.length === 4) {
+            result = next
+            this.#to(next)
+        }
+        return result
+    }
     #draw() {
         for (let p of this.points) {
             if (p[0] >= 0) {
