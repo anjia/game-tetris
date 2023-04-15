@@ -2,7 +2,7 @@ import { createLink } from '../js/utility.js'
 
 customElements.define('win-counter', class extends HTMLElement {
 
-    // private fields
+    // 私有属性
     #min = 0
     #max = 0
     #win = 0

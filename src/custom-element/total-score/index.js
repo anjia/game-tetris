@@ -1,12 +1,17 @@
-import { createLink, showNumber } from '../js/utility.js'
+import { createLink } from '../js/utility.js'
 
 customElements.define('total-score', class extends HTMLElement {
 
+    // 静态属性
     static SCORE = [0, 100, 300, 700, 1500]  // 一次性消 1-2-3-4 行时的得分
     static MAX = 999999                      // 最大得分
-    static LEN = 6                           // UI 显示的最大长度
 
-    // private fields
+    // 静态方法
+    static #showNumber(num) {
+        return String(num).padStart(6, '0')
+    }
+
+    // 私有属性
     #type
     #score;
     #vs;
@@ -60,7 +65,7 @@ customElements.define('total-score', class extends HTMLElement {
             x = this.constructor.MAX
         }
         this.#score = x
-        this.#domScore.innerText = showNumber(this.#score, this.constructor.LEN)
+        this.#domScore.innerText = this.constructor.#showNumber(this.#score)
         this.#updateDiff()
     }
 
@@ -85,6 +90,6 @@ customElements.define('total-score', class extends HTMLElement {
             this.#domDiff.className = 'diff less'
         }
         this.#diff = dist
-        this.#domDiff.innerText = showNumber(Math.abs(dist), this.constructor.LEN)
+        this.#domDiff.innerText = this.constructor.#showNumber(Math.abs(dist))
     }
 })

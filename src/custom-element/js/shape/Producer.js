@@ -1,10 +1,13 @@
 import All from './all.js'
 
-import { getRandomInt } from '../utility.js'
-
 class Producer {
 
-    // private fields
+    static #getRandomInt(max) {
+        // Math.random() [0, 1)
+        return Math.floor(Math.random() * max)
+    }
+
+    // 私有属性
     #total = All.length
     #List = []
 
@@ -26,7 +29,7 @@ class Producer {
         }
 
         if (start === this.#List.length) {
-            const num = getRandomInt(this.#total)
+            const num = this.constructor.#getRandomInt(this.#total)
             this.#List.push(num)
         }
         return this.#List[start]

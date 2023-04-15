@@ -4,7 +4,7 @@ import { createLink } from '../js/utility.js'
 
 customElements.define('grid-panel', class extends HTMLElement {
 
-    // private fields
+    // 私有属性
     #data = null       // 二维数组，20*10
     #container = null  // DOM
     #status;           // 状态
@@ -154,8 +154,21 @@ customElements.define('grid-panel', class extends HTMLElement {
             // 否则就定位在此处，若 shape 能被画全则落定
             if (this.shape.included) {
                 // 固定形状时，返回它消除的行数
-                const clearRows = this.shape.fixed()
-                // TODO. 告诉父容器有消行得分，父容器更新行数+分数+下一个
+                const fullRows = this.shape.fixed()
+
+                // if (fullRows.length) {
+                //     for (let row of fullRows) {
+                //         this.#updateRow(row, 2)
+                //     }
+
+                //     // TODO. 告诉父容器有消行得分，父容器更新行数+分数+下一个
+                //     // 动画结束后，重新赋值
+                //     setTimeout(() => {
+                //         this.#startNext()
+                //     }, 600)
+                // }
+                this.#startNext()
+
             } else {
                 this.gameover()  // 否则，gameover
             }

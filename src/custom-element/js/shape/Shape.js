@@ -1,9 +1,23 @@
-import { subtract } from '../utility.js'
-
 class Shape {
 
-    // private fields
+    // 私有属性
     #init = null   // 初始位置
+
+    static subtract(arr1, arr2) {
+        // arr1 - arr2
+        let result = []
+        for (let p1 of arr1) {
+            let exist = false
+            for (let p2 of arr2) {
+                if (p1[0] === p2[0] && p1[1] === p2[1]) {
+                    exist = true
+                    break
+                }
+            }
+            if (!exist) result.push(p1)
+        }
+        return result
+    }
 
     constructor(points) {
         this.#init = points
@@ -53,7 +67,9 @@ class Shape {
     }
 
     fixed() {
-        // 固定形状的同时，记录更新了那几行
+        this.draw()
+
+        // 更新 this.data，同时记录更新了哪几行
         let updateRows = new Set()
         for (let p of this.points) {
             if (p[0] >= 0) {
@@ -74,6 +90,7 @@ class Shape {
             if (j === this.columns) {
                 fullRows.push(row)
                 this.#clearFullRows(row)
+                this.#blinkRow(row)
             }
         }
 
@@ -101,6 +118,12 @@ class Shape {
 
 
 
+    #blinkRow(row) {
+        const start = row * this.columns
+        for (let j = 0; j < this.columns; j++) {
+            this.#updateCell(start + j, 2)
+        }
+    }
 
     #isCellFilled(i, j) {
         return i >= 0 && i < this.rows && j >= 0 && j < this.columns && this.data[i][j] === 1
@@ -137,12 +160,13 @@ class Shape {
     }
     to(next) {
         // 在 this.current 中但不在 next 中的，置灰
-        this.#updatePoints(subtract(this.points, next), 0)
+        this.#updatePoints(this.constructor.subtract(this.points, next), 0)
 
         // 在 next 中但不在 this.current 中的，置亮
-        this.#updatePoints(subtract(next, this.points), 1)
+        this.#updatePoints(this.constructor.subtract(next, this.points), 1)
 
         this.points = next
+
     }
 
 

@@ -3,7 +3,7 @@ import { createLink } from '../js/utility.js'
 
 customElements.define('next-shape', class extends HTMLElement {
 
-    // private fields
+    // 私有属性
     #container = null  // DOM
     #shapeList = []    // 形状对象列表
     #cur = 0;          // 形状的当前下标

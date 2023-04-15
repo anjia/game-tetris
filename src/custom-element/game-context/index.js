@@ -10,6 +10,7 @@ import { createLink } from '../js/utility.js'
 
 customElements.define('game-context', class extends HTMLElement {
 
+    // 静态属性
     static shaper = new ShapeProducer()  // shape 生产者
 
     constructor() {
