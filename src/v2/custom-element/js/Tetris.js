@@ -105,7 +105,7 @@ class Tetris extends Shape {
             let nextI = p[0] + factor[dist][0]
             let nextJ = p[1] + factor[dist][1]
 
-            if (nextI >= this.rows || nextJ < 0 || nextJ >= this.columns || this.#isCellFilled(nextI, nextJ)) {
+            if (nextI >= this.#rows || nextJ < 0 || nextJ >= this.#columns || this.#isCellFilled(nextI, nextJ)) {
                 break
             } else {
                 next.push([nextI, nextJ])
