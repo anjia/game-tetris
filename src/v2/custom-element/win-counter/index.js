@@ -1,6 +1,6 @@
-import { createLink } from '../js/utility.js'
+import Base from '../js/CustomBase.js'
 
-customElements.define('win-counter', class extends HTMLElement {
+customElements.define('win-counter', class extends Base {
 
     // 私有属性
     #min = 0
@@ -13,10 +13,10 @@ customElements.define('win-counter', class extends HTMLElement {
 
         // shadow root
         let shadow = this.attachShadow({ mode: 'open' })
-        shadow.appendChild(createLink('./custom-element/win-counter/index.css'))
+        shadow.appendChild(Base.createLink('./custom-element/win-counter/index.css'))
 
         // html
-        this.#container = document.createElement('ul')
+        this.#container = Base.create('ul')
         shadow.appendChild(this.#container)
 
         // 初始化

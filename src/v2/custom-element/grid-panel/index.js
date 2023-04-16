@@ -1,6 +1,6 @@
-import { createLink } from '../js/utility.js'
+import Base from '../js/CustomBase.js'
 
-customElements.define('grid-panel', class extends HTMLElement {
+customElements.define('grid-panel', class extends Base {
 
     // 私有属性
     #data = null       // 二维数组，20*10
@@ -32,11 +32,10 @@ customElements.define('grid-panel', class extends HTMLElement {
         let shadow = this.attachShadow({ mode: 'open' })
 
         // style
-        shadow.appendChild(createLink('./custom-element/grid-panel/index.css'))
+        shadow.appendChild(Base.createLink('./custom-element/grid-panel/index.css'))
 
         // html
-        this.#container = document.createElement('section')
-        this.#container.setAttribute('class', 'grid')
+        this.#container = Base.create('section', { 'class': 'grid' })
         let innerHTML = ''
         for (let i = 0; i < this.rows * this.columns; i++) {
             innerHTML += '<span></span>'

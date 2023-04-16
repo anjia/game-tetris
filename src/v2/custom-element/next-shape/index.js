@@ -1,7 +1,7 @@
+import Base from '../js/CustomBase.js'
 import all from '../js/tetris/all.js'
-import { createLink } from '../js/utility.js'
 
-customElements.define('next-shape', class extends HTMLElement {
+customElements.define('next-shape', class extends Base {
 
     // 私有属性
     #container = null  // DOM
@@ -30,10 +30,9 @@ customElements.define('next-shape', class extends HTMLElement {
 
         // 构造 shadow DOM
         let shadow = this.attachShadow({ mode: 'open' })
-        shadow.appendChild(createLink('./custom-element/next-shape/index.css'))
+        shadow.appendChild(Base.createLink('./custom-element/next-shape/index.css'))
 
-        this.#container = document.createElement('section')
-        this.#container.setAttribute('class', 'grid')
+        this.#container = Base.create('section', { 'class': 'grid' })
         let innerHTML = ''
         for (let item of arr) {
             innerHTML += '<span class="' + item.join(' ') + '"></span>'

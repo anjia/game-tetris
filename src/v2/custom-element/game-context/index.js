@@ -5,10 +5,10 @@ import '../grid-panel/index.js'
 import '../win-counter/index.js'
 import '../op-handler/index.js'
 
+import Base from '../js/CustomBase.js'
 import ShapeProducer from '../js/tetris/Producer.js'
-import { createLink } from '../js/utility.js'
 
-customElements.define('game-context', class extends HTMLElement {
+customElements.define('game-context', class extends Base {
 
     // 静态属性
     static shaper = new ShapeProducer()  // shape 生产者
@@ -28,38 +28,23 @@ customElements.define('game-context', class extends HTMLElement {
 
         // shadow DOM
         const shadow = this.attachShadow({ mode: 'open' })
-        shadow.appendChild(createLink('./custom-element/game-context/index.css'))
+        shadow.appendChild(Base.createLink('./custom-element/game-context/index.css'))
 
-        let div = document.createElement('div')
-        div.className = 'box'
-        this.domScore = document.createElement('total-score')
-        this.domScore.setAttribute('type', '2')
-        div.appendChild(this.domScore)
-        shadow.appendChild(div)
+        // html
+        this.domScore = Base.create('total-score', { 'type': '2' })
+        shadow.appendChild(Base.createDiv({ 'class': 'box' }, [this.domScore]))
 
-        div = document.createElement('div')
-        div.className = 'flex'
-        this.domClears = document.createElement('clear-lines')
-        this.domClears.className = 'flex-item box'
-        div.appendChild(this.domClears)
-        this.domNext = document.createElement('next-shape')
-        this.domNext.className = 'flex-item box'
-        div.appendChild(this.domNext)
-        shadow.appendChild(div)
+        this.domClears = Base.create('clear-lines', { 'class': 'flex-item box' })
+        this.domNext = Base.create('next-shape', { 'class': 'flex-item box' })
+        shadow.appendChild(Base.createDiv({ 'class': 'flex' }, [this.domClears, this.domNext]))
 
-        div = document.createElement('div')
-        div.className = 'box'
-        this.domPanel = document.createElement('grid-panel')
-        div.appendChild(this.domPanel)
-        shadow.appendChild(div)
+        this.domPanel = Base.create('grid-panel')
+        shadow.appendChild(Base.createDiv({ 'class': 'box' }, [this.domPanel]))
 
-        div = document.createElement('div')
-        div.className = 'box'
-        this.domWin = document.createElement('win-counter')
-        div.appendChild(this.domWin)
-        shadow.appendChild(div)
+        this.domWin = Base.create('win-counter')
+        shadow.appendChild(Base.createDiv({ 'class': 'box' }, [this.domWin]))
 
-        this.btnHandler = document.createElement('op-handler')
+        this.btnHandler = Base.create('op-handler')
         shadow.appendChild(this.btnHandler)
 
         // 监听子元素的事件

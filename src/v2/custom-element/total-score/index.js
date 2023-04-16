@@ -1,6 +1,6 @@
-import { createLink } from '../js/utility.js'
+import Base from '../js/CustomBase.js'
 
-customElements.define('total-score', class extends HTMLElement {
+customElements.define('total-score', class extends Base {
 
     // 静态属性
     static SCORE = [0, 100, 300, 700, 1500]  // 一次性消 1-2-3-4 行时的得分
@@ -27,21 +27,19 @@ customElements.define('total-score', class extends HTMLElement {
 
         // 构造 shadow DOM
         let shadow = this.attachShadow({ mode: 'open' })
-        shadow.appendChild(createLink('./custom-element/total-score/index.css'))
+        shadow.appendChild(Base.createLink('./custom-element/total-score/index.css'))
 
         // html
         const text = document.createTextNode('SCORE')
         shadow.appendChild(text)
         if (this.#type === '2') {
-            this.#domScore = document.createElement('div')
-            this.#domDiff = document.createElement('div')
+            this.#domScore = Base.createDiv()
+            this.#domDiff = Base.createDiv()
             shadow.appendChild(this.#domScore)
             shadow.appendChild(this.#domDiff)
         } else {
-            const max = document.createElement('div')
-            max.innerText = '最高分 000000'
-            const total = document.createElement('div')
-            total.innerText = '当前分 000000'
+            const max = Base.createDiv({ 'text': '最高分 000000' })
+            const total = Base.createDiv({ 'text': '当前分 000000' })
             shadow.appendChild(max)
             shadow.appendChild(total)
         }

@@ -1,8 +1,8 @@
 import '../game-context/index.js'
 
-import { createLink } from '../js/utility.js'
+import Base from '../js/CustomBase.js'
 
-customElements.define('game-tetris', class extends HTMLElement {
+customElements.define('game-tetris', class extends Base {
     constructor() {
         super()
 
@@ -17,26 +17,19 @@ customElements.define('game-tetris', class extends HTMLElement {
 
         // shadow DOM
         let shadow = this.attachShadow({ mode: 'open' })
-        shadow.appendChild(createLink('./custom-element/game-tetris/index.css'))
+        shadow.appendChild(Base.createLink('./custom-element/game-tetris/index.css'))
 
-        this.person1 = document.createElement('game-context')
+        this.person1 = Base.create('game-context')
         shadow.appendChild(this.person1)
 
-        let div = document.createElement('div')
-        let text = document.createTextNode('VS')
-        div.appendChild(text)
-        this.btnStart = document.createElement('button')
-        this.btnStart.innerText = '开始'
-        div.appendChild(this.btnStart)
-        this.btnPause = document.createElement('button')
-        this.btnPause.innerText = '暂停'
-        div.appendChild(this.btnPause)
-        this.btnReplay = document.createElement('button')
-        this.btnReplay.innerText = '重玩'
-        div.appendChild(this.btnReplay)
-        shadow.appendChild(div)
+        let text = Base.createDiv({ 'text': 'VS' })
+        this.btnStart = Base.createButton('开始')
+        this.btnPause = Base.createButton('暂停')
+        this.btnReplay = Base.createButton('重玩')
+        let op = Base.createDiv({}, [this.btnStart, this.btnPause, this.btnReplay])
+        shadow.appendChild(Base.createDiv({ 'class': 'vs' }, [text, op]))
 
-        this.person2 = document.createElement('game-context')
+        this.person2 = Base.create('game-context')
         shadow.appendChild(this.person2)
 
         // 注册事件

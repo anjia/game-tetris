@@ -1,4 +1,6 @@
-customElements.define('clear-lines', class extends HTMLElement {
+import Base from '../js/CustomBase.js'
+
+customElements.define('clear-lines', class extends Base {
 
     static SPEED = [0, 800, 650, 500, 370, 250, 200]   // 每级对应的降落速度，共 6 级
     static LEVELS = [0]
@@ -29,7 +31,7 @@ customElements.define('clear-lines', class extends HTMLElement {
         let shadow = this.attachShadow({ mode: 'open' })
         const text = document.createTextNode('LINE')
         shadow.appendChild(text)
-        this.#domLines = document.createElement('div')
+        this.#domLines = Base.createDiv()
         shadow.appendChild(this.#domLines)
 
         // 重置（初始化）数据

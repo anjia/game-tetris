@@ -1,6 +1,6 @@
-import { createLink } from '../js/utility.js'
+import Base from '../js/CustomBase.js'
 
-customElements.define('op-handler', class extends HTMLElement {
+customElements.define('op-handler', class extends Base {
 
     // 私有属性
     #btnRotate = null
@@ -19,24 +19,14 @@ customElements.define('op-handler', class extends HTMLElement {
         let shadow = this.attachShadow({ mode: 'open' })
 
         // style
-        shadow.appendChild(createLink('./custom-element/op-handler/index.css'))
+        shadow.appendChild(Base.createLink('./custom-element/op-handler/index.css'))
 
         // html
-        let container = document.createElement('div')
-        container.className = 'area'
-        this.#btnRotate = document.createElement('button')
-        this.#btnRotate.innerText = '旋转'
-        container.appendChild(this.#btnRotate)
-        this.#btnRight = document.createElement('button')
-        this.#btnRight.innerText = '右移'
-        container.appendChild(this.#btnRight)
-        this.#btnLeft = document.createElement('button')
-        this.#btnLeft.innerText = '左移'
-        container.appendChild(this.#btnLeft)
-        this.#btnDown = document.createElement('button')
-        this.#btnDown.innerText = '直接掉落'
-        container.appendChild(this.#btnDown)
-        shadow.appendChild(container)
+        this.#btnRotate = Base.createButton('旋转')
+        this.#btnRight = Base.createButton('右移')
+        this.#btnLeft = Base.createButton('左移')
+        this.#btnDown = Base.createButton('直接掉落')
+        shadow.appendChild(Base.createDiv({ 'class': 'area' }, [this.#btnRotate, this.#btnRight, this.#btnLeft, this.#btnDown]))
 
         // 事件
         this.#btnRotate.addEventListener('click', (e) => {
