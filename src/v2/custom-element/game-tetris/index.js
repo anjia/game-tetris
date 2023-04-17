@@ -7,46 +7,53 @@ customElements.define('game-tetris', class extends Base {
         super()
 
         // 实例属性
-        this.type = this.getAttribute('type')
-        this.person1 = null
-        this.person2 = null
+        this.type = parseInt(this.getAttribute('type')) || 1
 
-        this.btnStart = null
-        this.btnPause = null
-        this.btnReplay = null
+        // 局部变量
+        const context = []
+        for (let i = 0; i < this.type; i++) {
+            context.push(Base.create('game-context'))
+        }
+        const btnStart = Base.createButton('开始')
+        const btnPause = Base.createButton('暂停')
+        const btnReplay = Base.createButton('重玩')
 
         // shadow DOM
         let shadow = this.attachShadow({ mode: 'open' })
         shadow.appendChild(Base.createLink('./custom-element/game-tetris/index.css'))
 
-        this.person1 = Base.create('game-context')
-        shadow.appendChild(this.person1)
-
-        let text = Base.createDiv({ 'text': 'VS' })
-        this.btnStart = Base.createButton('开始')
-        this.btnPause = Base.createButton('暂停')
-        this.btnReplay = Base.createButton('重玩')
-        let op = Base.createDiv({}, [this.btnStart, this.btnPause, this.btnReplay])
-        shadow.appendChild(Base.createDiv({ 'class': 'vs' }, [text, op]))
-
-        this.person2 = Base.create('game-context')
-        shadow.appendChild(this.person2)
+        let op = Base.createDiv({}, [btnStart, btnPause, btnReplay])
+        if (this.type === 1) {
+            shadow.appendChild(context[0])
+            shadow.appendChild(op)
+        } else {
+            shadow.appendChild(context[0])
+            for (let i = 1; i < this.type; i++) {
+                let text = Base.createDiv({ 'text': 'VS' })
+                let children = [text]
+                if (i === 1) {
+                    children.push(op)
+                }
+                shadow.appendChild(Base.createDiv({ 'class': 'vs' }, children))
+                shadow.appendChild(context[i])
+            }
+        }
 
         // 注册事件
-        this.btnStart.onclick = () => {
-            console.log('game-tetris() start')
-            this.person1.start()
-            // this.person2.start()
-        }
-        this.btnPause.onclick = () => {
-            console.log('game-tetris() pause')
-            this.person1.pause()
-            // this.person2.pause()
-        }
-        this.btnReplay.onclick = () => {
-            console.log('game-tetris() reset')
-            this.person1.reset()
-            // this.person2.reset()
-        }
+        btnStart.addEventListener('click', () => {
+            for (let c of context) {
+                c.start()
+            }
+        })
+        btnPause.addEventListener('click', () => {
+            for (let c of context) {
+                c.pause()
+            }
+        })
+        btnReplay.addEventListener('click', () => {
+            for (let c of context) {
+                c.reset()
+            }
+        })
     }
 })

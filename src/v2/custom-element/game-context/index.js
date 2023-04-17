@@ -1,4 +1,3 @@
-import '../total-score/index.js'
 import '../clear-lines/index.js'
 import '../next-shape/index.js'
 import '../grid-panel/index.js'
@@ -7,19 +6,22 @@ import '../op-handler/index.js'
 
 import Base from '../js/CustomBase.js'
 import ShapeProducer from '../js/tetris/Producer.js'
+import Score from '../js/Score.js'
 
 customElements.define('game-context', class extends Base {
 
     // 静态属性
     static shaper = new ShapeProducer()  // shape 生产者
+    static scorer = new Score()          // score 的管理者
+    static reseted = false
 
     constructor() {
         super()
 
         // 实例属性
         this.shapeCounter = 0   // shape 的消费计数
+        this.domScore = this.constructor.scorer.add()
 
-        this.domScore = null
         this.domClears = null
         this.domNext = null
         this.domPanel = null
@@ -31,7 +33,6 @@ customElements.define('game-context', class extends Base {
         shadow.appendChild(Base.createLink('./custom-element/game-context/index.css'))
 
         // html
-        this.domScore = Base.create('total-score', { 'type': '2' })
         shadow.appendChild(Base.createDiv({ 'class': 'box' }, [this.domScore]))
 
         this.domClears = Base.create('clear-lines', { 'class': 'flex-item box' })
@@ -50,11 +51,12 @@ customElements.define('game-context', class extends Base {
         // 监听子元素的事件
         this.domPanel.addEventListener('next', (e) => {
             this.start()
+            this.#getNewNext()
         })
         this.domPanel.addEventListener('clear', (e) => {
             const lines = e.detail.lines
             this.domClears.add(lines)
-            this.domScore.clear(lines)
+            this.constructor.scorer.clear(this.domScore, lines)
         })
         this.domPanel.addEventListener('gameover', (e) => {
             this.reset()
@@ -79,7 +81,7 @@ customElements.define('game-context', class extends Base {
 
     start() {
         this.domPanel.start(this.domNext.shape, this.domClears.speed)
-        this.#getNewNext()
+        this.constructor.reseted = false
     }
 
     pause() {
@@ -87,7 +89,16 @@ customElements.define('game-context', class extends Base {
     }
 
     reset() {
-        this.domScore.reset()
+        // 静态属性相关
+        if (!this.constructor.reseted) {
+            this.constructor.shaper.reset()
+            this.constructor.reseted = true
+        }
+
+        // 实例属性
+        this.constructor.scorer.reset(this.domScore)
+        this.shapeCounter = 0
+        this.#getNewNext()
         this.domClears.reset()
         this.domPanel.reset()
         this.domWin.reset()

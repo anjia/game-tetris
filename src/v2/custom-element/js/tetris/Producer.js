@@ -7,33 +7,30 @@ class Producer {
         return Math.floor(Math.random() * max)
     }
 
-    // 私有属性
-    #total = All.length
-    #List = []
+    static #total = All.length
+    static #list = []
 
-    constructor() {
-
-    }
+    constructor() { }
 
     reset() {
-        this.#List.length = 0
+        this.constructor.#list.length = 0
     }
 
     next(start) {
+        const list = this.constructor.#list
         if (typeof start === undefined) {
-            start = this.#List.length ? (this.#List.length - 1) : 0
+            start = list.length ? (list.length - 1) : 0
         } else if (start < 0) {
             start = 0
-        } else if (start > this.#List.length) {
-            start = this.#List.length
+        } else if (start > list.length) {
+            start = list.length
         }
 
-        if (start === this.#List.length) {
-            const num = this.constructor.#getRandomInt(this.#total)
-            this.#List.push(num)
+        if (start === list.length) {
+            const num = this.constructor.#getRandomInt(this.constructor.#total)
+            list.push(num)
         }
-        // console.log(this.#List)
-        return this.#List[start]
+        return list[start]
     }
 }
 
