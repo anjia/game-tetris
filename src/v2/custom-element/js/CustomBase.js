@@ -35,6 +35,10 @@ class CustomBase extends HTMLElement {
         }
         return elem
     }
+
+    static showNumber(num, len) {
+        return String(num).padStart(len, '0')
+    }
 }
 
 export default CustomBase

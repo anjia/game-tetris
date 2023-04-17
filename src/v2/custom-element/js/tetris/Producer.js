@@ -1,23 +1,15 @@
 import All from './all.js'
 
 class Producer {
-
-    static #getRandomInt(max) {
-        // Math.random() [0, 1)
-        return Math.floor(Math.random() * max)
-    }
-
     static #total = All.length
     static #list = []
 
-    constructor() { }
-
-    reset() {
-        this.constructor.#list.length = 0
+    static reset() {
+        this.#list.length = 0
     }
 
-    next(start) {
-        const list = this.constructor.#list
+    static next(start) {
+        const list = this.#list
         if (typeof start === undefined) {
             start = list.length ? (list.length - 1) : 0
         } else if (start < 0) {
@@ -27,11 +19,18 @@ class Producer {
         }
 
         if (start === list.length) {
-            const num = this.constructor.#getRandomInt(this.constructor.#total)
+            const num = this.#getRandomInt(this.#total)
             list.push(num)
         }
         return list[start]
     }
+
+    static #getRandomInt(max) {
+        // Math.random() [0, 1)
+        return Math.floor(Math.random() * max)
+    }
+
+    constructor() { }
 }
 
 export default Producer

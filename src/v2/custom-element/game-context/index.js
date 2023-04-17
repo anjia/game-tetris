@@ -6,21 +6,25 @@ import '../op-handler/index.js'
 
 import Base from '../js/CustomBase.js'
 import ShapeProducer from '../js/tetris/Producer.js'
-import Score from '../js/Score.js'
+import ScoreController from '../js/Score.js'
 
-customElements.define('game-context', class extends Base {
+class GameContext extends Base {
 
-    // 静态属性
-    static shaper = new ShapeProducer()  // shape 生产者
-    static scorer = new Score()          // score 的管理者
-    static reseted = false
+    // 静态方法
+    static set type(x) {
+        ScoreController.type = x
+    }
+    static reset() {
+        ShapeProducer.reset()
+        ScoreController.reset()
+    }
 
     constructor() {
         super()
 
         // 实例属性
-        this.shapeCounter = 0   // shape 的消费计数
-        this.domScore = this.constructor.scorer.add()
+        this.shapeCounter = 0    // shape 的消费计数
+        this.domScore = ScoreController.create()  // score 新增一个
 
         this.domClears = null
         this.domNext = null
@@ -56,7 +60,7 @@ customElements.define('game-context', class extends Base {
         this.domPanel.addEventListener('clear', (e) => {
             const lines = e.detail.lines
             this.domClears.add(lines)
-            this.constructor.scorer.clear(this.domScore, lines)
+            ScoreController.clear(this.domScore, lines)
         })
         this.domPanel.addEventListener('gameover', (e) => {
             this.reset()
@@ -81,7 +85,6 @@ customElements.define('game-context', class extends Base {
 
     start() {
         this.domPanel.start(this.domNext.shape, this.domClears.speed)
-        this.constructor.reseted = false
     }
 
     pause() {
@@ -89,14 +92,6 @@ customElements.define('game-context', class extends Base {
     }
 
     reset() {
-        // 静态属性相关
-        if (!this.constructor.reseted) {
-            this.constructor.shaper.reset()
-            this.constructor.reseted = true
-        }
-
-        // 实例属性
-        this.constructor.scorer.reset(this.domScore)
         this.shapeCounter = 0
         this.#getNewNext()
         this.domClears.reset()
@@ -105,7 +100,11 @@ customElements.define('game-context', class extends Base {
     }
 
     #getNewNext() {
-        this.domNext.shape = (this.constructor.shaper).next(this.shapeCounter)
+        this.domNext.shape = ShapeProducer.next(this.shapeCounter)
         this.shapeCounter++
     }
-})
+}
+
+customElements.define('game-context', GameContext)
+
+export default GameContext

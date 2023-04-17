@@ -1,4 +1,4 @@
-import '../game-context/index.js'
+import GameContext from '../game-context/index.js'
 
 import Base from '../js/CustomBase.js'
 
@@ -8,6 +8,7 @@ customElements.define('game-tetris', class extends Base {
 
         // 实例属性
         this.type = parseInt(this.getAttribute('type')) || 1
+        GameContext.type = this.type
 
         // 局部变量
         const context = []
@@ -51,6 +52,7 @@ customElements.define('game-tetris', class extends Base {
             }
         })
         btnReplay.addEventListener('click', () => {
+            GameContext.reset()
             for (let c of context) {
                 c.reset()
             }

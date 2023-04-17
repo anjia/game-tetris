@@ -13,10 +13,6 @@ customElements.define('clear-lines', class extends Base {
         }
     }
 
-    static #showNumber(num) {
-        return String(num).padStart(3, '0')
-    }
-
     // 私有属性
     #lines;
     #domLines = null
@@ -50,7 +46,7 @@ customElements.define('clear-lines', class extends Base {
         x = parseInt(x) || 0
         if (x === this.#lines) return
         this.#lines = x
-        this.#domLines.innerText = this.constructor.#showNumber(x)
+        this.#domLines.innerText = Base.showNumber(x, 3)
 
         // 级别
         if (this.#lines >= this.constructor.LEVELS[this.level] && (this.level + 1 < this.constructor.LEVELS.length)) {
