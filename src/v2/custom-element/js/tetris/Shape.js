@@ -1,9 +1,11 @@
 class Shape {
 
+    // 静态属性
+    static #rotateMatrix = [[], [1, 1]]; // 旋转矩阵，逆时针旋转 90°
+
     // 静态方法
-    static #rotateMatrix = []; // 旋转矩阵，逆时针旋转 90°
-    static {
-        for (let n = 2; n <= 4; n++) {
+    static getFactor(n) {
+        if (!this.#rotateMatrix[n]) {
             let factor = []
             for (let i = n - 1; i >= 0; i--) {
                 let j = n - 1 - i
@@ -11,13 +13,14 @@ class Shape {
                     factor.push([i - k, j - k])
                 }
             }
-            Shape.#rotateMatrix[n] = factor
+            this.#rotateMatrix[n] = factor
         }
+        return this.#rotateMatrix[n]
     }
 
     static rotate(points) {
-        const { n, origin } = Shape.#getShapeDetail(points)
-        const factor = Shape.#rotateMatrix[n]
+        const { n, origin } = this.#getShapeDetail(points)
+        const factor = this.getFactor(n)
         let next = []
         for (let p of points) {
             const dist = (p[0] - origin[0]) * n + (p[1] - origin[1])
@@ -54,15 +57,15 @@ class Shape {
 
         const n = Math.max(rows.size, columns.size)
         let r = Math.floor(n / 2)
-        let center = [Shape.#getCenterIndex(rows), Shape.#getCenterIndex(columns)]
+        let center = [this.#getCenterIndex(rows), this.#getCenterIndex(columns)]
 
         // 修正中心点 center 或半径 r
         if (n % 2) {
             // 奇数时，若行多（中点必然是个点）则修正列号，否则修正行号
             if (rows.size > columns.size) {
-                Shape.#fixCenterIndex(points, center, [rows, columns], 1)
+                this.#fixCenterIndex(points, center, [rows, columns], 1)
             } else {
-                Shape.#fixCenterIndex(points, center, [rows, columns], 0)
+                this.#fixCenterIndex(points, center, [rows, columns], 0)
             }
         } else {
             r--
@@ -82,9 +85,10 @@ class Shape {
         // < 可覆盖 T L J
         // = 可覆盖 S Z
         if (left <= right) {
-            center[pos] = Shape.#getCenterIndex(rowcolumn[pos], 'ceil')
+            center[pos] = this.#getCenterIndex(rowcolumn[pos], 'ceil')
         }
     }
+
     static #getCenterIndex(set, mode) {
         const n = set.size
         let sum = 0

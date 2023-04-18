@@ -18,7 +18,7 @@ customElements.define('next-shape', class extends Base {
         }
         for (let shape of all) {
             this.#shapeList.push(new shape())
-            const matrix = shape.matrix
+            const matrix = shape.next
             for (let i = 0; i < matrix.length; i++) {
                 for (let j = 0; j < matrix[i].length; j++) {
                     if (matrix[i][j] === 1) {

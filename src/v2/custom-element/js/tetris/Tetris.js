@@ -2,22 +2,22 @@ import Shape from './Shape.js'
 
 class Tetris extends Shape {
     // 静态属性
-    static matrix;  // 形状的 next 矩阵
+    static next;  // 形状的 next 矩阵
 
-    // 私有属性
-    #rows;         // 画板的信息，来自 <grid-panel>
-    #columns;
+    // TODO. 改成静态私有属性
+    #paneled = false   // 画板的信息是否初始化
+    #rows = 20;        // 画板的信息，来自 <grid-panel>
+    #columns = 10;
     #data;
     #container;
 
     constructor(points) {
         super(points)
-        this.setted = false   // 画板的信息是否初始化
     }
 
     set panel(x) {
-        if (this.setted) return
-        this.setted = true
+        if (this.#paneled) return
+        this.#paneled = true
         this.#rows = x.rows
         this.#columns = x.columns
         this.#data = x.data

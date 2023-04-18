@@ -1,7 +1,7 @@
 import Tetris from './Tetris.js'
 
 class L extends Tetris {
-    static matrix = [
+    static next = [
         [0, 0, 1, 0],
         [1, 1, 1, 0]
     ]
