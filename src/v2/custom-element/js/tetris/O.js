@@ -1,4 +1,4 @@
-import Tetris from '../Tetris.js'
+import Tetris from './Tetris.js'
 
 class O extends Tetris {
     static matrix = [

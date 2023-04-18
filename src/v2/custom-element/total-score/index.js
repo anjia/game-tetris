@@ -3,11 +3,10 @@ import Base from '../js/CustomBase.js'
 customElements.define('total-score', class extends Base {
 
     // 静态属性
-    static SCORE = [0, 100, 300, 700, 1500]  // 一次性消 1-2-3-4 行时的得分
-    static MAX = 999999                      // 最大得分
+    static #SCORE = [0, 100, 300, 700, 1500]  // 一次性消 1-2-3-4 行时的得分
+    static #MAX = 999999                      // 最大得分
 
     // 私有属性
-    #type
     #score;
     #vs;
     #diff;
@@ -22,8 +21,7 @@ customElements.define('total-score', class extends Base {
         if (!this.isConnected) return
 
         // 获取属性参数
-        this.#type = parseInt(this.getAttribute('type')) || 1
-        // console.log('<total-score> type=', this.#type)
+        const type = parseInt(this.getAttribute('type')) || 1
 
         // 构造 shadow DOM
         let shadow = this.attachShadow({ mode: 'open' })
@@ -32,7 +30,7 @@ customElements.define('total-score', class extends Base {
         // html
         const text = document.createTextNode('SCORE')
         shadow.appendChild(text)
-        if (this.#type > 1) {
+        if (type > 1) {
             this.#domScore = Base.createDiv()
             this.#domDiff = Base.createDiv()
             shadow.appendChild(this.#domScore)
@@ -59,8 +57,8 @@ customElements.define('total-score', class extends Base {
     set score(x) {
         x = parseInt(x) || 0
         if (x === this.#score) return
-        if (x > this.constructor.MAX) {
-            x = this.constructor.MAX
+        if (x > this.constructor.#MAX) {
+            x = this.constructor.#MAX
         }
         this.#score = x
         this.#domScore.innerText = Base.showNumber(this.#score, 6)
@@ -69,7 +67,6 @@ customElements.define('total-score', class extends Base {
 
     set vs(x) {
         x = parseInt(x) || 0
-        if (this.#type === 1 || x === this.#vs) return
         this.#vs = x
         this.#updateDiff()
     }
@@ -80,7 +77,7 @@ customElements.define('total-score', class extends Base {
     }
 
     clear(lines) {
-        this.score = this.score + this.constructor.SCORE[lines]
+        this.score = this.score + this.constructor.#SCORE[lines]
     }
 
     #updateDiff() {
