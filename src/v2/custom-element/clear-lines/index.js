@@ -38,11 +38,7 @@ customElements.define('clear-lines', class extends Base {
         return this.constructor.#SPEED[this.level]
     }
 
-    get lines() {
-        return this.#lines
-    }
-
-    set lines(x) {
+    #setlines(x) {
         x = parseInt(x) || 0
         if (x === this.#lines) return
         this.#lines = x
@@ -56,12 +52,12 @@ customElements.define('clear-lines', class extends Base {
 
     reset() {
         this.level = 1
-        this.lines = 0
+        this.#setlines(0)
     }
 
-    add(x) {
+    clear(x) {
         if (x) {
-            this.lines = this.lines + x
+            this.#setlines(this.#lines + x)
         }
     }
 })

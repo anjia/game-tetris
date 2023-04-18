@@ -8,7 +8,7 @@ customElements.define('grid-panel', class extends Base {
     #status;           // 状态
     #timer;            // 降落的计时器
     #speed;            // 降落的速度
-    #maxRow;           // 楼盖的最高层
+    #highest;          // 楼盖的最高层
 
     // 私有属性-事件相关
     #eventClearsDetail = {
@@ -53,15 +53,15 @@ customElements.define('grid-panel', class extends Base {
         this.#init()
     }
 
-    get ispreparing() {
+    get #ispreparing() {
         return this.#status === 0
     }
 
-    get isplaying() {
+    get #isplaying() {
         return this.#status === 1
     }
 
-    get ispausing() {
+    get #ispausing() {
         return this.#status === 2
     }
 
@@ -74,7 +74,7 @@ customElements.define('grid-panel', class extends Base {
         }
         // 其它实例数据
         this.#status = 0
-        this.#maxRow = this.rows - 1
+        this.#highest = this.rows - 1
     }
 
     reset() {
@@ -84,7 +84,7 @@ customElements.define('grid-panel', class extends Base {
     }
 
     start(shape, speed) {
-        if (this.ispausing) {
+        if (this.#ispausing) {
             this.#falling()
         } else {
             this.shape = shape
@@ -103,43 +103,43 @@ customElements.define('grid-panel', class extends Base {
     }
 
     pause() {
-        if (this.isplaying) {
+        if (this.#isplaying) {
             this.#status = 2
             this.#clearTimer()
         }
     }
 
     left() {
-        if (!this.ispreparing) {
+        if (!this.#ispreparing) {
             this.shape.left()
-            if (this.ispausing) {
+            if (this.#ispausing) {
                 this.#falling()
             }
         }
     }
 
     right() {
-        if (!this.ispreparing) {
+        if (!this.#ispreparing) {
             this.shape.right()
-            if (this.ispausing) {
+            if (this.#ispausing) {
                 this.#falling()
             }
         }
     }
 
     down() {
-        if (!this.ispreparing) {
+        if (!this.#ispreparing) {
             this.shape.down()
-            if (this.ispausing) {
+            if (this.#ispausing) {
                 this.#falling()
             }
         }
     }
 
     rotate() {
-        if (!this.ispreparing) {
+        if (!this.#ispreparing) {
             this.shape.rotate()
-            if (this.ispausing) {
+            if (this.#ispausing) {
                 this.#falling()
             }
         }
@@ -191,18 +191,18 @@ customElements.define('grid-panel', class extends Base {
     }
 
     #clearFullRows(fullRows) {
-        const from = this.#maxRow
+        const from = this.#highest
         const to = fullRows[fullRows.length - 1]
 
         // 清除数据
         for (let row of fullRows) {
-            for (let i = row; i >= this.#maxRow; i--) {
+            for (let i = row; i >= this.#highest; i--) {
                 const srcI = i - 1
                 for (let j = 0; j < this.columns; j++) {
-                    this.#data[i][j] = ((srcI >= 0 && srcI >= this.#maxRow) ? this.#data[srcI][j] : 0)
+                    this.#data[i][j] = ((srcI >= 0 && srcI >= this.#highest) ? this.#data[srcI][j] : 0)
                 }
             }
-            this.#maxRow++
+            this.#highest++
         }
         // 清除UI
         for (let i = from; i <= to; i++) {
@@ -225,8 +225,8 @@ customElements.define('grid-panel', class extends Base {
         for (let p of this.shape.points) {
             if (p[0] >= 0) {
                 updateRows.add(p[0])
-                if (p[0] < this.#maxRow) {
-                    this.#maxRow = p[0]
+                if (p[0] < this.#highest) {
+                    this.#highest = p[0]
                 }
             }
         }

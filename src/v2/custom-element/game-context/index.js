@@ -72,7 +72,7 @@ class GameContext extends Base {
         })
         this.#domPanel.addEventListener('clear', (e) => {
             const lines = e.detail.lines
-            this.#domClears.add(lines)
+            this.#domClears.clear(lines)
             ScoreController.clear(this.domScore, lines)
         })
         this.#domPanel.addEventListener('gameover', (e) => {
