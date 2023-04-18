@@ -96,19 +96,13 @@ class Tetris extends Shape {
     }
 
     rotate() {
-        let result = []
-        const { n, origin } = this.constructor.getShapeDetail(this.points)
-        const factor = this.constructor.rotateMatrix[n]
+        let result = Shape.rotate(this.points)
         let next = []
-        for (let p of this.points) {
-            const dist = (p[0] - origin[0]) * n + (p[1] - origin[1])
-            let nextI = p[0] + factor[dist][0]
-            let nextJ = p[1] + factor[dist][1]
-
-            if (nextI >= this.#rows || nextJ < 0 || nextJ >= this.#columns || this.#isCellFilled(nextI, nextJ)) {
+        for (let p of result) {
+            if (p[0] >= this.#rows || p[1] < 0 || p[1] >= this.#columns || this.#isCellFilled(p[0], p[1])) {
                 break
             } else {
-                next.push([nextI, nextJ])
+                next.push([p[0], p[1]])
             }
         }
         if (next.length === 4) {
@@ -157,9 +151,9 @@ class Tetris extends Shape {
 
     #to(next) {
         // 在 this.current 中但不在 next 中的，置灰
-        this.#updateCells(this.constructor.subtract(this.points, next), 0)
+        this.#updateCells(Shape.subtract(this.points, next), 0)
         // 在 next 中但不在 this.current 中的，置亮
-        this.#updateCells(this.constructor.subtract(next, this.points), 1)
+        this.#updateCells(Shape.subtract(next, this.points), 1)
         this.points = next
     }
 

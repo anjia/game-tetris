@@ -1,7 +1,7 @@
 class Shape {
 
     // 静态方法
-    static rotateMatrix = []; // 旋转矩阵，逆时针旋转 90°
+    static #rotateMatrix = []; // 旋转矩阵，逆时针旋转 90°
     static {
         for (let n = 2; n <= 4; n++) {
             let factor = []
@@ -11,8 +11,21 @@ class Shape {
                     factor.push([i - k, j - k])
                 }
             }
-            this.rotateMatrix[n] = factor
+            Shape.#rotateMatrix[n] = factor
         }
+    }
+
+    static rotate(points) {
+        const { n, origin } = Shape.#getShapeDetail(points)
+        const factor = Shape.#rotateMatrix[n]
+        let next = []
+        for (let p of points) {
+            const dist = (p[0] - origin[0]) * n + (p[1] - origin[1])
+            let nextI = p[0] + factor[dist][0]
+            let nextJ = p[1] + factor[dist][1]
+            next.push([nextI, nextJ])
+        }
+        return next
     }
 
     static subtract(arr1, arr2) {
@@ -31,7 +44,7 @@ class Shape {
         return result
     }
 
-    static getShapeDetail(points) {
+    static #getShapeDetail(points) {
         let rows = new Set()
         let columns = new Set()
         for (let p of points) {
@@ -41,15 +54,15 @@ class Shape {
 
         const n = Math.max(rows.size, columns.size)
         let r = Math.floor(n / 2)
-        let center = [this.getCenterIndex(rows), this.getCenterIndex(columns)]
+        let center = [Shape.#getCenterIndex(rows), Shape.#getCenterIndex(columns)]
 
         // 修正中心点 center 或半径 r
         if (n % 2) {
             // 奇数时，若行多（中点必然是个点）则修正列号，否则修正行号
             if (rows.size > columns.size) {
-                this.fixCenterIndex(points, center, [rows, columns], 1)
+                Shape.#fixCenterIndex(points, center, [rows, columns], 1)
             } else {
-                this.fixCenterIndex(points, center, [rows, columns], 0)
+                Shape.#fixCenterIndex(points, center, [rows, columns], 0)
             }
         } else {
             r--
@@ -58,16 +71,8 @@ class Shape {
         const origin = [center[0] - r, center[1] - r]
         return { n, origin }
     }
-    static getCenterIndex(set, mode) {
-        const n = set.size
-        let sum = 0
-        for (let num of set) {
-            sum += num
-        }
-        // 默认向下取整（默认向下走，eg. I）
-        return mode === 'ceil' ? Math.ceil(sum / n) : Math.floor(sum / n)
-    }
-    static fixCenterIndex(points, center, rowcolumn, pos) {
+
+    static #fixCenterIndex(points, center, rowcolumn, pos) {
         let left = 0
         let right = 0
         for (let p of points) {
@@ -77,8 +82,17 @@ class Shape {
         // < 可覆盖 T L J
         // = 可覆盖 S Z
         if (left <= right) {
-            center[pos] = this.getCenterIndex(rowcolumn[pos], 'ceil')
+            center[pos] = Shape.#getCenterIndex(rowcolumn[pos], 'ceil')
         }
+    }
+    static #getCenterIndex(set, mode) {
+        const n = set.size
+        let sum = 0
+        for (let num of set) {
+            sum += num
+        }
+        // 默认向下取整（默认向下走，eg. I）
+        return mode === 'ceil' ? Math.ceil(sum / n) : Math.floor(sum / n)
     }
 
     // 私有属性
