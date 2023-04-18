@@ -11,20 +11,27 @@ import ScoreController from '../js/Score.js'
 class GameContext extends Base {
 
     // 静态方法
-    static set type(x) {
-        ScoreController.type = x
-    }
     static reset() {
         ShapeProducer.reset()
-        ScoreController.reset()
+        ScoreController.reset()  // 最后统一清空分数
+        // TODO.
+        // lines 也应该最后清空
+        // next-shape 也应该最后恢复一致
     }
 
     constructor() {
         super()
+    }
+
+    connectedCallback() {
+        if (!this.isConnected) return
+
+        // 获取属性
+        const type = parseInt(this.getAttribute('type')) || 1
+        ScoreController.type = type
 
         // 实例属性
         this.shapeCounter = 0    // shape 的消费计数
-        this.domScore = ScoreController.create()  // score 新增一个
 
         this.domClears = null
         this.domNext = null
@@ -37,6 +44,7 @@ class GameContext extends Base {
         shadow.appendChild(Base.createLink('./custom-element/game-context/index.css'))
 
         // html
+        this.domScore = ScoreController.create()  // score 新增一个
         shadow.appendChild(Base.createDiv({ 'class': 'box' }, [this.domScore]))
 
         this.domClears = Base.create('clear-lines', { 'class': 'flex-item box' })
@@ -82,6 +90,8 @@ class GameContext extends Base {
         // 初始化数据
         this.#getNewNext()
     }
+
+
 
     start() {
         this.domPanel.start(this.domNext.shape, this.domClears.speed)

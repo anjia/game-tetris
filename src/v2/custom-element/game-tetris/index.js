@@ -6,14 +6,13 @@ customElements.define('game-tetris', class extends Base {
     constructor() {
         super()
 
-        // 实例属性
-        this.type = parseInt(this.getAttribute('type')) || 1
-        GameContext.type = this.type
+        // 获取 HTML 属性
+        const type = parseInt(this.getAttribute('type')) || 1
 
         // 局部变量
         const context = []
-        for (let i = 0; i < this.type; i++) {
-            context.push(Base.create('game-context'))
+        for (let i = 0; i < type; i++) {
+            context.push(Base.create('game-context', { 'type': type }))
         }
         const btnStart = Base.createButton('开始')
         const btnPause = Base.createButton('暂停')
@@ -24,12 +23,12 @@ customElements.define('game-tetris', class extends Base {
         shadow.appendChild(Base.createLink('./custom-element/game-tetris/index.css'))
 
         let op = Base.createDiv({}, [btnStart, btnPause, btnReplay])
-        if (this.type === 1) {
+        if (type === 1) {
             shadow.appendChild(context[0])
             shadow.appendChild(op)
         } else {
             shadow.appendChild(context[0])
-            for (let i = 1; i < this.type; i++) {
+            for (let i = 1; i < type; i++) {
                 let text = Base.createDiv({ 'text': 'VS' })
                 let children = [text]
                 if (i === 1) {
