@@ -10,7 +10,9 @@ customElements.define('win-counter', class extends Base {
 
     constructor() {
         super()
+    }
 
+    connectedCallback() {
         // shadow root
         let shadow = this.attachShadow({ mode: 'open' })
         shadow.appendChild(Base.createLink('./custom-element/win-counter/index.css'))
@@ -20,9 +22,10 @@ customElements.define('win-counter', class extends Base {
         shadow.appendChild(this.#container)
 
         // 初始化
-        this.max = 3
+        this.max = parseInt(this.getAttribute('max')) || 3
         this.win = 0
     }
+
 
     set win(x) {
         if (x === this.#win || x < this.#min || x > this.#max) return

@@ -3,14 +3,10 @@ import Base from '../js/CustomBase.js'
 customElements.define('op-handler', class extends Base {
 
     // 私有属性
-    #btnRotate = null
-    #btnRight = null
-    #btnLeft = null
-    #btnDown = null
-    #eRotate = new Event('rotate')
-    #eRight = new Event('right')
-    #eLeft = new Event('left')
-    #eDown = new Event('down')
+    #rotate = new Event('rotate')
+    #right = new Event('right')
+    #left = new Event('left')
+    #down = new Event('down')
 
     constructor() {
         super()
@@ -22,24 +18,25 @@ customElements.define('op-handler', class extends Base {
         shadow.appendChild(Base.createLink('./custom-element/op-handler/index.css'))
 
         // html
-        this.#btnRotate = Base.createButton('旋转')
-        this.#btnRight = Base.createButton('右移')
-        this.#btnLeft = Base.createButton('左移')
-        this.#btnDown = Base.createButton('直接掉落')
-        shadow.appendChild(Base.createDiv({ 'class': 'area' }, [this.#btnRotate, this.#btnRight, this.#btnLeft, this.#btnDown]))
+        const btnRotate = Base.createButton('旋转')
+        const btnRight = Base.createButton('右移')
+        const btnLeft = Base.createButton('左移')
+        const btnDown = Base.createButton('直接掉落')
+        shadow.appendChild(Base.createDiv({ 'class': 'area' }, [btnRotate, btnRight, btnLeft, btnDown]))
 
         // 事件
-        this.#btnRotate.addEventListener('click', (e) => {
-            this.dispatchEvent(this.#eRotate)
+        // TODO. 监听键盘
+        btnRotate.addEventListener('click', (e) => {
+            this.dispatchEvent(this.#rotate)
         })
-        this.#btnRight.addEventListener('click', (e) => {
-            this.dispatchEvent(this.#eRight)
+        btnRight.addEventListener('click', (e) => {
+            this.dispatchEvent(this.#right)
         })
-        this.#btnLeft.addEventListener('click', (e) => {
-            this.dispatchEvent(this.#eLeft)
+        btnLeft.addEventListener('click', (e) => {
+            this.dispatchEvent(this.#left)
         })
-        this.#btnDown.addEventListener('click', (e) => {
-            this.dispatchEvent(this.#eDown)
+        btnDown.addEventListener('click', (e) => {
+            this.dispatchEvent(this.#down)
         })
     }
 })

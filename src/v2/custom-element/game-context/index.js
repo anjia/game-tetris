@@ -51,7 +51,7 @@ class GameContext extends Base {
         this.#domPanel = Base.create('grid-panel')
         shadow.appendChild(Base.createDiv({ 'class': 'box' }, [this.#domPanel]))
 
-        this.#domWin = Base.create('win-counter')
+        this.#domWin = Base.create('win-counter', { 'max': 5 })
         shadow.appendChild(Base.createDiv({ 'class': 'box' }, [this.#domWin]))
 
         this.#btnHandler = Base.create('op-handler')

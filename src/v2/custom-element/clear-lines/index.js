@@ -2,14 +2,14 @@ import Base from '../js/CustomBase.js'
 
 customElements.define('clear-lines', class extends Base {
 
-    static SPEED = [0, 800, 650, 500, 370, 250, 200]   // 每级对应的降落速度，共 6 级
-    static LEVELS = [0]
+    static #SPEED = [0, 800, 650, 500, 370, 250, 200]   // 每级对应的降落速度，共 6 级
+    static #LINES = [0]
     static {
         // 每消除 20 行就升一级，同时增加降落速度 
         // 用数组的好处：可以用 `比大小` 替代取余 `Math.ceil(总行数 % 20)`
         const clearLines = 20
-        for (let i = 1; i < this.SPEED.length; i++) {
-            this.LEVELS[i] = this.LEVELS[i - 1] + clearLines
+        for (let i = 1; i < this.#SPEED.length; i++) {
+            this.#LINES[i] = this.#LINES[i - 1] + clearLines
         }
     }
 
@@ -35,7 +35,7 @@ customElements.define('clear-lines', class extends Base {
     }
 
     get speed() {
-        return this.constructor.SPEED[this.level]
+        return this.constructor.#SPEED[this.level]
     }
 
     get lines() {
@@ -49,7 +49,7 @@ customElements.define('clear-lines', class extends Base {
         this.#domLines.innerText = Base.showNumber(x, 3)
 
         // 级别
-        if (this.#lines >= this.constructor.LEVELS[this.level] && (this.level + 1 < this.constructor.LEVELS.length)) {
+        if (this.#lines >= this.constructor.#LINES[this.level] && (this.level + 1 < this.constructor.#LINES.length)) {
             this.level++
         }
     }
