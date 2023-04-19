@@ -7,12 +7,13 @@ customElements.define('game-tetris', class extends Base {
         super()
 
         // 获取 HTML 属性
-        const type = parseInt(this.getAttribute('type')) || 1
+        const people = parseInt(this.getAttribute('people')) || 1
+        const race = parseInt(this.getAttribute('race')) || 3
 
         // 局部变量
         const context = []
-        for (let i = 0; i < type; i++) {
-            context.push(Base.create('game-context', { 'type': type }))
+        for (let i = 0; i < people; i++) {
+            context.push(Base.create('game-context', { 'people': people, 'race': race }))
         }
         const btnStart = Base.createButton('开始')
         const btnPause = Base.createButton('暂停')
@@ -23,12 +24,12 @@ customElements.define('game-tetris', class extends Base {
         shadow.appendChild(Base.createLink('./custom-element/game-tetris/index.css'))
 
         let op = Base.createDiv({}, [btnStart, btnPause, btnReplay])
-        if (type === 1) {
+        if (people === 1) {
             shadow.appendChild(context[0])
             shadow.appendChild(op)
         } else {
             shadow.appendChild(context[0])
-            for (let i = 1; i < type; i++) {
+            for (let i = 1; i < people; i++) {
                 let text = Base.createDiv({ 'text': 'VS' })
                 let children = [text]
                 if (i === 1) {

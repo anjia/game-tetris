@@ -3,11 +3,11 @@ import Base from './CustomBase.js'
 
 class Score {
 
-    static type = 1;     // 可以被修改
+    static people = 1;     // 可以被修改
     static #list = []
 
     static create() {
-        const element = Base.create('total-score', { 'type': this.type })
+        const element = Base.create('total-score', { 'people': this.people })
         this.#list.push(element)
         return element
     }
@@ -16,7 +16,7 @@ class Score {
         element.clear(lines)
 
         // 更新其它 score 的 vs 值
-        if (this.type > 1) {
+        if (this.people > 1) {
             // 原地排序，从小到大
             this.#list.sort((a, b) => {
                 const dist = a.score - b.score

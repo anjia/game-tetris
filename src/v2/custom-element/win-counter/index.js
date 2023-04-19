@@ -4,8 +4,8 @@ customElements.define('win-counter', class extends Base {
 
     // 私有属性
     #min = 0
-    #max = 0
-    #win = 0
+    #max;
+    #win = 0;
     #container = null
 
     constructor() {
@@ -21,11 +21,9 @@ customElements.define('win-counter', class extends Base {
         this.#container = Base.create('ul')
         shadow.appendChild(this.#container)
 
-        // 初始化
-        this.max = parseInt(this.getAttribute('max')) || 3
-        this.win = 0
+        // 初始化（通过数据改UI）, max=3
+        this.#updateMax(parseInt(this.getAttribute('race')) || 3)
     }
-
 
     set win(x) {
         if (x === this.#win || x < this.#min || x > this.#max) return
@@ -38,7 +36,15 @@ customElements.define('win-counter', class extends Base {
         }
     }
 
-    set max(x) {
+    reset() {
+        this.win = 0
+    }
+
+    #updateMax(x) {
+        if (this.#max === null) {
+            this.#max = x
+            return
+        }
         if (x === this.#max || x < this.#min) return
         if (x > this.#max) {
             let innerHTML = ''
@@ -57,9 +63,5 @@ customElements.define('win-counter', class extends Base {
                 this.setAttribute('value', this.#win)
             }
         }
-    }
-
-    reset() {
-        this.win = 0
     }
 })

@@ -7,7 +7,6 @@ customElements.define('total-score', class extends Base {
     static #MAX = 999999                      // 最大得分
 
     // 私有属性
-    #score;
     #vs;
     #diff;
     #domScore = null;
@@ -15,13 +14,16 @@ customElements.define('total-score', class extends Base {
 
     constructor() {
         super()
+
+        // 实例属性
+        this.score;
     }
 
     connectedCallback() {
         if (!this.isConnected) return
 
         // 获取属性参数
-        const type = parseInt(this.getAttribute('type')) || 1
+        const people = parseInt(this.getAttribute('people')) || 1
 
         // 构造 shadow DOM
         let shadow = this.attachShadow({ mode: 'open' })
@@ -30,7 +32,7 @@ customElements.define('total-score', class extends Base {
         // html
         const text = document.createTextNode('SCORE')
         shadow.appendChild(text)
-        if (type > 1) {
+        if (people > 1) {
             this.#domScore = Base.createDiv()
             this.#domDiff = Base.createDiv()
             shadow.appendChild(this.#domScore)
@@ -46,42 +48,34 @@ customElements.define('total-score', class extends Base {
         this.reset()
     }
 
-    get score() {
-        return this.#score
-    }
-
-    get vs() {
-        return this.#vs
-    }
-
-    set score(x) {
-        x = parseInt(x) || 0
-        if (x === this.#score) return
-        if (x > this.constructor.#MAX) {
-            x = this.constructor.#MAX
-        }
-        this.#score = x
-        this.#domScore.innerText = Base.showNumber(this.#score, 6)
-        this.#updateDiff()
-    }
-
+    // 就类似数据驱动
     set vs(x) {
-        x = parseInt(x) || 0
         this.#vs = x
         this.#updateDiff()
     }
 
-    reset() {
-        this.score = 0
-        this.vs = 0
+    clear(lines) {
+        const x = this.score + this.constructor.#SCORE[lines]
+        this.#updateScore(x)
     }
 
-    clear(lines) {
-        this.score = this.score + this.constructor.#SCORE[lines]
+    reset() {
+        this.score = 0
+        this.#vs = 0
+        this.#updateScore(0)
+    }
+
+    #updateScore(x) {
+        if (x > this.constructor.#MAX) {
+            x = this.constructor.#MAX
+        }
+        this.score = x
+        this.#domScore.innerText = Base.showNumber(this.score, 6)
+        this.#updateDiff()
     }
 
     #updateDiff() {
-        const dist = this.#score - this.#vs
+        const dist = this.score - this.#vs
         if (dist === this.#diff) return
         if (dist >= 0) {
             this.#domDiff.className = 'diff'

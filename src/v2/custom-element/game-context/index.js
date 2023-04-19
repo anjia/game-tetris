@@ -6,7 +6,7 @@ import '../op-handler/index.js'
 
 import Base from '../js/CustomBase.js'
 import ShapeProducer from '../js/TetrisProducer.js'
-import ScoreController from '../js/Score.js'
+import ScoreController from '../js/ScoreController.js'
 
 class GameContext extends Base {
 
@@ -32,8 +32,8 @@ class GameContext extends Base {
         if (!this.isConnected) return
 
         // 获取属性
-        const type = parseInt(this.getAttribute('type')) || 1
-        ScoreController.type = type
+        ScoreController.people = parseInt(this.getAttribute('people')) || 1
+        const race = this.getAttribute('race')
 
         // shadow DOM
         const shadow = this.attachShadow({ mode: 'open' })
@@ -50,7 +50,7 @@ class GameContext extends Base {
         this.#domPanel = Base.create('grid-panel')
         shadow.appendChild(Base.createDiv({ 'class': 'box' }, [this.#domPanel]))
 
-        this.#domWin = Base.create('win-counter', { 'max': 5 })
+        this.#domWin = Base.create('win-counter', { 'race': race })
         shadow.appendChild(Base.createDiv({ 'class': 'box' }, [this.#domWin]))
 
         this.#btnHandler = Base.create('op-handler')
