@@ -51,9 +51,10 @@ customElements.define('game-tetris', class extends Base {
             }
         })
         btnReplay.addEventListener('click', () => {
-            GameContext.reset()
+            GameContext.reset()  // 清空静态属性相关，比如形状、分数
             for (let c of context) {
-                c.reset()
+                c.resetInfo()    // 清空结果类信息，比如行数
+                c.reset()        // 清空其它
             }
         })
     }

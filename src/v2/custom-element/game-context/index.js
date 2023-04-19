@@ -14,12 +14,11 @@ class GameContext extends Base {
     static reset() {
         ShapeProducer.reset()
         ScoreController.reset()  // 最后统一清空分数
-        // TODO. lines 也应该最后清空
     }
 
     // 私有属性
     #shapeCounter = 0    // shape 的消费计数
-    #domClears = null
+    #domLines = null
     #domNext = null
     #domPanel = null
     #domWin = null
@@ -44,9 +43,9 @@ class GameContext extends Base {
         this.domScore = ScoreController.create()  // score 新增一个
         shadow.appendChild(Base.createDiv({ 'class': 'box' }, [this.domScore]))
 
-        this.#domClears = Base.create('clear-lines', { 'class': 'flex-item box' })
+        this.#domLines = Base.create('clear-lines', { 'class': 'flex-item box' })
         this.#domNext = Base.create('next-shape', { 'class': 'flex-item box' })
-        shadow.appendChild(Base.createDiv({ 'class': 'flex' }, [this.#domClears, this.#domNext]))
+        shadow.appendChild(Base.createDiv({ 'class': 'flex' }, [this.#domLines, this.#domNext]))
 
         this.#domPanel = Base.create('grid-panel')
         shadow.appendChild(Base.createDiv({ 'class': 'box' }, [this.#domPanel]))
@@ -72,7 +71,7 @@ class GameContext extends Base {
         })
         this.#domPanel.addEventListener('clear', (e) => {
             const lines = e.detail.lines
-            this.#domClears.clear(lines)
+            this.#domLines.clear(lines)
             ScoreController.clear(this.domScore, lines)
         })
         this.#domPanel.addEventListener('gameover', (e) => {
@@ -94,10 +93,8 @@ class GameContext extends Base {
         })
     }
 
-
-
     start() {
-        this.#domPanel.start(this.#domNext.shape, this.#domClears.speed)
+        this.#domPanel.start(this.#domNext.shape, this.#domLines.speed)
     }
 
     pause() {
@@ -107,9 +104,11 @@ class GameContext extends Base {
     reset() {
         this.#shapeCounter = 0
         this.#getNewNext()
-        this.#domClears.reset()
         this.#domPanel.reset()
         this.#domWin.reset()
+    }
+    resetInfo() {
+        this.#domLines.reset()
     }
 
     #getNewNext() {
