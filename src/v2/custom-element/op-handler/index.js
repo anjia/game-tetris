@@ -26,16 +26,16 @@ customElements.define('op-handler', class extends Base {
 
         // 事件
         // TODO. 监听键盘
-        btnRotate.addEventListener('click', (e) => {
+        btnRotate.addEventListener('click', () => {
             this.dispatchEvent(this.#rotate)
         })
-        btnRight.addEventListener('click', (e) => {
+        btnRight.addEventListener('click', () => {
             this.dispatchEvent(this.#right)
         })
-        btnLeft.addEventListener('click', (e) => {
+        btnLeft.addEventListener('click', () => {
             this.dispatchEvent(this.#left)
         })
-        btnDown.addEventListener('click', (e) => {
+        btnDown.addEventListener('click', () => {
             this.dispatchEvent(this.#down)
         })
     }

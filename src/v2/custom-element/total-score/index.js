@@ -51,30 +51,30 @@ customElements.define('total-score', class extends Base {
     // 就类似数据驱动
     set vs(x) {
         this.#vs = x
-        this.#updateDiff()
+        this.#renderDiff()
     }
 
     clear(lines) {
         const x = this.score + this.constructor.#SCORE[lines]
-        this.#updateScore(x)
+        this.#setScore(x)
     }
 
     reset() {
         this.score = 0
         this.#vs = 0
-        this.#updateScore(0)
+        this.#setScore(0)
     }
 
-    #updateScore(x) {
+    #setScore(x) {
         if (x > this.constructor.#MAX) {
             x = this.constructor.#MAX
         }
         this.score = x
-        this.#domScore.innerText = Base.showNumber(this.score, 6)
-        this.#updateDiff()
+        this.#domScore.innerText = Base.padNumber(this.score, 6)
+        this.#renderDiff()
     }
 
-    #updateDiff() {
+    #renderDiff() {
         const dist = this.score - this.#vs
         if (dist === this.#diff) return
         if (dist >= 0) {
@@ -83,6 +83,6 @@ customElements.define('total-score', class extends Base {
             this.#domDiff.className = 'diff less'
         }
         this.#diff = dist
-        this.#domDiff.innerText = Base.showNumber(Math.abs(dist), 6)
+        this.#domDiff.innerText = Base.padNumber(Math.abs(dist), 6)
     }
 })

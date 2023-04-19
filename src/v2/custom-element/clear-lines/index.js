@@ -14,14 +14,12 @@ customElements.define('clear-lines', class extends Base {
     }
 
     // 私有属性
+    #level;
     #lines;
     #domLines = null
 
     constructor() {
         super()
-
-        // 实例属性
-        this.level;
 
         // shadow DOM
         let shadow = this.attachShadow({ mode: 'open' })
@@ -35,29 +33,29 @@ customElements.define('clear-lines', class extends Base {
     }
 
     get speed() {
-        return this.constructor.#SPEED[this.level]
-    }
-
-    #setlines(x) {
-        x = parseInt(x) || 0
-        if (x === this.#lines) return
-        this.#lines = x
-        this.#domLines.innerText = Base.showNumber(x, 3)
-
-        // 级别
-        if (this.#lines >= this.constructor.#LINES[this.level] && (this.level + 1 < this.constructor.#LINES.length)) {
-            this.level++
-        }
+        return this.constructor.#SPEED[this.#level]
     }
 
     reset() {
-        this.level = 1
+        this.#level = 1
         this.#setlines(0)
     }
 
     clear(x) {
         if (x) {
             this.#setlines(this.#lines + x)
+        }
+    }
+
+    #setlines(x) {
+        x = parseInt(x) || 0
+        if (x === this.#lines) return
+        this.#lines = x
+        this.#domLines.innerText = Base.padNumber(x, 3)
+
+        // 级别
+        if (this.#lines >= this.constructor.#LINES[this.#level] && (this.#level + 1 < this.constructor.#LINES.length)) {
+            this.#level++
         }
     }
 })
