@@ -5,7 +5,7 @@ customElements.define('next-shape', class extends Base {
 
     // 私有属性
     #container = null  // DOM
-    #shapeList = []    // 形状对象列表
+    #list = []         // 形状对象列表
     #cur = 0;          // 形状的当前下标
 
     constructor() {
@@ -17,7 +17,7 @@ customElements.define('next-shape', class extends Base {
             arr.push([])
         }
         for (let shape of all) {
-            this.#shapeList.push(new shape())
+            this.#list.push(new shape())
             const matrix = shape.next
             for (let i = 0; i < matrix.length; i++) {
                 for (let j = 0; j < matrix[i].length; j++) {
@@ -43,14 +43,14 @@ customElements.define('next-shape', class extends Base {
 
     // 获取 shape object
     get shape() {
-        return this.#shapeList[this.#cur]
+        return this.#list[this.#cur]
     }
 
     // 设置 shape 下标
     set shape(x) {
         if (x !== this.#cur) {
             this.#cur = x
-            this.#container.className = 'grid shape-' + this.#shapeList[this.#cur].constructor.name
+            this.#container.className = 'grid shape-' + this.#list[this.#cur].constructor.name
         }
     }
 })

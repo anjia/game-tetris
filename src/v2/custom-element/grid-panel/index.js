@@ -1,4 +1,5 @@
 import Base from '../js/CustomBase.js'
+import Render from '../js/Render.js'
 
 customElements.define('grid-panel', class extends Base {
 
@@ -9,6 +10,7 @@ customElements.define('grid-panel', class extends Base {
     #timer;            // 降落的计时器
     #speed;            // 降落的速度
     #highest;          // 楼盖的最高层
+    #render;
 
     // 私有属性-事件相关
     #eventClearsDetail = {
@@ -50,6 +52,12 @@ customElements.define('grid-panel', class extends Base {
         }
 
         // 初始化数据
+        this.#render = new Render({
+            rows: this.rows,
+            columns: this.columns,
+            data: this.#data,
+            container: this.#container
+        })
         this.#init()
     }
 
@@ -79,25 +87,25 @@ customElements.define('grid-panel', class extends Base {
 
     reset() {
         this.#clearTimer()
-        this.#resetScreen()
+        this.#render.resetScreen()
         this.#init()
     }
 
     start(shape, speed) {
         if (this.#ispausing) {
-            this.#falling()
+            this.#toFalling()
         } else {
             this.shape = shape
             this.shape.reset()
-            this.shape.panel = {
-                rows: this.rows,
-                columns: this.columns,
-                data: this.#data,
-                container: this.#container
-            }
+            this.shape.render = this.#render
             this.#speed = speed
-            this.#startNext()
 
+            // 若 shape 可以入场开始，则继续下落，否则 gameover
+            if (this.shape.start()) {
+                this.#startTimer()
+            } else {
+                this.#gameover()
+            }
         }
         this.#status = 1
     }
@@ -113,7 +121,7 @@ customElements.define('grid-panel', class extends Base {
         if (!this.#ispreparing) {
             this.shape.left()
             if (this.#ispausing) {
-                this.#falling()
+                this.#toFalling()
             }
         }
     }
@@ -122,7 +130,7 @@ customElements.define('grid-panel', class extends Base {
         if (!this.#ispreparing) {
             this.shape.right()
             if (this.#ispausing) {
-                this.#falling()
+                this.#toFalling()
             }
         }
     }
@@ -131,7 +139,7 @@ customElements.define('grid-panel', class extends Base {
         if (!this.#ispreparing) {
             this.shape.down()
             if (this.#ispausing) {
-                this.#falling()
+                this.#toFalling()
             }
         }
     }
@@ -140,7 +148,7 @@ customElements.define('grid-panel', class extends Base {
         if (!this.#ispreparing) {
             this.shape.rotate()
             if (this.#ispausing) {
-                this.#falling()
+                this.#toFalling()
             }
         }
     }
@@ -149,29 +157,26 @@ customElements.define('grid-panel', class extends Base {
     /**
      * 私有方法
      */
-    #startNext() {
-        // 若 shape 可以入场开始，则继续下落，否则 gameover
-        if (this.shape.start()) {
-            this.#continueFalling()
-        } else {
-            this.#gameover()
-        }
+    #startTimer() {
+        this.#timer = setTimeout(() => {
+            this.#toFalling()
+        }, this.#speed)
     }
 
-    #gameover() {
-        this.dispatchEvent(this.#eventGameover)
+    #clearTimer() {
+        clearTimeout(this.#timer)  // this.#timer 依然有值，只是不触发了而已
     }
 
-    #falling() {
+    #toFalling() {
         // 若 shape 能继续走，则继续下落，否则就定位在此处
         if (this.shape.fall()) {
-            this.#continueFalling()
+            this.#startTimer()
         } else if (this.shape.merged()) {
             // 若 shape 能被成功合并，则判断是否有满行
-            const fullRows = this.#getFullRows()
+            const fullRows = this.#calculateFullRows()
             if (fullRows.length) {
 
-                this.#blinkFullRows(fullRows)  // 统一闪，耗时 0.6s
+                this.#render.blinkRows(fullRows)  // 统一闪，耗时 0.6s
 
                 // 通知父容器有消行得分
                 this.#eventClearsDetail.lines = fullRows.length
@@ -190,36 +195,7 @@ customElements.define('grid-panel', class extends Base {
         }
     }
 
-    #clearFullRows(fullRows) {
-        const from = this.#highest
-        const to = fullRows[fullRows.length - 1]
-
-        // 清除数据
-        for (let row of fullRows) {
-            for (let i = row; i >= this.#highest; i--) {
-                const srcI = i - 1
-                for (let j = 0; j < this.columns; j++) {
-                    this.#data[i][j] = ((srcI >= 0 && srcI >= this.#highest) ? this.#data[srcI][j] : 0)
-                }
-            }
-            this.#highest++
-        }
-        // 清除UI
-        for (let i = from; i <= to; i++) {
-            const start = i * this.columns
-            for (let j = 0; j < this.columns; j++) {
-                this.#updateCell(start + j, this.#data[i][j])
-            }
-        }
-    }
-
-    #continueFalling() {
-        this.#timer = setTimeout(() => {
-            this.#falling()
-        }, this.#speed)
-    }
-
-    #getFullRows() {
+    #calculateFullRows() {
         // 更新的行
         let updateRows = new Set()
         for (let p of this.shape.points) {
@@ -234,7 +210,7 @@ customElements.define('grid-panel', class extends Base {
         let fullRows = []
         for (let row of updateRows) {
             let j = 0
-            while (j < this.columns && this.#isCellFilled(row, j)) j++
+            while (j < this.columns && this.#render.isCellFilled(row, j)) j++
             if (j === this.columns) {
                 fullRows.push(row)
             }
@@ -248,49 +224,30 @@ customElements.define('grid-panel', class extends Base {
         return fullRows
     }
 
+    #gameover() {
+        this.dispatchEvent(this.#eventGameover)
+    }
 
+    #clearFullRows(fullRows) {
+        const from = this.#highest
+        const to = fullRows[fullRows.length - 1]
 
-    #blinkFullRows(fullRows) {
+        // 清除数据
         for (let row of fullRows) {
-            this.#updateRow(row, 2)
-        }
-    }
-
-    #clearTimer() {
-        clearTimeout(this.#timer)  // this.#timer 依然有值，只是不触发了而已
-    }
-
-    #resetScreen() {
-        this.#startResetScreen(this.rows - 1, -1, 1)
-    }
-    #startResetScreen(row, add, mode) {
-        if (add === 1 && row === this.rows) {
-            return
-        }
-
-        this.#updateRow(row, mode)
-
-        setTimeout(() => {
-            let nextRow = row + add
-            if (add === -1 && nextRow < 0) {
-                this.#startResetScreen(0, 1, 0)
-            } else {
-                this.#startResetScreen(nextRow, add, mode)
+            for (let i = row; i >= this.#highest; i--) {
+                const srcI = i - 1
+                for (let j = 0; j < this.columns; j++) {
+                    this.#data[i][j] = ((srcI >= 0 && srcI >= this.#highest) ? this.#data[srcI][j] : 0)
+                }
             }
-        }, 30)
-    }
-    #updateRow(row, mode) {
-        const start = row * this.columns
-        for (let j = 0; j < this.columns; j++) {
-            this.#updateCell(start + j, mode)
+            this.#highest++
         }
-    }
-    #updateCell(i, mode) {
-        const flag = ['', 'light', 'blink']
-        this.#container.children[i].className = flag[mode]
-    }
-
-    #isCellFilled(i, j) {
-        return i >= 0 && i < this.rows && j >= 0 && j < this.columns && this.#data[i][j] === 1
+        // 更新 UI
+        for (let i = from; i <= to; i++) {
+            const start = i * this.columns
+            for (let j = 0; j < this.columns; j++) {
+                this.#render.renderCell(start + j, this.#data[i][j])
+            }
+        }
     }
 })
