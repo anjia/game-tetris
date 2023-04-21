@@ -4,12 +4,15 @@ import Render from '../js/Render.js'
 customElements.define('grid-panel', class extends Base {
 
     // 私有属性
+    #rows = 20         // 行
+    #columns = 10      // 列
     #data = null       // 二维数组，20*10
     #container = null  // DOM
     #status;           // 状态
+    #shape = null      // 当前形状
     #timer;            // 降落的计时器
     #speed;            // 降落的速度
-    #render;
+    #render;           // 负责 UI 渲染
 
     // 私有属性-事件相关
     #eventClearsDetail = {
@@ -24,11 +27,6 @@ customElements.define('grid-panel', class extends Base {
     constructor() {
         super()
 
-        // 实例属性
-        this.rows = 20
-        this.columns = 10
-        this.shape = null   // 当前形状
-
         // shadow DOM
         let shadow = this.attachShadow({ mode: 'open' })
 
@@ -38,22 +36,22 @@ customElements.define('grid-panel', class extends Base {
         // html
         this.#container = Base.create('section', { 'class': 'grid' })
         let innerHTML = ''
-        for (let i = 0; i < this.rows * this.columns; i++) {
+        for (let i = 0; i < this.#rows * this.#columns; i++) {
             innerHTML += '<span></span>'
         }
         this.#container.innerHTML = innerHTML
         shadow.appendChild(this.#container)
 
         // 二维数组，申请空间
-        this.#data = new Array(this.rows)
-        for (let i = 0; i < this.rows; i++) {
-            this.#data[i] = new Array(this.columns)
+        this.#data = new Array(this.#rows)
+        for (let i = 0; i < this.#rows; i++) {
+            this.#data[i] = new Array(this.#columns)
         }
 
         // 初始化数据
         this.#render = new Render({
-            rows: this.rows,
-            columns: this.columns,
+            rows: this.#rows,
+            columns: this.#columns,
             data: this.#data,
             container: this.#container
         })
@@ -74,8 +72,8 @@ customElements.define('grid-panel', class extends Base {
 
     #init() {
         // grid data 全部填充 0
-        for (let i = 0; i < this.rows; i++) {
-            for (let j = 0; j < this.columns; j++) {
+        for (let i = 0; i < this.#rows; i++) {
+            for (let j = 0; j < this.#columns; j++) {
                 this.#data[i][j] = 0
             }
         }
@@ -93,13 +91,13 @@ customElements.define('grid-panel', class extends Base {
         if (this.#ispausing) {
             this.#toFalling()
         } else {
-            this.shape = shape
-            this.shape.reset()
+            this.#shape = shape
+            this.#shape.reset()
             this.#speed = speed
 
             // 若 shape 可以入场开始，则绘制+继续下落，否则 gameover
-            if (this.shape.start(this.#render)) {
-                this.shape.draw(this.#render)
+            if (this.#shape.start(this.#render)) {
+                this.#shape.draw(this.#render)
                 this.#startTimer()
             } else {
                 this.#gameover()
@@ -117,7 +115,7 @@ customElements.define('grid-panel', class extends Base {
 
     left() {
         if (!this.#ispreparing) {
-            this.shape.left(this.#render)
+            this.#shape.left(this.#render)
             if (this.#ispausing) {
                 this.#toFalling()
             }
@@ -126,7 +124,7 @@ customElements.define('grid-panel', class extends Base {
 
     right() {
         if (!this.#ispreparing) {
-            this.shape.right(this.#render)
+            this.#shape.right(this.#render)
             if (this.#ispausing) {
                 this.#toFalling()
             }
@@ -135,7 +133,7 @@ customElements.define('grid-panel', class extends Base {
 
     down() {
         if (!this.#ispreparing) {
-            this.shape.down(this.#render)
+            this.#shape.down(this.#render)
             if (this.#ispausing) {
                 this.#toFalling()
             }
@@ -144,7 +142,7 @@ customElements.define('grid-panel', class extends Base {
 
     rotate() {
         if (!this.#ispreparing) {
-            this.shape.rotate(this.#render)
+            this.#shape.rotate(this.#render)
             if (this.#ispausing) {
                 this.#toFalling()
             }
@@ -167,12 +165,12 @@ customElements.define('grid-panel', class extends Base {
 
     #toFalling() {
         // 1. 若 shape 能继续走，则继续下落
-        if (this.shape.fall(this.#render)) {
+        if (this.#shape.fall(this.#render)) {
             this.#startTimer()
         } else {
 
             // 2. 否则就定位在此处，合并 shape
-            const { result, fullRows } = this.shape.merge(this.#render)
+            const { result, fullRows } = this.#shape.merge(this.#render)
 
             // 2.1 若合并成功，则判断是否有满行
             if (result) {

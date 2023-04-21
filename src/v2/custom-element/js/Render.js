@@ -15,11 +15,33 @@ class Render {
         this.#highest = this.#rows - 1
     }
 
+    reset() {
+        this.#highest = this.#rows - 1
+        this.#startResetScreen(this.#rows - 1, -1, 1)
+    }
+
+    #startResetScreen(row, dy, mode) {
+        if (dy === 1 && row === this.#rows) {
+            return
+        }
+
+        this.#renderRow(row, mode)
+
+        setTimeout(() => {
+            let nextRow = row + dy
+            if (dy === -1 && nextRow < 0) {
+                this.#startResetScreen(0, 1, 0)
+            } else {
+                this.#startResetScreen(nextRow, dy, mode)
+            }
+        }, 30)
+    }
+
     draw(points) {
         for (let p of points) {
             if (p[0] >= 0) {
                 const i = p[0] * this.#columns + p[1]
-                this.renderCell(i, 1)
+                this.#renderCell(i, 1)
             }
         }
     }
@@ -77,31 +99,9 @@ class Render {
         for (let i = from; i <= to; i++) {
             const start = i * this.#columns
             for (let j = 0; j < this.#columns; j++) {
-                this.renderCell(start + j, this.#data[i][j])
+                this.#renderCell(start + j, this.#data[i][j])
             }
         }
-    }
-
-    reset() {
-        this.#highest = this.#rows - 1
-        this.#startResetScreen(this.#rows - 1, -1, 1)
-    }
-
-    #startResetScreen(row, dy, mode) {
-        if (dy === 1 && row === this.#rows) {
-            return
-        }
-
-        this.#renderRow(row, mode)
-
-        setTimeout(() => {
-            let nextRow = row + dy
-            if (dy === -1 && nextRow < 0) {
-                this.#startResetScreen(0, 1, 0)
-            } else {
-                this.#startResetScreen(nextRow, dy, mode)
-            }
-        }, 30)
     }
 
     blinkRows(fullRows) {
@@ -113,21 +113,21 @@ class Render {
     #renderRow(row, mode) {
         const start = row * this.#columns
         for (let j = 0; j < this.#columns; j++) {
-            this.renderCell(start + j, mode)
+            this.#renderCell(start + j, mode)
         }
     }
 
-    renderCells(points, mode) {
+    renderPoints(points, mode) {
         if (!points.length) return
         for (let p of points) {
             if (p[0] >= 0) {
                 const i = p[0] * this.#columns + p[1]
-                this.renderCell(i, mode)
+                this.#renderCell(i, mode)
             }
         }
     }
 
-    renderCell(i, mode) {
+    #renderCell(i, mode) {
         const flag = ['', 'light', 'blink']
         this.#container.children[i].className = flag[mode]
     }

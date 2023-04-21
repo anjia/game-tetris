@@ -4,7 +4,7 @@ class Shape {
     static #rotateMatrix = [[], [1, 1]]; // 旋转矩阵，逆时针旋转 90°
 
     // 静态方法
-    static getFactor(n) {
+    static #getFactor(n) {
         if (!this.#rotateMatrix[n]) {
             let factor = []
             for (let i = n - 1; i >= 0; i--) {
@@ -18,12 +18,12 @@ class Shape {
         return this.#rotateMatrix[n]
     }
 
-    static subtract(arr1, arr2) {
-        // arr1 - arr2
+    static minus(points1, points2) {
+        // points1 - points2
         let result = []
-        for (let p1 of arr1) {
+        for (let p1 of points1) {
             let exist = false
-            for (let p2 of arr2) {
+            for (let p2 of points2) {
                 if (p1[0] === p2[0] && p1[1] === p2[1]) {
                     exist = true
                     break
@@ -50,7 +50,7 @@ class Shape {
     constructor(points) {
         this.#init = points
 
-        // 实例属性
+        // 实例属性（TODO.只读）
         this.points = points
     }
 
@@ -60,7 +60,7 @@ class Shape {
 
     rotate() {
         const { n, origin } = this.#getShapeDetail()
-        const factor = Shape.getFactor(n)
+        const factor = Shape.#getFactor(n)
         let next = []
         for (let p of this.points) {
             const dist = (p[0] - origin[0]) * n + (p[1] - origin[1])

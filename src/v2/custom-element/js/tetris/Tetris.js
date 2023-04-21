@@ -138,9 +138,9 @@ class Tetris extends Shape {
 
     #to(next, render) {
         // 在 this.current 中但不在 next 中的，置灰
-        render.renderCells(Shape.subtract(this.points, next), 0)
+        render.renderPoints(Shape.minus(this.points, next), 0)
         // 在 next 中但不在 this.current 中的，置亮
-        render.renderCells(Shape.subtract(next, this.points), 1)
+        render.renderPoints(Shape.minus(next, this.points), 1)
         this.points = next
     }
 }
