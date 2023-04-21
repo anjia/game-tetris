@@ -25,6 +25,14 @@ customElements.define('win-counter', class extends Base {
         this.#setMax(parseInt(this.getAttribute('games')) || 3)
     }
 
+    reset() {
+        this.#setWin(0)
+    }
+
+    win() {
+        this.#setWin(this.#win + 1)
+    }
+
     #setWin(x) {
         if (x === this.#win || x < this.#min || x > this.#max) return
         this.#win = x
@@ -34,14 +42,6 @@ customElements.define('win-counter', class extends Base {
         for (let i = this.#win; i < this.#max; i++) {
             this.#container.children[i].className = ''
         }
-    }
-
-    win() {
-        this.#setWin(this.#win + 1)
-    }
-
-    reset() {
-        this.#setWin(0)
     }
 
     #setMax(x) {

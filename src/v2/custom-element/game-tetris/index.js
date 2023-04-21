@@ -5,10 +5,10 @@ import Base from '../js/CustomBase.js'
 customElements.define('game-tetris', class extends Base {
 
     // 私有变量
-    #status = 0;
     #people;
+    #context;    // <game-context>[]
+    #status = 0;
     #overCounter = 0
-    #context;
     #btnStart;
     #btnAgain;
 
@@ -24,9 +24,9 @@ customElements.define('game-tetris', class extends Base {
         const games = parseInt(this.getAttribute('games')) || 3
 
         // 构造 DOM
-        this.context = []
+        this.#context = []
         for (let i = 0; i < this.#people; i++) {
-            this.context.push(Base.create('game-context', { 'people': this.#people, 'games': games }))
+            this.#context.push(Base.create('game-context', { 'people': this.#people, 'games': games }))
         }
         this.#btnStart = Base.createByOptions('button', { 'class': 'start' })
         this.#btnAgain = Base.createByOptions('button', { 'text': '再来一局' })
@@ -37,10 +37,10 @@ customElements.define('game-tetris', class extends Base {
 
         let op = Base.createByOptions('div', {}, [this.#btnStart, this.#btnAgain])
         if (this.#people === 1) {
-            shadow.appendChild(this.context[0])
+            shadow.appendChild(this.#context[0])
             shadow.appendChild(op)
         } else {
-            shadow.appendChild(this.context[0])
+            shadow.appendChild(this.#context[0])
             for (let i = 1; i < this.#people; i++) {
                 let text = Base.createByOptions('div', { 'text': 'VS' })
                 let children = [text]
@@ -48,7 +48,7 @@ customElements.define('game-tetris', class extends Base {
                     children.push(op)
                 }
                 shadow.appendChild(Base.createByOptions('div', { 'class': 'vs' }, children))
-                shadow.appendChild(this.context[i])
+                shadow.appendChild(this.#context[i])
             }
         }
 
@@ -84,7 +84,7 @@ customElements.define('game-tetris', class extends Base {
         this.#btnAgain.addEventListener('click', () => {
             this.#reset()
             GameContext.reset()  // 重置全局类
-            for (let c of this.context) {
+            for (let c of this.#context) {
                 c.resetPanel()   // 重置游戏面板相关，比如 <grid-panel>, <next-shape>
                 c.reset()        // 重置其它元素，比如 <clear-lines>, <win-counter>
             }
@@ -95,32 +95,32 @@ customElements.define('game-tetris', class extends Base {
             if (this.#overCounter === this.#people) {
                 this.#reset()
                 // 比分数：谁多谁赢
-                // this.context[i].win()
+                // this.#context[i].win()
             }
         })
+    }
+
+    #start() {
+        for (let c of this.#context) {
+            c.start()
+        }
+    }
+
+    #pause() {
+        for (let c of this.#context) {
+            c.pause()
+        }
+    }
+
+    #continue() {
+        for (let c of this.#context) {
+            c.continue()
+        }
     }
 
     #reset() {
         this.#status = 0;
         this.#overCounter = 0
         this.#btnStart.className = 'start'
-    }
-
-    #start() {
-        for (let c of this.context) {
-            c.start()
-        }
-    }
-
-    #pause() {
-        for (let c of this.context) {
-            c.pause()
-        }
-    }
-
-    #continue() {
-        for (let c of this.context) {
-            c.continue()
-        }
     }
 })

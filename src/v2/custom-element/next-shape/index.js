@@ -7,6 +7,7 @@ customElements.define('next-shape', class extends Base {
     #container = null  // DOM
     #list = []         // 形状对象列表
     #cur = 0;          // 形状的当前下标
+    #innerHTML;
 
     constructor() {
         super()
@@ -27,17 +28,21 @@ customElements.define('next-shape', class extends Base {
                 }
             }
         }
+        this.#innerHTML = ''
+        for (let item of arr) {
+            this.#innerHTML += '<span class="' + item.join(' ') + '"></span>'
+        }
+    }
+
+    connectedCallback() {
+        if (!this.isConnected) return
 
         // 构造 shadow DOM
         let shadow = this.attachShadow({ mode: 'open' })
         shadow.appendChild(Base.createLink('./custom-element/next-shape/index.css'))
 
         this.#container = Base.create('section', { 'class': 'grid' })
-        let innerHTML = ''
-        for (let item of arr) {
-            innerHTML += '<span class="' + item.join(' ') + '"></span>'
-        }
-        this.#container.innerHTML = innerHTML
+        this.#container.innerHTML = this.#innerHTML
         shadow.appendChild(this.#container)
     }
 
@@ -56,5 +61,4 @@ customElements.define('next-shape', class extends Base {
             this.#container.className = 'grid shape-' + this.#list[this.#cur].constructor.name
         }
     }
-
 })

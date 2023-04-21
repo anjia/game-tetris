@@ -10,7 +10,9 @@ customElements.define('op-handler', class extends Base {
 
     constructor() {
         super()
+    }
 
+    connectedCallback() {
         // shadow DOM
         let shadow = this.attachShadow({ mode: 'open' })
 

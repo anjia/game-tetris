@@ -20,6 +20,10 @@ customElements.define('clear-lines', class extends Base {
 
     constructor() {
         super()
+    }
+
+    connectedCallback() {
+        if (!this.isConnected) return
 
         // shadow DOM
         let shadow = this.attachShadow({ mode: 'open' })
