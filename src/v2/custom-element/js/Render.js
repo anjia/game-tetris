@@ -1,16 +1,18 @@
 class Render {
 
     // 私有变量
-    #rows;
-    #columns;
+    #rows = 20;
+    #columns = 10;
     #container;
     #data;
+    #highest;  // 楼盖的最高层
 
     constructor(options) {
         this.#rows = options.rows;
         this.#columns = options.columns;
         this.#container = options.container;
         this.#data = options.data;
+        this.#highest = this.#rows - 1
     }
 
     draw(points) {
@@ -22,7 +24,66 @@ class Render {
         }
     }
 
-    resetScreen() {
+    merge(points) {
+        for (let p of points) {
+            this.#data[p[0]][p[1]] = 1
+        }
+    }
+
+    calculateFullRows(points) {
+        // 更新的行
+        let updateRows = new Set()
+        for (let p of points) {
+            if (p[0] >= 0) {
+                updateRows.add(p[0])
+                if (p[0] < this.#highest) {
+                    this.#highest = p[0]
+                }
+            }
+        }
+        // 判断是否有满行
+        let fullRows = []
+        for (let row of updateRows) {
+            let j = 0
+            while (j < this.#columns && this.isFilled(row, j)) j++
+            if (j === this.#columns) {
+                fullRows.push(row)
+            }
+        }
+        // 原地排序，从小-大
+        fullRows.sort((a, b) => {
+            if (a > b) return 1
+            else if (a < b) return -1
+            return 0
+        })
+        return fullRows
+    }
+
+    clearFullRows(fullRows) {
+        const from = this.#highest
+        const to = fullRows[fullRows.length - 1]
+
+        // 清除数据
+        for (let row of fullRows) {
+            for (let i = row; i >= this.#highest; i--) {
+                const srcI = i - 1
+                for (let j = 0; j < this.#columns; j++) {
+                    this.#data[i][j] = ((srcI >= 0 && srcI >= this.#highest) ? this.#data[srcI][j] : 0)
+                }
+            }
+            this.#highest++
+        }
+        // 更新 UI
+        for (let i = from; i <= to; i++) {
+            const start = i * this.#columns
+            for (let j = 0; j < this.#columns; j++) {
+                this.renderCell(start + j, this.#data[i][j])
+            }
+        }
+    }
+
+    reset() {
+        this.#highest = this.#rows - 1
         this.#startResetScreen(this.#rows - 1, -1, 1)
     }
 
@@ -71,14 +132,8 @@ class Render {
         this.#container.children[i].className = flag[mode]
     }
 
-    isCellFilled(i, j) {
+    isFilled(i, j) {
         return i >= 0 && i < this.#rows && j >= 0 && j < this.#columns && this.#data[i][j] === 1
-    }
-
-    fill(i, j) {
-        if (i >= 0 && i < this.#rows && j >= 0 && j < this.#columns) {
-            this.#data[i][j] = 1
-        }
     }
 
     isFloor(i) {
@@ -89,8 +144,8 @@ class Render {
         return i >= this.#rows
     }
 
-    isOutWall(i) {
-        return i < 0 || i >= this.#columns
+    isOutWall(j) {
+        return j < 0 || j >= this.#columns
     }
 }
 

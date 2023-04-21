@@ -9,7 +9,6 @@ customElements.define('grid-panel', class extends Base {
     #status;           // 状态
     #timer;            // 降落的计时器
     #speed;            // 降落的速度
-    #highest;          // 楼盖的最高层
     #render;
 
     // 私有属性-事件相关
@@ -82,12 +81,11 @@ customElements.define('grid-panel', class extends Base {
         }
         // 其它实例数据
         this.#status = 0
-        this.#highest = this.rows - 1
     }
 
     reset() {
         this.#clearTimer()
-        this.#render.resetScreen()
+        this.#render.reset()
         this.#init()
     }
 
@@ -97,11 +95,11 @@ customElements.define('grid-panel', class extends Base {
         } else {
             this.shape = shape
             this.shape.reset()
-            this.shape.render = this.#render
             this.#speed = speed
 
-            // 若 shape 可以入场开始，则继续下落，否则 gameover
-            if (this.shape.start()) {
+            // 若 shape 可以入场开始，则绘制+继续下落，否则 gameover
+            if (this.shape.start(this.#render)) {
+                this.shape.draw(this.#render)
                 this.#startTimer()
             } else {
                 this.#gameover()
@@ -119,7 +117,7 @@ customElements.define('grid-panel', class extends Base {
 
     left() {
         if (!this.#ispreparing) {
-            this.shape.left()
+            this.shape.left(this.#render)
             if (this.#ispausing) {
                 this.#toFalling()
             }
@@ -128,7 +126,7 @@ customElements.define('grid-panel', class extends Base {
 
     right() {
         if (!this.#ispreparing) {
-            this.shape.right()
+            this.shape.right(this.#render)
             if (this.#ispausing) {
                 this.#toFalling()
             }
@@ -137,7 +135,7 @@ customElements.define('grid-panel', class extends Base {
 
     down() {
         if (!this.#ispreparing) {
-            this.shape.down()
+            this.shape.down(this.#render)
             if (this.#ispausing) {
                 this.#toFalling()
             }
@@ -146,7 +144,7 @@ customElements.define('grid-panel', class extends Base {
 
     rotate() {
         if (!this.#ispreparing) {
-            this.shape.rotate()
+            this.shape.rotate(this.#render)
             if (this.#ispausing) {
                 this.#toFalling()
             }
@@ -168,86 +166,46 @@ customElements.define('grid-panel', class extends Base {
     }
 
     #toFalling() {
-        // 若 shape 能继续走，则继续下落，否则就定位在此处
-        if (this.shape.fall()) {
+        // 1. 若 shape 能继续走，则继续下落
+        if (this.shape.fall(this.#render)) {
             this.#startTimer()
-        } else if (this.shape.merged()) {
-            // 若 shape 能被成功合并，则判断是否有满行
-            const fullRows = this.#calculateFullRows()
-            if (fullRows.length) {
-
-                this.#render.blinkRows(fullRows)  // 统一闪，耗时 0.6s
-
-                // 通知父容器有消行得分
-                this.#eventClearsDetail.lines = fullRows.length
-                this.dispatchEvent(this.#eventClears)
-
-                // 动画结束后，重新赋值
-                setTimeout(() => {
-                    this.#clearFullRows(fullRows)        // 统一清除
-                    this.dispatchEvent(this.#eventNext)  // 通知父容器开始下一个
-                }, 600)
-            } else {
-                this.dispatchEvent(this.#eventNext)
-            }
         } else {
-            this.#gameover()  // 否则，gameover
-        }
-    }
 
-    #calculateFullRows() {
-        // 更新的行
-        let updateRows = new Set()
-        for (let p of this.shape.points) {
-            if (p[0] >= 0) {
-                updateRows.add(p[0])
-                if (p[0] < this.#highest) {
-                    this.#highest = p[0]
+            // 2. 否则就定位在此处，合并 shape
+            const { result, fullRows } = this.shape.merge(this.#render)
+
+            // 2.1 若合并成功，则判断是否有满行
+            if (result) {
+
+                if (fullRows.length) {
+                    this.#render.blinkRows(fullRows)  // 统一闪，耗时 0.6s
+
+                    // 通知父容器有消行得分
+                    this.#eventClearsDetail.lines = fullRows.length
+                    this.dispatchEvent(this.#eventClears)
+
+                    // 动画结束后，重新赋值
+                    setTimeout(() => {
+                        this.#render.clearFullRows(fullRows)  // 统一清除
+                        this.#next()
+                    }, 600)
+
+                } else {
+                    this.#next()
                 }
+
+            } else {
+                // 2.2 合并失败，则说明 shape 没画全，gameover
+                this.#gameover()
             }
         }
-        // 判断是否有满行
-        let fullRows = []
-        for (let row of updateRows) {
-            let j = 0
-            while (j < this.columns && this.#render.isCellFilled(row, j)) j++
-            if (j === this.columns) {
-                fullRows.push(row)
-            }
-        }
-        // 原地排序，从小-大
-        fullRows.sort((a, b) => {
-            if (a > b) return 1
-            else if (a < b) return -1
-            return 0
-        })
-        return fullRows
     }
 
     #gameover() {
-        this.dispatchEvent(this.#eventGameover)
+        this.dispatchEvent(this.#eventGameover)  // 通知父容器 gameover
     }
 
-    #clearFullRows(fullRows) {
-        const from = this.#highest
-        const to = fullRows[fullRows.length - 1]
-
-        // 清除数据
-        for (let row of fullRows) {
-            for (let i = row; i >= this.#highest; i--) {
-                const srcI = i - 1
-                for (let j = 0; j < this.columns; j++) {
-                    this.#data[i][j] = ((srcI >= 0 && srcI >= this.#highest) ? this.#data[srcI][j] : 0)
-                }
-            }
-            this.#highest++
-        }
-        // 更新 UI
-        for (let i = from; i <= to; i++) {
-            const start = i * this.columns
-            for (let j = 0; j < this.columns; j++) {
-                this.#render.renderCell(start + j, this.#data[i][j])
-            }
-        }
+    #next() {
+        this.dispatchEvent(this.#eventNext)  // 通知父容器开始下一个
     }
 })
