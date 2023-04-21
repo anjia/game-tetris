@@ -60,14 +60,14 @@ class GameContext extends Base {
         this.#addEventListener()
 
         // 初始化数据
-        this.#updateNext()
+        this.#next()
     }
 
     #addEventListener() {
         // 游戏面板
         this.#domPanel.addEventListener('next', () => {
             this.start()
-            this.#updateNext()
+            this.#next()
         })
         this.#domPanel.addEventListener('clear', (e) => {
             const lines = e.detail.lines()
@@ -109,14 +109,14 @@ class GameContext extends Base {
     resetPanel() {
         this.#domPanel.reset()
         this.#shapeCounter = 0
-        this.#updateNext()
+        this.#next()
     }
 
     win() {
         this.#domWin.win()
     }
 
-    #updateNext() {
+    #next() {
         this.#domNext.next = ShapeProducer.next(this.#shapeCounter)
         this.#shapeCounter++
     }
