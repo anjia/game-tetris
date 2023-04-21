@@ -54,10 +54,10 @@ class Render {
 
     calculateFullRows(points) {
         // 更新的行
-        let updateRows = new Set()
+        let updatedRows = new Set()
         for (let p of points) {
             if (p[0] >= 0) {
-                updateRows.add(p[0])
+                updatedRows.add(p[0])
                 if (p[0] < this.#highest) {
                     this.#highest = p[0]
                 }
@@ -65,7 +65,7 @@ class Render {
         }
         // 判断是否有满行
         let fullRows = []
-        for (let row of updateRows) {
+        for (let row of updatedRows) {
             let j = 0
             while (j < this.#columns && this.isFilled(row, j)) j++
             if (j === this.#columns) {
