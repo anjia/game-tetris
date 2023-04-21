@@ -22,7 +22,7 @@ customElements.define('win-counter', class extends Base {
         shadow.appendChild(this.#container)
 
         // 初始化（通过数据改UI）, max=3
-        this.#setMax(parseInt(this.getAttribute('race')) || 3)
+        this.#setMax(parseInt(this.getAttribute('games')) || 3)
     }
 
     #setWin(x) {

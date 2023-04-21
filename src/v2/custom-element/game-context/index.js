@@ -33,7 +33,7 @@ class GameContext extends Base {
 
         // 获取属性
         ScoreController.people = parseInt(this.getAttribute('people')) || 1
-        const race = this.getAttribute('race')
+        const games = this.getAttribute('games')
 
         // shadow DOM
         const shadow = this.attachShadow({ mode: 'open' })
@@ -41,17 +41,17 @@ class GameContext extends Base {
 
         // html
         this.domScore = ScoreController.create()  // score 新增一个
-        shadow.appendChild(Base.createDiv({ 'class': 'box' }, [this.domScore]))
+        shadow.appendChild(Base.createByOptions('div', { 'class': 'box' }, [this.domScore]))
 
         this.#domLines = Base.create('clear-lines', { 'class': 'flex-item box' })
         this.#domNext = Base.create('next-shape', { 'class': 'flex-item box' })
-        shadow.appendChild(Base.createDiv({ 'class': 'flex' }, [this.#domLines, this.#domNext]))
+        shadow.appendChild(Base.createByOptions('div', { 'class': 'flex' }, [this.#domLines, this.#domNext]))
 
         this.#domPanel = Base.create('grid-panel')
-        shadow.appendChild(Base.createDiv({ 'class': 'box' }, [this.#domPanel]))
+        shadow.appendChild(Base.createByOptions('div', { 'class': 'box' }, [this.#domPanel]))
 
-        this.#domWin = Base.create('win-counter', { 'race': race })
-        shadow.appendChild(Base.createDiv({ 'class': 'box' }, [this.#domWin]))
+        this.#domWin = Base.create('win-counter', { 'games': games })
+        shadow.appendChild(Base.createByOptions('div', { 'class': 'box' }, [this.#domWin]))
 
         this.#btnHandler = Base.create('op-handler')
         shadow.appendChild(this.#btnHandler)
@@ -95,6 +95,10 @@ class GameContext extends Base {
 
     start() {
         this.#domPanel.start(this.#domNext.shape, this.#domLines.speed)
+    }
+
+    continue() {
+        this.#domPanel.continue()
     }
 
     pause() {

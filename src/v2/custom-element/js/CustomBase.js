@@ -1,20 +1,15 @@
 class CustomBase extends HTMLElement {
 
-    static createLink(href) {
-        const link = document.createElement('link')
-        link.setAttribute('rel', 'stylesheet')
-        link.setAttribute('href', href)
-        return link
+    static create(name, attrs) {
+        const elem = document.createElement(name)
+        for (let key in attrs) {
+            elem.setAttribute(key, attrs[key])
+        }
+        return elem
     }
 
-    static createButton(text) {
-        const btn = document.createElement('button')
-        btn.innerText = text
-        return btn
-    }
-
-    static createDiv(options = {}, children = []) {
-        const div = document.createElement('div')
+    static createByOptions(name, options = {}, children = []) {
+        const div = document.createElement(name)
         const attrs = {
             'class': 'className',
             'text': 'innerText'
@@ -28,12 +23,11 @@ class CustomBase extends HTMLElement {
         return div
     }
 
-    static create(name, attrs) {
-        const elem = document.createElement(name)
-        for (let key in attrs) {
-            elem.setAttribute(key, attrs[key])
-        }
-        return elem
+    static createLink(href) {
+        return this.create('link', {
+            'rel': 'stylesheet',
+            'href': href
+        })
     }
 
     static padNumber(num, len) {

@@ -70,6 +70,10 @@ customElements.define('grid-panel', class extends Base {
         return this.#status === 2
     }
 
+    get #isgameover() {
+        return this.#status === 3
+    }
+
     #init() {
         // grid data 全部填充 0
         for (let i = 0; i < this.#rows; i++) {
@@ -88,6 +92,7 @@ customElements.define('grid-panel', class extends Base {
     }
 
     start(shape, speed) {
+        if (this.#isgameover) return
         if (this.#ispausing) {
             this.#toFalling()
         } else {
@@ -104,6 +109,13 @@ customElements.define('grid-panel', class extends Base {
             }
         }
         this.#status = 1
+    }
+
+    continue() {
+        if (this.#ispausing) {
+            this.#status = 1
+            this.#toFalling()
+        }
     }
 
     pause() {
@@ -200,6 +212,7 @@ customElements.define('grid-panel', class extends Base {
     }
 
     #gameover() {
+        this.#status = 3
         this.dispatchEvent(this.#eventGameover)  // 通知父容器 gameover
     }
 

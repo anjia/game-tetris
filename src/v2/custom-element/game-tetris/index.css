@@ -12,12 +12,16 @@ button {
     margin: 0 5px;
 }
 
-.btn-start::before {
-    content: attr(data-start);
+.start::before {
+    content: '开始';
 }
 
-.btn-start.pause::before {
-    content: attr(data-pause);
+.start.pause::before {
+    content: '暂停';
+}
+
+.start.continue::before {
+    content: '继续';
 }
 
 .vs {

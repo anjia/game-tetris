@@ -25,7 +25,7 @@ customElements.define('clear-lines', class extends Base {
         let shadow = this.attachShadow({ mode: 'open' })
         const text = document.createTextNode('LINE')
         shadow.appendChild(text)
-        this.#domLines = Base.createDiv()
+        this.#domLines = Base.createByOptions('div')
         shadow.appendChild(this.#domLines)
 
         // 重置（初始化）数据

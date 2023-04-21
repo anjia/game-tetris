@@ -33,13 +33,13 @@ customElements.define('total-score', class extends Base {
         const text = document.createTextNode('SCORE')
         shadow.appendChild(text)
         if (people > 1) {
-            this.#domScore = Base.createDiv()
-            this.#domDiff = Base.createDiv()
+            this.#domScore = Base.createByOptions('div')
+            this.#domDiff = Base.createByOptions('div')
             shadow.appendChild(this.#domScore)
             shadow.appendChild(this.#domDiff)
         } else {
-            const max = Base.createDiv({ 'text': '最高分 000000' })
-            const total = Base.createDiv({ 'text': '当前分 000000' })
+            const max = Base.createByOptions('div', { 'text': '最高分 000000' })
+            const total = Base.createByOptions('div', { 'text': '当前分 000000' })
             shadow.appendChild(max)
             shadow.appendChild(total)
         }
