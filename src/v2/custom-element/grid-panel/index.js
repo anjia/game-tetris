@@ -12,16 +12,16 @@ customElements.define('grid-panel', class extends Base {
     #shape = null      // 当前形状
     #timer;            // 降落的计时器
     #speed;            // 降落的速度
+    #clearlines;       // 消除的行数
     #render;           // 负责 UI 渲染
 
     // 私有属性-事件相关
-    #eventClearsDetail = {
-        'lines': undefined  // 消的行数
-    }
-    #eventGameover = new Event('gameover')
+    #eventGameover = new CustomEvent('gameover', { composed: true })
     #eventNext = new Event('next')
     #eventClears = new CustomEvent('clear', {
-        detail: this.#eventClearsDetail
+        detail: {
+            'lines': () => this.#clearlines
+        }
     })
 
     constructor() {
@@ -179,7 +179,7 @@ customElements.define('grid-panel', class extends Base {
                     this.#render.blinkRows(fullRows)  // 统一闪，耗时 0.6s
 
                     // 通知父容器有消行得分
-                    this.#eventClearsDetail.lines = fullRows.length
+                    this.#clearlines = fullRows.length
                     this.dispatchEvent(this.#eventClears)
 
                     // 动画结束后，重新赋值

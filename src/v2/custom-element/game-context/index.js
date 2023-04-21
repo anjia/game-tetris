@@ -65,17 +65,17 @@ class GameContext extends Base {
 
     #addEventListener() {
         // 游戏面板
-        this.#domPanel.addEventListener('next', (e) => {
+        this.#domPanel.addEventListener('next', () => {
             this.start()
             this.#updateNext()
         })
         this.#domPanel.addEventListener('clear', (e) => {
-            const lines = e.detail.lines
+            const lines = e.detail.lines()
             this.#domLines.clear(lines)
             ScoreController.clear(this.domScore, lines)
         })
-        this.#domPanel.addEventListener('gameover', (e) => {
-            this.reset()
+        this.#domPanel.addEventListener('gameover', () => {
+            this.resetPanel()
         })
 
         // 游戏手柄
@@ -110,6 +110,10 @@ class GameContext extends Base {
         this.#domPanel.reset()
         this.#shapeCounter = 0
         this.#updateNext()
+    }
+
+    win() {
+        this.#domWin.win()
     }
 
     #updateNext() {
