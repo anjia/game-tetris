@@ -113,7 +113,7 @@ class GameContext extends Base {
     }
 
     #updateNext() {
-        this.#domNext.shape = ShapeProducer.next(this.#shapeCounter)
+        this.#domNext.next = ShapeProducer.next(this.#shapeCounter)
         this.#shapeCounter++
     }
 }

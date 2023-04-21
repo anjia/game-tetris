@@ -46,11 +46,15 @@ customElements.define('next-shape', class extends Base {
         return this.#list[this.#cur]
     }
 
-    // 设置 shape 下标
-    set shape(x) {
+    get next() {
+        return this.#cur
+    }
+
+    set next(x) {
         if (x !== this.#cur) {
             this.#cur = x
             this.#container.className = 'grid shape-' + this.#list[this.#cur].constructor.name
         }
     }
+
 })
