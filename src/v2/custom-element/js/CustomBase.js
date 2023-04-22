@@ -1,26 +1,21 @@
 class CustomBase extends HTMLElement {
 
-    static create(name, attrs) {
-        const elem = document.createElement(name)
-        for (let key in attrs) {
-            elem.setAttribute(key, attrs[key])
-        }
-        return elem
-    }
-
-    static createByOptions(name, options = {}, children = []) {
-        const div = document.createElement(name)
+    static create(name, options, children = []) {
         const attrs = {
-            'class': 'className',
             'text': 'innerText'
         }
+        const elem = document.createElement(name)
         for (let key in options) {
-            div[attrs[key]] = options[key]
+            if (attrs[key]) {
+                elem[attrs[key]] = options[key]
+            } else {
+                elem.setAttribute(key, options[key])
+            }
         }
         for (let child of children) {
-            div.appendChild(child)
+            elem.appendChild(child)
         }
-        return div
+        return elem
     }
 
     static createLink(href) {

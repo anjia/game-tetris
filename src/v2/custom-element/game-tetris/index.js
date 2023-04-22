@@ -28,26 +28,26 @@ customElements.define('game-tetris', class extends Base {
         for (let i = 0; i < this.#people; i++) {
             this.#context.push(Base.create('game-context', { 'people': this.#people, 'games': games }))
         }
-        this.#btnStart = Base.createByOptions('button', { 'class': 'start' })
-        this.#btnAgain = Base.createByOptions('button', { 'text': '再来一局' })
+        this.#btnStart = Base.create('button', { 'class': 'start' })
+        this.#btnAgain = Base.create('button', { 'text': '再来一局' })
 
         // shadow DOM
         let shadow = this.attachShadow({ mode: 'open' })
         shadow.appendChild(Base.createLink('./custom-element/game-tetris/index.css'))
 
-        let op = Base.createByOptions('div', {}, [this.#btnStart, this.#btnAgain])
+        let op = Base.create('div', {}, [this.#btnStart, this.#btnAgain])
         if (this.#people === 1) {
             shadow.appendChild(this.#context[0])
             shadow.appendChild(op)
         } else {
             shadow.appendChild(this.#context[0])
             for (let i = 1; i < this.#people; i++) {
-                let text = Base.createByOptions('div', { 'text': 'VS' })
+                let text = Base.create('div', { 'text': 'VS' })
                 let children = [text]
                 if (i === 1) {
                     children.push(op)
                 }
-                shadow.appendChild(Base.createByOptions('div', { 'class': 'vs' }, children))
+                shadow.appendChild(Base.create('div', { 'class': 'vs' }, children))
                 shadow.appendChild(this.#context[i])
             }
         }
