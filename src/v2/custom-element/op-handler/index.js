@@ -2,14 +2,14 @@ import Base from '../js/CustomBase.js'
 
 class OP extends Base {
 
-    static KEY = ['↑←→↓', 'wasz', 'ijkm', 'yghb', 'rdfc']
+    static KEY = ['↑←→↓', 'WASZ', 'IJKM', 'YGHB', 'RDFC']
     static counter = 0
 
     // 私有属性
-    #rotate = new Event('rotate')
-    #right = new Event('right')
-    #left = new Event('left')
-    #down = new Event('down')
+    #eventRotate = new Event('rotate')
+    #eventRight = new Event('right')
+    #eventLeft = new Event('left')
+    #eventDown = new Event('down')
     #keys = ['', '', '', '']
 
     constructor() {
@@ -21,21 +21,21 @@ class OP extends Base {
                 window.addEventListener('keydown', (e) => {
                     // console.log(e.key)
                     switch (e.key) {
-                        case 'Up':
+                        case 'Up':    // IE/Edge
                         case 'ArrowUp':
-                            this.dispatchEvent(this.#rotate)
+                            this.#rotate()
                             break
-                        case 'Left':
+                        case 'Left':  // IE/Edge
                         case 'ArrowLeft':
-                            this.dispatchEvent(this.#left)
+                            this.#left()
                             break
-                        case 'Right':
+                        case 'Right':  // IE/Edge
                         case 'ArrowRight':
-                            this.dispatchEvent(this.#right)
+                            this.#right()
                             break
-                        case 'Down':
+                        case 'Down':  // IE/Edge
                         case 'ArrowDown':
-                            this.dispatchEvent(this.#down)
+                            this.#down()
                             break
                     }
                 })
@@ -44,16 +44,20 @@ class OP extends Base {
                     // console.log(e.key)
                     switch (e.key) {
                         case this.#keys[0]:
-                            this.dispatchEvent(this.#rotate)
+                        case this.#keys[0].toLowerCase():
+                            this.#rotate()
                             break
                         case this.#keys[1]:
-                            this.dispatchEvent(this.#left)
+                        case this.#keys[1].toLowerCase():
+                            this.#left()
                             break
                         case this.#keys[2]:
-                            this.dispatchEvent(this.#right)
+                        case this.#keys[2].toLowerCase():
+                            this.#right()
                             break
                         case this.#keys[3]:
-                            this.dispatchEvent(this.#down)
+                        case this.#keys[3].toLowerCase():
+                            this.#down()
                             break
                     }
                 })
@@ -79,17 +83,33 @@ class OP extends Base {
 
         // 事件
         btnRotate.addEventListener('click', () => {
-            this.dispatchEvent(this.#rotate)
+            this.#rotate()
         })
         btnRight.addEventListener('click', () => {
-            this.dispatchEvent(this.#right)
+            this.#right()
         })
         btnLeft.addEventListener('click', () => {
-            this.dispatchEvent(this.#left)
+            this.#left()
         })
         btnDown.addEventListener('click', () => {
-            this.dispatchEvent(this.#down)
+            this.#down()
         })
+    }
+
+    #rotate() {
+        this.dispatchEvent(this.#eventRotate)
+    }
+
+    #left() {
+        this.dispatchEvent(this.#eventLeft)
+    }
+
+    #right() {
+        this.dispatchEvent(this.#eventRight)
+    }
+
+    #down() {
+        this.dispatchEvent(this.#eventDown)
     }
 }
 

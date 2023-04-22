@@ -26,5 +26,4 @@
 button::after {
     content: attr(data-key);
     display: block;
-    text-transform: uppercase;
 }
