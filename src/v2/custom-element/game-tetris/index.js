@@ -57,6 +57,8 @@ customElements.define('game-tetris', class extends Base {
     }
 
     #addEventListener() {
+
+        // TODO. 状态图1
         this.#btnStart.addEventListener('click', () => {
             // 0 未开始-准备中，1-游戏中，2-暂停，3-继续，4-gameover
             switch (this.#status) {

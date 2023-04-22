@@ -2,22 +2,23 @@ import Base from '../js/CustomBase.js'
 
 class OP extends Base {
 
-    static KEY = ['↑←→↓', 'WASZ', 'IJKM', 'YGHB', 'RDFC']
-    static counter = 0
+    static #KEYS = ['↑←→↓', 'WASZ', 'IJKM', 'YGHB', 'RDFC']
+    static #counter = 0
 
     // 私有属性
-    #eventRotate = new Event('rotate')
+    #keys = ['', '', '', '']
+    #eventRotate = new Event('rotate')  // TODO. event 可以现 new 吗？
     #eventRight = new Event('right')
     #eventLeft = new Event('left')
     #eventDown = new Event('down')
-    #keys = ['', '', '', '']
 
     constructor() {
         super()
-        if (OP.counter < OP.KEY.length) {
-            this.#keys = OP.KEY[OP.counter]
 
-            if (OP.counter == 0) {
+        if (OP.#counter < OP.#KEYS.length) {
+            this.#keys = OP.#KEYS[OP.#counter]
+
+            if (OP.#counter == 0) {
                 window.addEventListener('keydown', (e) => {
                     // console.log(e.key)
                     switch (e.key) {
@@ -63,11 +64,13 @@ class OP extends Base {
                 })
             }
 
-            OP.counter++
+            OP.#counter++
         }
     }
 
     connectedCallback() {
+        if (!this.isConnected) return
+
         // shadow DOM
         let shadow = this.attachShadow({ mode: 'open' })
 

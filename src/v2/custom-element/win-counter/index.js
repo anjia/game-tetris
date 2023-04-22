@@ -13,6 +13,8 @@ customElements.define('win-counter', class extends Base {
     }
 
     connectedCallback() {
+        if (!this.isConnected) return
+
         // shadow root
         let shadow = this.attachShadow({ mode: 'open' })
         shadow.appendChild(Base.createLink('./custom-element/win-counter/index.css'))

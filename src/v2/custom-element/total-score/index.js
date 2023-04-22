@@ -7,6 +7,7 @@ customElements.define('total-score', class extends Base {
     static #MAX = 999999                      // 最大得分
 
     // 私有属性
+    #score;
     #vs;
     #diff;
     #domScore = null;
@@ -14,9 +15,6 @@ customElements.define('total-score', class extends Base {
 
     constructor() {
         super()
-
-        // 实例属性
-        this.score;
     }
 
     connectedCallback() {
@@ -48,6 +46,31 @@ customElements.define('total-score', class extends Base {
         this.reset()
     }
 
+    // TODO. 对象的实例属性，只读
+    // 1. getter, setter
+    // 2. freeze
+    // 3. writable
+    get score() {
+        return this.#score
+    }
+
+    get vs() {
+        return this.#vs
+    }
+
+    get diff() {
+        return this.#diff
+    }
+
+    set score(x) {
+        if (x > this.constructor.#MAX) {
+            x = this.constructor.#MAX
+        }
+        this.#score = x
+        this.#domScore.innerText = Base.padNumber(this.score, 6)
+        this.#renderDiff()
+    }
+
     // 就类似数据驱动
     set vs(x) {
         this.#vs = x
@@ -56,26 +79,16 @@ customElements.define('total-score', class extends Base {
 
     clear(lines) {
         const x = this.score + this.constructor.#SCORE[lines]
-        this.#setScore(x)
+        this.score = x
     }
 
     reset() {
+        this.vs = 0
         this.score = 0
-        this.#vs = 0
-        this.#setScore(0)
-    }
-
-    #setScore(x) {
-        if (x > this.constructor.#MAX) {
-            x = this.constructor.#MAX
-        }
-        this.score = x
-        this.#domScore.innerText = Base.padNumber(this.score, 6)
-        this.#renderDiff()
     }
 
     #renderDiff() {
-        const dist = this.score - this.#vs
+        const dist = this.score - this.vs
         if (dist === this.#diff) return
         if (dist >= 0) {
             this.#domDiff.className = 'diff'

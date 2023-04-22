@@ -62,6 +62,7 @@ customElements.define('grid-panel', class extends Base {
         this.#init()
     }
 
+    // TODO. 状态图2
     get #ispreparing() {
         return this.#status === 0
     }
