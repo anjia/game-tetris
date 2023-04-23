@@ -25,6 +25,7 @@ class Tetris extends Base {
     connectedCallback() {
         if (!this.isConnected) return
 
+        // TODO. 属性可修改，页面交互
         // 获取 HTML 属性
         this.#people = parseInt(this.getAttribute('people')) || 1
         const games = parseInt(this.getAttribute('games')) || 3

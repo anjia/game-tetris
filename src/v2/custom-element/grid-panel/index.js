@@ -12,7 +12,7 @@ class Panel extends Base {
     // 私有属性
     #rows = 20         // 行
     #columns = 10      // 列
-    #data = null       // 二维数组，20*10
+    #data = null       // 二维数组，20*10。TODO.改成类型数组（省空间）
     #container = null  // DOM
     #status;           // 状态
     #shape = null      // 当前形状

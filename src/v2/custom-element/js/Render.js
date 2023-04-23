@@ -38,6 +38,7 @@ class Render {
     }
 
     draw(points) {
+        // TODO. 带颜色
         for (let p of points) {
             if (p[0] >= 0) {
                 const i = p[0] * this.#columns + p[1]
