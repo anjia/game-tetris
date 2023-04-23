@@ -89,7 +89,7 @@ class Panel extends Base {
         switch (this.#status) {
             case Panel.#PREPARING:
                 this.#status = Panel.#PLAYING
-
+            case Panel.#PLAYING:
                 this.#shape = shape
                 this.#shape.reset()
                 this.#speed = speed
