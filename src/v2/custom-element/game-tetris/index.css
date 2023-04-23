@@ -24,6 +24,10 @@ button {
     content: '继续';
 }
 
+.start.gameover::before {
+    content: '再来一局';
+}
+
 .vs {
     display: flex;
     flex-direction: column;
