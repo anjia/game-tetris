@@ -1,7 +1,13 @@
 import Base from '../js/CustomBase.js'
 import Render from '../js/Render.js'
 
-customElements.define('grid-panel', class extends Base {
+class Panel extends Base {
+
+    // 状态
+    static #PREPARING = 0
+    static #PLAYING = 1
+    static #PAUSING = 2
+    static #GAMEOVER = 3
 
     // 私有属性
     #rows = 20         // 行
@@ -62,23 +68,6 @@ customElements.define('grid-panel', class extends Base {
         this.#init()
     }
 
-    // TODO. 状态图2
-    get #ispreparing() {
-        return this.#status === 0
-    }
-
-    get #isplaying() {
-        return this.#status === 1
-    }
-
-    get #ispausing() {
-        return this.#status === 2
-    }
-
-    get #isgameover() {
-        return this.#status === 3
-    }
-
     #init() {
         // grid data 全部填充 0
         for (let i = 0; i < this.#rows; i++) {
@@ -87,7 +76,7 @@ customElements.define('grid-panel', class extends Base {
             }
         }
         // 其它实例数据
-        this.#status = 0
+        this.#status = Panel.#PREPARING
     }
 
     reset() {
@@ -97,72 +86,64 @@ customElements.define('grid-panel', class extends Base {
     }
 
     start(shape, speed) {
-        if (this.#isgameover) return
-        if (this.#ispausing) {
-            this.#toFalling()
-        } else {
-            this.#shape = shape
-            this.#shape.reset()
-            this.#speed = speed
+        switch (this.#status) {
+            case Panel.#PREPARING:
+                this.#status = Panel.#PLAYING
 
-            // 若 shape 可以入场开始，则绘制+继续下落，否则 gameover
-            if (this.#shape.start(this.#render)) {
-                this.#shape.draw(this.#render)
-                this.#startTimer()
-            } else {
-                this.#gameover()
-            }
+                this.#shape = shape
+                this.#shape.reset()
+                this.#speed = speed
+
+                // 若 shape 可以入场开始，则绘制+继续下落，否则 gameover
+                if (this.#shape.start(this.#render)) {
+                    this.#shape.draw(this.#render)
+                    this.#startTimer()
+                } else {
+                    this.#gameover()
+                }
+
+                break
+            case Panel.#PAUSING:
+                this.continue()
+                break
         }
-        this.#status = 1
     }
 
     continue() {
-        if (this.#ispausing) {
-            this.#status = 1
+        if (this.#status === Panel.#PAUSING) {
+            this.#status = Panel.#PLAYING
             this.#toFalling()
         }
     }
 
     pause() {
-        if (this.#isplaying) {
-            this.#status = 2
+        if (this.#status === Panel.#PLAYING) {
+            this.#status = Panel.#PAUSING
             this.#clearTimer()
         }
     }
 
     left() {
-        if (!this.#ispreparing) {
+        if (this.#status === Panel.#PLAYING) {
             this.#shape.left(this.#render)
-            if (this.#ispausing) {
-                this.#toFalling()
-            }
         }
     }
 
     right() {
-        if (!this.#ispreparing) {
+        if (this.#status === Panel.#PLAYING) {
             this.#shape.right(this.#render)
-            if (this.#ispausing) {
-                this.#toFalling()
-            }
         }
     }
 
     down() {
-        if (!this.#ispreparing) {
+        if (this.#status === Panel.#PLAYING) {
             this.#shape.down(this.#render)
-            if (this.#ispausing) {
-                this.#toFalling()
-            }
         }
     }
 
     rotate() {
-        if (!this.#ispreparing) {
+        if (this.#status === Panel.#PLAYING) {
             this.#shape.rotate(this.#render)
-            if (this.#ispausing) {
-                this.#toFalling()
-            }
         }
     }
 
@@ -217,11 +198,13 @@ customElements.define('grid-panel', class extends Base {
     }
 
     #gameover() {
-        this.#status = 3
+        this.#status = Panel.#GAMEOVER
         this.dispatchEvent(this.#eventGameover)  // 通知父容器 gameover
     }
 
     #next() {
         this.dispatchEvent(this.#eventNext)  // 通知父容器开始下一个
     }
-})
+}
+
+customElements.define('grid-panel', Panel)
