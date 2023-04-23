@@ -33,6 +33,7 @@ customElements.define('win-counter', class extends Base {
 
     win() {
         this.#setWin(this.#win + 1)
+        return this.#win === this.#max
     }
 
     #setWin(x) {

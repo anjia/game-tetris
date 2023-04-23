@@ -15,6 +15,9 @@ customElements.define('total-score', class extends Base {
 
     constructor() {
         super()
+
+        // 实例属性
+        this.key;
     }
 
     connectedCallback() {
@@ -22,6 +25,7 @@ customElements.define('total-score', class extends Base {
 
         // 获取属性参数
         const people = parseInt(this.getAttribute('people')) || 1
+        this.key = this.getAttribute('key')
 
         // 构造 shadow DOM
         let shadow = this.attachShadow({ mode: 'open' })

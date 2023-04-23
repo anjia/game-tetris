@@ -6,10 +6,16 @@ class Score {
     static people = 1;     // 可以被修改
     static #list = []
 
-    static create() {
-        const element = Base.create('total-score', { 'people': this.people })
+    static create(key) {
+        const element = Base.create('total-score', { 'people': this.people, 'key': key })
         this.#list.push(element)
         return element
+    }
+
+    static get winner() {
+        const score = this.#list[0].score
+        const key = this.#list[0].key
+        return score > 0 ? key : -1
     }
 
     static clear(element, lines) {
@@ -17,19 +23,18 @@ class Score {
 
         // 更新其它 score 的 vs 值
         if (this.people > 1) {
-            // 原地排序，从小到大
+            // 原地排序，从大到小
             this.#list.sort((a, b) => {
                 const dist = a.score - b.score
-                if (dist > 0) return 1
-                else if (dist < 0) return -1
+                if (dist > 0) return -1
+                else if (dist < 0) return 1
                 return 0
             })
 
             // 最大的和次大的比，其余和最大值比
-            const len = this.#list.length
-            const max = this.#list[len - 1].score
-            this.#list[len - 1].vs = this.#list[len - 2].score
-            for (let i = 0; i < len - 1; i++) {
+            const max = this.#list[0].score
+            this.#list[0].vs = this.#list[1].score
+            for (let i = 1; i < this.#list.length; i++) {
                 this.#list[i].vs = max
             }
         }

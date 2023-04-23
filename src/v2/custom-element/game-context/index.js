@@ -16,6 +16,10 @@ class GameContext extends Base {
         ScoreController.reset()  // 最后统一清空分数
     }
 
+    static get winner() {
+        return ScoreController.winner
+    }
+
     // 私有属性
     #shapeCounter = 0    // shape 的消费计数
     #domLines = null
@@ -34,13 +38,14 @@ class GameContext extends Base {
         // 获取属性
         ScoreController.people = parseInt(this.getAttribute('people')) || 1
         const games = this.getAttribute('games')
+        const key = this.getAttribute('key')
 
         // shadow DOM
         const shadow = this.attachShadow({ mode: 'open' })
         shadow.appendChild(Base.createLink('./custom-element/game-context/index.css'))
 
         // html
-        this.domScore = ScoreController.create()  // score 新增一个
+        this.domScore = ScoreController.create(key)  // score 新增一个
         shadow.appendChild(Base.create('div', { 'class': 'box' }, [this.domScore]))
 
         this.#domLines = Base.create('clear-lines', { 'class': 'flex-item box' })
@@ -105,9 +110,11 @@ class GameContext extends Base {
         this.#domPanel.pause()
     }
 
-    reset() {
+    reset(flag) {
         this.#domLines.reset()
-        this.#domWin.reset()
+        if (flag) {
+            this.#domWin.reset()
+        }
     }
 
     resetPanel() {
@@ -117,7 +124,7 @@ class GameContext extends Base {
     }
 
     win() {
-        this.#domWin.win()
+        return this.#domWin.win()
     }
 
     #next() {
