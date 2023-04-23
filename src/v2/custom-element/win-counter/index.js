@@ -7,6 +7,7 @@ customElements.define('win-counter', class extends Base {
     #max = 0;
     #win = 0;
     #container = null
+    #tip;
 
     constructor() {
         super()
@@ -23,17 +24,30 @@ customElements.define('win-counter', class extends Base {
         this.#container = Base.create('ul')
         shadow.appendChild(this.#container)
 
+        this.#tip = Base.create('div', { class: 'tip' })
+        shadow.appendChild(this.#tip)
+
         // 初始化（通过数据改UI）, max=3
         this.#setMax(parseInt(this.getAttribute('games')) || 3)
     }
 
-    reset() {
-        this.#setWin(0)
+    reset(flag) {
+        this.#tip.className = 'tip'
+        if (flag) {
+            this.#setWin(0)
+        }
     }
 
     win() {
         this.#setWin(this.#win + 1)
-        return this.#win === this.#max
+        let isfinally = false
+        if (this.#win === this.#max) {
+            isfinally = true
+            this.#tip.className = 'tip finally'
+        } else {
+            this.#tip.className = 'tip round'
+        }
+        return isfinally
     }
 
     #setWin(x) {

@@ -1,3 +1,7 @@
+:host {
+    position: relative;
+}
+
 ul {
     display: flex;
     justify-content: center;
@@ -17,4 +21,20 @@ ul>li {
 
 ul>li.s {
     opacity: 1;
+}
+
+.tip {
+    position: absolute;
+    color: red;
+    font-size: small;
+    bottom: -5px;
+    transform: translateY(100%);
+}
+
+.tip.finally::before {
+    content: '恭喜，获得最终胜利！！！';
+}
+
+.tip.round::before {
+    content: '恭喜，获得本轮比赛的胜利！';
 }

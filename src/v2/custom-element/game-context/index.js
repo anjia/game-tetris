@@ -112,9 +112,7 @@ class GameContext extends Base {
 
     reset(flag) {
         this.#domLines.reset()
-        if (flag) {
-            this.#domWin.reset()
-        }
+        this.#domWin.reset(flag)
     }
 
     resetPanel() {
