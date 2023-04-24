@@ -7,7 +7,7 @@
     margin-bottom: var(--gap);
     text-align: center;
     padding: var(--gap) 0;
-    border-radius: 2px;
+    border-radius: 4px;
 }
 
 .flex {

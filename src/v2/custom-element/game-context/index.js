@@ -105,6 +105,12 @@ class GameContext extends Base {
         })
     }
 
+    set games(x) {
+        if (this.#people > 1) {
+            this.#domWin.max = x
+        }
+    }
+
     start() {
         this.#domPanel.start(this.#domNext.shape, this.#domLines.speed)
     }
@@ -122,6 +128,7 @@ class GameContext extends Base {
         if (this.#people > 1) {
             this.#domWin.reset(flag)
         }
+        this.#btnHandler.reset()
     }
 
     resetPanel() {

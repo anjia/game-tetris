@@ -28,7 +28,7 @@ customElements.define('win-counter', class extends Base {
         shadow.appendChild(this.#tip)
 
         // 初始化（通过数据改UI）, max=3
-        this.#setMax(parseInt(this.getAttribute('games')) || 3)
+        this.max = parseInt(this.getAttribute('games')) || 3
     }
 
     reset(flag) {
@@ -61,7 +61,7 @@ customElements.define('win-counter', class extends Base {
         }
     }
 
-    #setMax(x) {
+    set max(x) {
         if (x === this.#max || x < this.#min) return
         if (x > this.#max) {
             let innerHTML = ''

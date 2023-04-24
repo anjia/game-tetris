@@ -99,6 +99,10 @@ class OP extends Base {
         })
     }
 
+    reset() {
+        OP.#counter = 0
+    }
+
     #rotate() {
         this.dispatchEvent(this.#eventRotate)
     }

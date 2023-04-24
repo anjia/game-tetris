@@ -4,6 +4,10 @@ import Base from '../js/CustomBase.js'
 
 class Tetris extends Base {
 
+    static get observedAttributes() {
+        return ['people', 'games']
+    }
+
     // 状态
     static #PREPARING = 0
     static #PLAYING = 1
@@ -13,61 +17,94 @@ class Tetris extends Base {
 
     // 私有变量
     #people;
-    #context;    // <game-context>[]
+    #context = [];    // <game-context>[]
     #status = Tetris.#PREPARING;
     #overCounter = 0
+    #games;
+
+    #domList;
     #btnStart;
     #btnReset;
+    #btnWrap;
 
     constructor() {
         super()
+
+        const shadow = this.attachShadow({ mode: 'open' })
+        shadow.appendChild(Base.createLink('./custom-element/game-tetris/index.css'))
+
+        const container = Base.create('div')
+        this.#domList = Base.create('div', { 'class': 'wrap' })
+        container.appendChild(Base.create('h1', { 'text': '俄罗斯方块' }))
+        container.appendChild(this.#domList)
+        shadow.appendChild(container)
+
+        this.#btnStart = Base.create('button', { 'class': 'start' })
+        this.#btnReset = Base.create('button', { 'text': '重置' })
+        this.#btnWrap = Base.create('div', {}, [this.#btnStart, this.#btnReset])
+
+        // 监听事件
+        this.#addEventListener()
     }
 
     connectedCallback() {
         if (!this.isConnected) return
 
-        // TODO. 属性可修改，页面交互
-        // 获取 HTML 属性
-        this.#people = parseInt(this.getAttribute('people')) || 1
-        const games = parseInt(this.getAttribute('games')) || 3
+        this.people = this.getAttribute('people')
+        this.games = this.getAttribute('games')
+    }
 
-        // 构造 DOM
+    attributeChangedCallback(name, oldValue, newValue) {
+        // $0.setAttribute('people', '2') 即便值相等，回调也会执行
+        // console.log(`<game-tetris> attributeChangedCallback() name=${name}, oldValue=${oldValue}, newValue=${newValue}`)
+        switch (name) {
+            case 'people':
+                this.people = newValue
+                break
+            case 'games':
+                this.games = newValue
+                break
+        }
+    }
+
+    set people(x) {
+        x = parseInt(x) || 1
+        if (x === this.#people) return
+        this.#people = x
+        this.reset()
+
         this.#context = []
         for (let i = 0; i < this.#people; i++) {
-            this.#context.push(Base.create('game-context', { 'people': this.#people, 'games': games, 'key': i }))
+            this.#context.push(Base.create('game-context', { 'people': this.#people, 'games': this.#games, 'key': i }))
         }
-        this.#btnStart = Base.create('button', { 'class': 'start' })
-        this.#btnReset = Base.create('button', { 'text': '重置' })
 
-        // shadow DOM
-        let shadow = this.attachShadow({ mode: 'open' })
-        shadow.appendChild(Base.createLink('./custom-element/game-tetris/index.css'))
-
-        const container = Base.create('div', { 'class': (this.#people > 1 ? 'vs' : 'single') })
-        const wrap = Base.create('div', { 'class': 'wrap' })
-        let op = Base.create('div', {}, [this.#btnStart, this.#btnReset])
+        this.#domList.innerHTML = ''
         if (this.#people === 1) {
-            wrap.appendChild(this.#context[0])
-            wrap.appendChild(Base.create('div', { 'class': 'gap' }, [op]))
+            this.#domList.parentElement.className = 'single'
+            this.#domList.appendChild(this.#context[0])
+            this.#domList.appendChild(Base.create('div', { 'class': 'gap' }, [this.#btnWrap]))
         } else {
-            wrap.appendChild(this.#context[0])
+            this.#domList.parentElement.className = 'vs'
+            this.#domList.appendChild(this.#context[0])
             for (let i = 1; i < this.#people; i++) {
                 let text = Base.create('div', { 'text': 'VS' })
                 let children = [text]
                 if (i === 1) {
-                    children.push(op)
+                    children.push(this.#btnWrap)
                 }
-                wrap.appendChild(Base.create('div', { 'class': 'gap' }, children))
-                wrap.appendChild(this.#context[i])
+                this.#domList.appendChild(Base.create('div', { 'class': 'gap' }, children))
+                this.#domList.appendChild(this.#context[i])
             }
         }
+    }
 
-        container.appendChild(Base.create('h1', { 'text': '俄罗斯方块' }))
-        container.appendChild(wrap)
-        shadow.appendChild(container)
-
-        // 监听事件
-        this.#addEventListener()
+    set games(x) {
+        x = parseInt(x) || 3
+        if (x === this.#games) return
+        this.#games = x
+        for (let c of this.#context) {
+            c.games = x
+        }
     }
 
     #addEventListener() {
@@ -93,8 +130,7 @@ class Tetris extends Base {
         })
 
         this.#btnReset.addEventListener('click', () => {
-            Tetris.#PK_OVER = false
-            this.#reset()
+            this.reset()
         })
 
         this.addEventListener('gameover', () => {
@@ -127,6 +163,11 @@ class Tetris extends Base {
         for (let c of this.#context) {
             c.continue()
         }
+    }
+
+    reset() {
+        Tetris.#PK_OVER = false
+        this.#reset()
     }
 
     #reset() {
