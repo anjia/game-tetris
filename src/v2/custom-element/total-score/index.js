@@ -12,6 +12,7 @@ customElements.define('total-score', class extends Base {
     #diff;
     #domScore = null;
     #domDiff = null;
+    #people;
 
     constructor() {
         super()
@@ -24,7 +25,7 @@ customElements.define('total-score', class extends Base {
         if (!this.isConnected) return
 
         // 获取属性参数
-        const people = parseInt(this.getAttribute('people')) || 1
+        this.#people = parseInt(this.getAttribute('people')) || 1
         this.key = this.getAttribute('key')
 
         // 构造 shadow DOM
@@ -32,18 +33,17 @@ customElements.define('total-score', class extends Base {
         shadow.appendChild(Base.createLink('./custom-element/total-score/index.css'))
 
         // html
-        const text = document.createTextNode('SCORE')
-        shadow.appendChild(text)
-        if (people > 1) {
-            this.#domScore = Base.create('div')
+        this.#domScore = Base.create('div')
+        if (this.#people > 1) {
+            const text = document.createTextNode('SCORE')
             this.#domDiff = Base.create('div')
+            shadow.appendChild(text)
             shadow.appendChild(this.#domScore)
             shadow.appendChild(this.#domDiff)
         } else {
             const max = Base.create('div', { 'text': '最高分 000000' })
-            const total = Base.create('div', { 'text': '当前分 000000' })
             shadow.appendChild(max)
-            shadow.appendChild(total)
+            shadow.appendChild(this.#domScore)
         }
 
         // 重置（初始化）数据
@@ -92,6 +92,7 @@ customElements.define('total-score', class extends Base {
     }
 
     #renderDiff() {
+        if (this.#people === 1) return
         const dist = this.score - this.vs
         if (dist === this.#diff) return
         if (dist >= 0) {

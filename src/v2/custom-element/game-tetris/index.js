@@ -43,22 +43,28 @@ class Tetris extends Base {
         let shadow = this.attachShadow({ mode: 'open' })
         shadow.appendChild(Base.createLink('./custom-element/game-tetris/index.css'))
 
+        const container = Base.create('div', { 'class': (this.#people > 1 ? 'vs' : 'single') })
+        const wrap = Base.create('div', { 'class': 'wrap' })
         let op = Base.create('div', {}, [this.#btnStart, this.#btnReset])
         if (this.#people === 1) {
-            shadow.appendChild(this.#context[0])
-            shadow.appendChild(op)
+            wrap.appendChild(this.#context[0])
+            wrap.appendChild(Base.create('div', { 'class': 'gap' }, [op]))
         } else {
-            shadow.appendChild(this.#context[0])
+            wrap.appendChild(this.#context[0])
             for (let i = 1; i < this.#people; i++) {
                 let text = Base.create('div', { 'text': 'VS' })
                 let children = [text]
                 if (i === 1) {
                     children.push(op)
                 }
-                shadow.appendChild(Base.create('div', { 'class': 'vs' }, children))
-                shadow.appendChild(this.#context[i])
+                wrap.appendChild(Base.create('div', { 'class': 'gap' }, children))
+                wrap.appendChild(this.#context[i])
             }
         }
+
+        container.appendChild(Base.create('h1', { 'text': '俄罗斯方块' }))
+        container.appendChild(wrap)
+        shadow.appendChild(container)
 
         // 监听事件
         this.#addEventListener()

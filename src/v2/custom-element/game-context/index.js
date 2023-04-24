@@ -27,39 +27,46 @@ class GameContext extends Base {
     #domPanel = null
     #domWin = null
     #btnHandler = null
+    #people;
 
     constructor() {
         super()
+
+        // 实例属性
+        this.domScore;
     }
 
     connectedCallback() {
         if (!this.isConnected) return
 
         // 获取属性
-        ScoreController.people = parseInt(this.getAttribute('people')) || 1
+        this.#people = parseInt(this.getAttribute('people')) || 1
         const games = this.getAttribute('games')
         const key = this.getAttribute('key')
+        ScoreController.people = this.#people
 
         // shadow DOM
         const shadow = this.attachShadow({ mode: 'open' })
         shadow.appendChild(Base.createLink('./custom-element/game-context/index.css'))
 
         // html
+        const container = Base.create('div', { 'class': 'container' })
         this.domScore = ScoreController.create(key)  // score 新增一个
-        shadow.appendChild(Base.create('div', { 'class': 'box' }, [this.domScore]))
-
         this.#domLines = Base.create('clear-lines', { 'class': 'flex-item box' })
         this.#domNext = Base.create('next-shape', { 'class': 'flex-item box' })
-        shadow.appendChild(Base.create('div', { 'class': 'flex' }, [this.#domLines, this.#domNext]))
-
         this.#domPanel = Base.create('grid-panel')
-        shadow.appendChild(Base.create('div', { 'class': 'box' }, [this.#domPanel]))
-
-        this.#domWin = Base.create('win-counter', { 'games': games })
-        shadow.appendChild(Base.create('div', { 'class': 'box' }, [this.#domWin]))
-
         this.#btnHandler = Base.create('op-handler')
-        shadow.appendChild(this.#btnHandler)
+
+        container.appendChild(Base.create('div', { 'class': 'box' }, [this.domScore]))
+        container.appendChild(Base.create('div', { 'class': 'flex' }, [this.#domLines, this.#domNext]))
+        container.appendChild(Base.create('div', { 'class': 'box' }, [this.#domPanel]))
+
+        if (this.#people > 1) {
+            this.#domWin = Base.create('win-counter', { 'games': games })
+            container.appendChild(Base.create('div', { 'class': 'box' }, [this.#domWin]))
+        }
+        container.appendChild(this.#btnHandler)
+        shadow.appendChild(container)
 
         // 监听子元素的事件
         this.#addEventListener()
@@ -112,7 +119,9 @@ class GameContext extends Base {
 
     reset(flag) {
         this.#domLines.reset()
-        this.#domWin.reset(flag)
+        if (this.#people > 1) {
+            this.#domWin.reset(flag)
+        }
     }
 
     resetPanel() {
@@ -122,7 +131,9 @@ class GameContext extends Base {
     }
 
     win() {
-        return this.#domWin.win()
+        if (this.#people > 1) {
+            return this.#domWin.win()
+        }
     }
 
     #next() {
