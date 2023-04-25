@@ -20,12 +20,15 @@ class Tetris extends Base {
     #context = [];    // <game-context>[]
     #status = Tetris.#PREPARING;
     #overCounter = 0
-    #games;
+    #games = 3;
 
     #domList;
     #btnStart;
     #btnReset;
     #btnWrap;
+
+    #startKey = 'Enter'
+    #resetKey = 'Escape'
 
     constructor() {
         super()
@@ -39,8 +42,8 @@ class Tetris extends Base {
         container.appendChild(this.#domList)
         shadow.appendChild(container)
 
-        this.#btnStart = Base.create('button', { 'class': 'start' })
-        this.#btnReset = Base.create('button', { 'text': '重置 Esc' })
+        this.#btnStart = Base.create('button', { 'class': 'start', 'data-key': this.#startKey })
+        this.#btnReset = Base.create('button', { 'text': '重置', 'data-key': this.#resetKey })
         this.#btnWrap = Base.create('div', {}, [this.#btnStart, this.#btnReset])
 
         // 监听事件
@@ -71,7 +74,7 @@ class Tetris extends Base {
         x = parseInt(x) || 1
         if (x === this.#people) return
         this.#people = x
-        this.reset()
+        this.#btnReset.click()
 
         this.#context = []
         for (let i = 0; i < this.#people; i++) {
@@ -130,7 +133,8 @@ class Tetris extends Base {
         })
 
         this.#btnReset.addEventListener('click', () => {
-            this.reset()
+            Tetris.#PK_OVER = false
+            this.#reset()
         })
 
         this.addEventListener('gameover', () => {
@@ -148,10 +152,10 @@ class Tetris extends Base {
 
         window.addEventListener('keydown', (e) => {
             switch (e.key) {
-                case 'Enter':
+                case this.#startKey:
                     this.#btnStart.click()
                     break
-                case 'Escape':
+                case this.#resetKey:
                     this.#btnReset.click()
                     break
             }
@@ -174,11 +178,6 @@ class Tetris extends Base {
         for (let c of this.#context) {
             c.continue()
         }
-    }
-
-    reset() {
-        Tetris.#PK_OVER = false
-        this.#reset()
     }
 
     #reset() {
