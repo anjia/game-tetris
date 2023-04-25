@@ -40,7 +40,7 @@ class Tetris extends Base {
         shadow.appendChild(container)
 
         this.#btnStart = Base.create('button', { 'class': 'start' })
-        this.#btnReset = Base.create('button', { 'text': '重置' })
+        this.#btnReset = Base.create('button', { 'text': '重置 Esc' })
         this.#btnWrap = Base.create('div', {}, [this.#btnStart, this.#btnReset])
 
         // 监听事件
@@ -143,6 +143,17 @@ class Tetris extends Base {
                 if (key >= 0 && this.#context[key].win()) {
                     Tetris.#PK_OVER = true
                 }
+            }
+        })
+
+        window.addEventListener('keydown', (e) => {
+            switch (e.key) {
+                case 'Enter':
+                    this.#btnStart.click()
+                    break
+                case 'Escape':
+                    this.#btnReset.click()
+                    break
             }
         })
     }

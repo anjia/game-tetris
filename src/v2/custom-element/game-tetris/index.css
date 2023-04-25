@@ -15,6 +15,10 @@ button {
     min-width: 70px;
 }
 
+.start::after {
+    content: ' Enter'
+}
+
 .start::before {
     content: '开始';
 }
