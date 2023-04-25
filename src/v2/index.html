@@ -25,13 +25,23 @@
             font-family: Courier, monospace;
         }
 
-        .op {
+        /* 设置区 */
+        #setting {
+            display: flex;
+            justify-content: center;
+            align-items: center;
             margin: 1em 0 2em;
-            text-align: center;
+            gap: 10px;
         }
 
-        #people {
-            width: 35px;
+        #options {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        #options.disabled {
+            color: gray;
         }
     </style>
 
@@ -39,12 +49,21 @@
 </head>
 
 <body>
-    <main id="main">
-        <div class="op">
+    <header id="setting">
+        <div>
             <input type="radio" name="mode" id="single" value="single" checked><label for="single">单人模式</label>
-            <input type="radio" name="mode" id="vs" value="vs"><label for="vs">对战模式</label> <input type="number"
-                value="3" name="number" min="2" max="10" id="people" disabled> 人
+            <input type="radio" name="mode" id="vs" value="vs"><label for="vs">对战模式</label>
         </div>
+        <div id="options" class="disabled">
+            <div><input type="number" value="3" name="number" min="2" max="10" id="people" disabled>人</div>
+            <div>
+                <input type="radio" name="games" value="3" id="games3" checked disabled> <label
+                    for="games3">三局两胜</label><br />
+                <input type="radio" name="games" value="5" id="games5" disabled> <label for="games5">五局三胜</label>
+            </div>
+        </div>
+    </header>
+    <main>
         <game-tetris id="tetris"></game-tetris>
     </main>
     <script src="./index.js"></script>
