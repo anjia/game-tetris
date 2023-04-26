@@ -40,13 +40,10 @@ class Render {
     }
 
     draw(points, type, level) {
-        // TODO. 带类型（空心or实心）
-        // console.log(type, level)
-
         for (let p of points) {
             if (p[0] >= 0) {
                 const i = p[0] * this.#columns + p[1]
-                this.#renderCell(i, 'draw', level)
+                this.#renderCell(i, 'draw', type, level)
             }
         }
     }
@@ -125,25 +122,28 @@ class Render {
         for (let p of points) {
             if (p[0] >= 0) {
                 const i = p[0] * this.#columns + p[1]
-                this.#renderCell(i, mode, level)
+                this.#renderCell(i, mode, type, level)
             }
         }
     }
 
-    #renderCell(i, mode, level = '') {
+    #renderCell(i, mode, type, level) {
         const obj = this.#container.children[i]
         switch (mode) {
             case 'dark':
                 CSSOM.setClass(obj, '')
                 break
             case 'light':
-                CSSOM.setClass(obj, 'light')
+                CSSOM.setClass(obj, 's')
                 break
             case 'blink':
                 CSSOM.addClass(obj, 'blink')
                 break;
             case 'draw':
-                CSSOM.addClass(obj, 'light')
+                CSSOM.addClass(obj, 's')
+                if (type) {
+                    CSSOM.addClass(obj, type)
+                }
                 if (level) {
                     CSSOM.addClass(obj, 'l' + level)
                 }

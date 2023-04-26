@@ -51,7 +51,7 @@ customElements.define('next-shape', class extends Base {
                     if (matrix[i][j] === 0) {
                         this.#domCells[start + j].className = ''
                     } else {
-                        this.#domCells[start + j].className = 's'
+                        this.#domCells[start + j].className = 's' + (this.shape.type ? (' ' + this.shape.type) : '')
                     }
                 }
             }
