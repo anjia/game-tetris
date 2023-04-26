@@ -10,12 +10,6 @@
     opacity: 0.1;
 }
 
-.shape-O .O,
-.shape-I .I,
-.shape-T .T,
-.shape-J .J,
-.shape-L .L,
-.shape-S .S,
-.shape-Z .Z {
+.grid>span.s {
     opacity: 1;
 }

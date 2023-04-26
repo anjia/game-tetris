@@ -40,23 +40,28 @@
     color: #F44336;
 } */
 
-.l2 {
+.light.l2,
+.l2 .s {
     color: #009688;
 }
 
-.l3 {
+.light.l3,
+.l3 .s {
     color: #3F51B5;
 }
 
-.l4 {
+.light.l4,
+.l4 .s {
     color: #FF9800;
 }
 
-.l5 {
+.light.l5,
+.l5 .s {
     color: #9C27B0;
 }
 
-.l6 {
+.light.l6,
+.l6 .s {
     color: #F44336;
 }
 
