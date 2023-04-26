@@ -7,8 +7,8 @@ h1 {
 button {
     position: relative;
     min-width: 70px;
-    background-color: var(--color);
-    color: var(--bg);
+    background-color: var(--bg);
+    color: var(--color);
     border-radius: 6px;
     margin: 3em 5px 0;
 }

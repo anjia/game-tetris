@@ -17,8 +17,8 @@
 }
 
 .area>button {
-    background-color: var(--color);
-    color: var(--bg);
+    background-color: var(--bg);
+    color: var(--color);
     border-radius: 50%;
     transform: rotate(-45deg);
 }
