@@ -52,7 +52,7 @@ class GameContext extends Base {
         // html
         const container = Base.create('div', { 'class': 'container' })
         this.domScore = ScoreController.create(key)  // score 新增一个
-        this.#domLines = Base.create('clear-lines', { 'class': 'flex-item box' })
+        this.#domLines = Base.create('clear-lines', { 'class': 'flex-item box', 'people': this.#people })
         this.#domNext = Base.create('next-shape', { 'class': 'flex-item box' })
         this.#domPanel = Base.create('grid-panel')
         this.#btnHandler = Base.create('op-handler')
@@ -112,7 +112,7 @@ class GameContext extends Base {
     }
 
     start() {
-        this.#domPanel.start(this.#domNext.shape, this.#domLines.speed)
+        this.#domPanel.start(this.#domNext.shape, this.#domLines.speed, this.#domLines.level)
     }
 
     continue() {

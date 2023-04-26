@@ -6,8 +6,8 @@ customElements.define('next-shape', class extends Base {
     // 私有属性
     #container = null  // DOM
     #list = []         // 形状对象列表
-    #cur = 0;          // 形状的当前下标
-    #innerHTML;
+    #cur = 0           // 形状的当前下标
+    #domCells = []
 
     constructor() {
         super()
@@ -28,9 +28,8 @@ customElements.define('next-shape', class extends Base {
                 }
             }
         }
-        this.#innerHTML = ''
         for (let item of arr) {
-            this.#innerHTML += '<span class="' + item.join(' ') + '"></span>'
+            this.#domCells.push(Base.create('span', { 'class': item.join(' ') }))
         }
     }
 
@@ -41,8 +40,7 @@ customElements.define('next-shape', class extends Base {
         let shadow = this.attachShadow({ mode: 'open' })
         shadow.appendChild(Base.createLink('./custom-element/next-shape/index.css'))
 
-        this.#container = Base.create('section', { 'class': 'grid' })
-        this.#container.innerHTML = this.#innerHTML
+        this.#container = Base.create('section', { 'class': 'grid' }, this.#domCells)
         shadow.appendChild(this.#container)
     }
 
@@ -58,7 +56,24 @@ customElements.define('next-shape', class extends Base {
     set next(x) {
         if (x !== this.#cur) {
             this.#cur = x
-            this.#container.className = 'grid shape-' + this.#list[this.#cur].constructor.name
+            this.#container.className = 'grid shape-' + this.shape.constructor.name
         }
+    }
+
+    set level(x) {
+        const shape = this.shape
+        // const name = shape.constructor.name
+        // this.#domCells.forEach(cell => {
+        //     let arr = []
+        //     cell.classList.forEach(item => {
+        //         if (item.indexOf('l') === -1) {
+        //             arr.push(item)
+        //         }
+        //         if (item === name) {
+        //             arr.push('l' + level)
+        //         }
+        //     })
+        //     cell.className = arr.join(' ')
+        // })
     }
 })

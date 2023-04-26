@@ -85,13 +85,14 @@ class Panel extends Base {
         this.#init()
     }
 
-    start(shape, speed) {
+    start(shape, speed, level) {
         switch (this.#status) {
             case Panel.#PREPARING:
                 this.#status = Panel.#PLAYING
             case Panel.#PLAYING:
                 this.#shape = shape
                 this.#shape.reset()
+                this.#shape.level = level
                 this.#speed = speed
 
                 // 若 shape 可以入场开始，则绘制+继续下落，否则 gameover

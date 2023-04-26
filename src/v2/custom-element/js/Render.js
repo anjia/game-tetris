@@ -1,3 +1,5 @@
+import CSSOM from './CSSOM.js'
+
 class Render {
 
     // 私有变量
@@ -17,7 +19,7 @@ class Render {
 
     reset() {
         this.#highest = this.#rows - 1
-        this.#startResetScreen(this.#rows - 1, -1, 1)
+        this.#startResetScreen(this.#rows - 1, -1, 'light')
     }
 
     #startResetScreen(row, dy, mode) {
@@ -30,19 +32,21 @@ class Render {
         setTimeout(() => {
             let nextRow = row + dy
             if (dy === -1 && nextRow < 0) {
-                this.#startResetScreen(0, 1, 0)
+                this.#startResetScreen(0, 1, 'dark')
             } else {
                 this.#startResetScreen(nextRow, dy, mode)
             }
         }, 30)
     }
 
-    draw(points) {
-        // TODO. 带颜色
+    draw(points, type, level) {
+        // TODO. 带类型（空心or实心）
+        // console.log(type, level)
+
         for (let p of points) {
             if (p[0] >= 0) {
                 const i = p[0] * this.#columns + p[1]
-                this.#renderCell(i, 1)
+                this.#renderCell(i, 'draw', level)
             }
         }
     }
@@ -83,31 +87,29 @@ class Render {
     }
 
     clearFullRows(fullRows) {
-        const from = this.#highest
-        const to = fullRows[fullRows.length - 1]
-
-        // 清除数据
+        // 清除数据、更新UI
         for (let row of fullRows) {
             for (let i = row; i >= this.#highest; i--) {
                 const srcI = i - 1
+                const srcStart = srcI * this.#columns
+                const toStart = i * this.#columns
                 for (let j = 0; j < this.#columns; j++) {
-                    this.#data[i][j] = ((srcI >= 0 && srcI >= this.#highest) ? this.#data[srcI][j] : 0)
+                    if (srcI >= 0 && srcI >= this.#highest) {
+                        this.#data[i][j] = this.#data[srcI][j]
+                        this.#container.children[toStart + j].className = this.#container.children[srcStart + j].className
+                    } else {
+                        this.#data[i][j] = 0
+                        this.#container.children[toStart + j].className = ''
+                    }
                 }
             }
             this.#highest++
-        }
-        // 更新 UI
-        for (let i = from; i <= to; i++) {
-            const start = i * this.#columns
-            for (let j = 0; j < this.#columns; j++) {
-                this.#renderCell(start + j, this.#data[i][j])
-            }
         }
     }
 
     blinkRows(fullRows) {
         for (let row of fullRows) {
-            this.#renderRow(row, 2)
+            this.#renderRow(row, 'blink')
         }
     }
 
@@ -118,19 +120,35 @@ class Render {
         }
     }
 
-    renderPoints(points, mode) {
+    renderPoints(points, mode, type, level) {
         if (!points.length) return
         for (let p of points) {
             if (p[0] >= 0) {
                 const i = p[0] * this.#columns + p[1]
-                this.#renderCell(i, mode)
+                this.#renderCell(i, mode, level)
             }
         }
     }
 
-    #renderCell(i, mode) {
-        const flag = ['', 'light', 'blink']
-        this.#container.children[i].className = flag[mode]
+    #renderCell(i, mode, level = '') {
+        const obj = this.#container.children[i]
+        switch (mode) {
+            case 'dark':
+                CSSOM.setClass(obj, '')
+                break
+            case 'light':
+                CSSOM.setClass(obj, 'light')
+                break
+            case 'blink':
+                CSSOM.addClass(obj, 'blink')
+                break;
+            case 'draw':
+                CSSOM.addClass(obj, 'light')
+                if (level) {
+                    CSSOM.addClass(obj, 'l' + level)
+                }
+                break
+        }
     }
 
     isFilled(i, j) {

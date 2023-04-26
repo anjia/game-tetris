@@ -35,3 +35,34 @@
         opacity: 1;
     }
 }
+
+/* .l1 {
+    color: #F44336;
+} */
+
+.l2 {
+    color: #009688;
+}
+
+.l3 {
+    color: #3F51B5;
+}
+
+.l4 {
+    color: #FF9800;
+}
+
+.l5 {
+    color: #9C27B0;
+}
+
+.l6 {
+    color: #F44336;
+}
+
+/* .grid>span.light.solid {
+    box-shadow: none;
+    color: var(--bg);
+    border-width: 3px;
+    border-color: darkblue;
+} */
