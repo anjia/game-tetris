@@ -142,7 +142,6 @@ class Tetris extends Base {
             if (this.#overCounter === this.#people) {
                 this.#setStatus(Tetris.#GAMEOVER)
                 // 比分数（谁多谁赢），如果赢的场次等于最大场次了，游戏就结束了
-                // TODO. 不论原值是什么，最终的值一定是 string 么？
                 const key = parseInt(GameContext.winner)
                 if (key >= 0 && this.#context[key].win()) {
                     Tetris.#PK_OVER = true

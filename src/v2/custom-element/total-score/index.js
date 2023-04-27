@@ -58,10 +58,6 @@ customElements.define('total-score', class extends Base {
         this.reset()
     }
 
-    // TODO. 对象的实例属性，只读
-    // 1. getter, setter
-    // 2. freeze
-    // 3. writable
     get score() {
         return this.#score
     }

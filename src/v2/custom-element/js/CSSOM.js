@@ -1,5 +1,5 @@
 class CSSOM {
-    // TODO. 操作 className 的
+    // TODO. 将所有操作 className 的都封装在这里？
     static removeClass(obj, name) {
         let arr = []
         obj.classList.forEach(item => {

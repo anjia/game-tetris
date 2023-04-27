@@ -50,7 +50,7 @@ class Shape {
     constructor(points) {
         this.#init = points
 
-        // 实例属性（TODO.只读）
+        // 实例属性
         this.points = points
     }
 

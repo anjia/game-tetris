@@ -7,7 +7,7 @@ class OP extends Base {
 
     // 私有属性
     #keys = ['', '', '', '']
-    #eventRotate = new Event('rotate')  // TODO. event 可以现 new 吗？
+    #eventRotate = new Event('rotate')
     #eventRight = new Event('right')
     #eventLeft = new Event('left')
     #eventDown = new Event('down')
