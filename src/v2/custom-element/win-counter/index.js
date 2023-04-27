@@ -3,9 +3,9 @@ import Base from '../js/CustomBase.js'
 customElements.define('win-counter', class extends Base {
 
     // 私有属性
-    #min = 0
-    #max = 0;
-    #win = 0;
+    #dataMin = 0
+    #dataMax = 0;
+    #dataWin = 0;
     #container = null
     #tip;
 
@@ -31,54 +31,54 @@ customElements.define('win-counter', class extends Base {
         this.max = parseInt(this.getAttribute('games')) || 3
     }
 
+    set max(x) {
+        if (x === this.#dataMax || x < this.#dataMin) return
+        if (x > this.#dataMax) {
+            let innerHTML = ''
+            for (let i = this.#dataMax; i < x; i++) {
+                innerHTML += '<li></li>'
+            }
+            this.#container.insertAdjacentHTML('beforeend', innerHTML)
+            this.#dataMax = x
+        } else {
+            for (let i = this.#dataMax - 1; i >= x; i--) {
+                this.#container.children[i].remove()
+            }
+            this.#dataMax = x
+            if (this.#dataWin > this.#dataMax) {
+                this.#dataWin = this.#dataMax
+                this.setAttribute('value', this.#dataWin)
+            }
+        }
+    }
+
+    set #win(x) {
+        if (x === this.#dataWin || x < this.#dataMin || x > this.#dataMax) return
+        this.#dataWin = x
+        for (let i = 0; i < this.#dataWin; i++) {
+            this.#container.children[i].className = 's'
+        }
+        for (let i = this.#dataWin; i < this.#dataMax; i++) {
+            this.#container.children[i].className = ''
+        }
+    }
+
     reset(flag) {
         this.#tip.className = 'tip'
         if (flag) {
-            this.#setWin(0)
+            this.#win = 0
         }
     }
 
     win() {
-        this.#setWin(this.#win + 1)
+        this.#win = this.#dataWin + 1
         let isfinally = false
-        if (this.#win === this.#max) {
+        if (this.#dataWin === this.#dataMax) {
             isfinally = true
             this.#tip.className = 'tip finally'
         } else {
             this.#tip.className = 'tip round'
         }
         return isfinally
-    }
-
-    #setWin(x) {
-        if (x === this.#win || x < this.#min || x > this.#max) return
-        this.#win = x
-        for (let i = 0; i < this.#win; i++) {
-            this.#container.children[i].className = 's'
-        }
-        for (let i = this.#win; i < this.#max; i++) {
-            this.#container.children[i].className = ''
-        }
-    }
-
-    set max(x) {
-        if (x === this.#max || x < this.#min) return
-        if (x > this.#max) {
-            let innerHTML = ''
-            for (let i = this.#max; i < x; i++) {
-                innerHTML += '<li></li>'
-            }
-            this.#container.insertAdjacentHTML('beforeend', innerHTML)
-            this.#max = x
-        } else {
-            for (let i = this.#max - 1; i >= x; i--) {
-                this.#container.children[i].remove()
-            }
-            this.#max = x
-            if (this.#win > this.#max) {
-                this.#win = this.#max
-                this.setAttribute('value', this.#win)
-            }
-        }
     }
 })

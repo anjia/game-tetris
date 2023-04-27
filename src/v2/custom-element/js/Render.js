@@ -54,11 +54,12 @@ class Render {
         }, 30)
     }
 
-    draw(points, type, level) {
+    draw(points, mode, type, level) {
+        if (!points.length) return
         for (let p of points) {
             if (p[0] >= 0) {
                 const i = p[0] * this.#columns + p[1]
-                this.#renderCell(i, 'draw', type, level)
+                this.#renderCell(i, mode, type, level)
             }
         }
     }
@@ -129,16 +130,6 @@ class Render {
         const start = row * this.#columns
         for (let j = 0; j < this.#columns; j++) {
             this.#renderCell(start + j, mode)
-        }
-    }
-
-    renderPoints(points, mode, type, level) {
-        if (!points.length) return
-        for (let p of points) {
-            if (p[0] >= 0) {
-                const i = p[0] * this.#columns + p[1]
-                this.#renderCell(i, mode, type, level)
-            }
         }
     }
 

@@ -4,9 +4,9 @@ import all from '../js/tetris/all.js'
 customElements.define('next-shape', class extends Base {
 
     // 私有属性
-    #container = null  // DOM
     #list = []         // 形状对象列表
-    #cur;             // 形状的当前下标
+    #cur;              // 形状的当前下标
+    #container = null  // DOM
     #domCells = []
 
     constructor() {
