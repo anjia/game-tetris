@@ -7,23 +7,21 @@ customElements.define('total-score', class extends Base {
     static #MAX = 999999                      // 最大得分
 
     // 私有属性
+    #people;
+    #key;
     #score;
     #vs;
-    #diff;
-    #max;
+    #dataDiff;
+    #dataMax;
     #domScore = null
     #domDiff = null
     #domMax = null
-    #people;
 
     constructor() {
         super()
 
-        // 实例属性
-        this.key;
-
         // 私有属性
-        this.#max = parseInt(localStorage.getItem('max')) || 0
+        this.#dataMax = parseInt(localStorage.getItem('max')) || 0
 
         // 构造 shadow DOM（不变的部分）
         let shadow = this.attachShadow({ mode: 'open' })
@@ -36,7 +34,7 @@ customElements.define('total-score', class extends Base {
 
         // 获取属性参数
         this.#people = parseInt(this.getAttribute('people')) || 1
-        this.key = this.getAttribute('key')
+        this.#key = this.getAttribute('key')
 
         // html
         const shadow = this.shadowRoot
@@ -49,7 +47,7 @@ customElements.define('total-score', class extends Base {
             shadow.appendChild(this.#domDiff)
         } else {
             this.#domScore.className = 'cur'
-            this.#domMax = Base.create('div', { 'class': 'max', 'text': Base.padNumber(this.#max, 6) })
+            this.#domMax = Base.create('div', { 'class': 'max', 'text': Base.padNumber(this.#dataMax, 6) })
             shadow.appendChild(this.#domMax)
             shadow.appendChild(this.#domScore)
         }
@@ -67,7 +65,11 @@ customElements.define('total-score', class extends Base {
     }
 
     get diff() {
-        return this.#diff
+        return this.#dataDiff
+    }
+
+    get key() {
+        return this.#key
     }
 
     set score(x) {
@@ -78,16 +80,36 @@ customElements.define('total-score', class extends Base {
         this.#domScore.innerText = Base.padNumber(this.score, 6)
 
         if (this.#people === 1) {
-            this.#renderMax(this.#score)
+            this.#max = this.#score
         } else {
-            this.#renderDiff()
+            this.#diff = x - this.vs
         }
     }
 
     // 就类似数据驱动
     set vs(x) {
         this.#vs = x
-        this.#renderDiff()
+        this.#diff = this.score - x
+    }
+
+    set #diff(dist) {
+        if (this.#people === 1 || dist === this.#dataDiff) return
+        if (dist >= 0) {
+            this.#domDiff.className = 'diff'
+        } else {
+            this.#domDiff.className = 'diff less'
+        }
+        this.#dataDiff = dist
+        this.#domDiff.innerText = Base.padNumber(Math.abs(dist), 6)
+    }
+
+    set #max(x) {
+        if (this.#people > 1 || x === this.#dataMax) return
+        if (x > this.#dataMax) {
+            this.#dataMax = x
+            this.#domMax.innerText = Base.padNumber(this.#dataMax, 6)
+            localStorage.setItem('max', x)
+        }
     }
 
     clear(lines) {
@@ -98,27 +120,5 @@ customElements.define('total-score', class extends Base {
     reset() {
         this.vs = 0
         this.score = 0
-    }
-
-    #renderDiff() {
-        if (this.#people === 1) return
-        const dist = this.score - this.vs
-        if (dist === this.#diff) return
-        if (dist >= 0) {
-            this.#domDiff.className = 'diff'
-        } else {
-            this.#domDiff.className = 'diff less'
-        }
-        this.#diff = dist
-        this.#domDiff.innerText = Base.padNumber(Math.abs(dist), 6)
-    }
-
-    #renderMax(x) {
-        if (this.#people > 1 || x === this.#max) return
-        if (x > this.#max) {
-            this.#max = x
-            this.#domMax.innerText = Base.padNumber(this.#max, 6)
-            localStorage.setItem('max', x)
-        }
     }
 })

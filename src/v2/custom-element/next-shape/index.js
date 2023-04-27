@@ -48,7 +48,7 @@ customElements.define('next-shape', class extends Base {
                 const column = matrix[i].length
                 const start = i * column
                 for (let j = 0; j < column; j++) {
-                    if (matrix[i][j] === 0) {
+                    if (matrix[i][j] === false) {
                         this.#domCells[start + j].className = ''
                     } else {
                         this.#domCells[start + j].className = 's' + (this.shape.type ? (' ' + this.shape.type) : '')

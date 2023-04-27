@@ -14,11 +14,13 @@ class Tetris extends Base {
     static #PAUSING = 2
     static #GAMEOVER = 3
     static #PK_OVER = false
+    static #START_KEY = 'Enter'
+    static #RESET_KEY = 'Escape'
 
     // 私有变量
     #people;
     #context = [];    // <game-context>[]
-    #status = Tetris.#PREPARING;
+    #dataStatus = Tetris.#PREPARING;
     #overCounter = 0
     #games = 3;
 
@@ -27,11 +29,12 @@ class Tetris extends Base {
     #btnReset;
     #btnWrap;
 
-    #startKey = 'Enter'
-    #resetKey = 'Escape'
-
     constructor() {
         super()
+    }
+
+    connectedCallback() {
+        if (!this.isConnected) return
 
         const shadow = this.attachShadow({ mode: 'open' })
         shadow.appendChild(Base.createLink('./custom-element/game-tetris/index.css'))
@@ -42,19 +45,16 @@ class Tetris extends Base {
         container.appendChild(this.#domList)
         shadow.appendChild(container)
 
-        this.#btnStart = Base.create('button', { 'class': 'start', 'data-key': this.#startKey })
-        this.#btnReset = Base.create('button', { 'text': '重置', 'data-key': this.#resetKey })
+        this.#btnStart = Base.create('button', { 'class': 'start', 'data-key': Tetris.#START_KEY })
+        this.#btnReset = Base.create('button', { 'text': '重置', 'data-key': Tetris.#RESET_KEY })
         this.#btnWrap = Base.create('div', {}, [this.#btnStart, this.#btnReset])
+
+        // 初始化
+        this.people = this.getAttribute('people')
+        this.games = this.getAttribute('games')
 
         // 监听事件
         this.#addEventListener()
-    }
-
-    connectedCallback() {
-        if (!this.isConnected) return
-
-        this.people = this.getAttribute('people')
-        this.games = this.getAttribute('games')
     }
 
     attributeChangedCallback(name, oldValue, newValue) {
@@ -110,20 +110,38 @@ class Tetris extends Base {
         }
     }
 
+    set #status(x) {
+        this.#dataStatus = x
+        switch (this.#dataStatus) {
+            case Tetris.#PREPARING:
+                this.#btnStart.className = 'start'
+                break
+            case Tetris.#PLAYING:
+                this.#btnStart.className = 'start pause'
+                break
+            case Tetris.#PAUSING:
+                this.#btnStart.className = 'start continue'
+                break
+            case Tetris.#GAMEOVER:
+                this.#btnStart.className = 'start gameover'
+                break
+        }
+    }
+
     #addEventListener() {
 
         this.#btnStart.addEventListener('click', () => {
-            switch (this.#status) {
+            switch (this.#dataStatus) {
                 case Tetris.#PREPARING:
-                    this.#setStatus(Tetris.#PLAYING)   // 状态：未开始 -> 游戏中
+                    this.#status = Tetris.#PLAYING     // 状态：未开始 -> 游戏中
                     this.#start()                      // 动作：开始游戏
                     break
                 case Tetris.#PLAYING:
-                    this.#setStatus(Tetris.#PAUSING)   // 状态：游戏中 -> 暂停
+                    this.#status = Tetris.#PAUSING     // 状态：游戏中 -> 暂停
                     this.#pause()                      // 动作：暂停游戏
                     break
                 case Tetris.#PAUSING:
-                    this.#setStatus(Tetris.#PLAYING)   // 状态：暂停 -> 游戏中
+                    this.#status = Tetris.#PLAYING     // 状态：暂停 -> 游戏中
                     this.#continue()                   // 动作：继续游戏
                     break
                 case Tetris.#GAMEOVER:
@@ -140,7 +158,7 @@ class Tetris extends Base {
         this.addEventListener('gameover', () => {
             this.#overCounter++
             if (this.#overCounter === this.#people) {
-                this.#setStatus(Tetris.#GAMEOVER)
+                this.#status = Tetris.#GAMEOVER
                 // 比分数（谁多谁赢），如果赢的场次等于最大场次了，游戏就结束了
                 const key = parseInt(GameContext.winner)
                 if (key >= 0 && this.#context[key].win()) {
@@ -151,10 +169,10 @@ class Tetris extends Base {
 
         window.addEventListener('keydown', (e) => {
             switch (e.key) {
-                case this.#startKey:
+                case Tetris.#START_KEY:
                     this.#btnStart.click()
                     break
-                case this.#resetKey:
+                case Tetris.#RESET_KEY:
                     this.#btnReset.click()
                     break
             }
@@ -180,31 +198,13 @@ class Tetris extends Base {
     }
 
     #reset() {
-        this.#setStatus(Tetris.#PREPARING)
+        this.#status = Tetris.#PREPARING
         this.#overCounter = 0
 
         GameContext.reset()  // 重置全局类
         for (let c of this.#context) {
-            c.resetPanel()             // 重置游戏面板相关，比如 <grid-panel>, <next-shape>
             c.reset(Tetris.#PK_OVER)   // 重置其它元素，比如 <clear-lines>, <win-counter>
-        }
-    }
-
-    #setStatus(x) {
-        this.#status = x
-        switch (this.#status) {
-            case Tetris.#PREPARING:
-                this.#btnStart.className = 'start'
-                break
-            case Tetris.#PLAYING:
-                this.#btnStart.className = 'start pause'
-                break
-            case Tetris.#PAUSING:
-                this.#btnStart.className = 'start continue'
-                break
-            case Tetris.#GAMEOVER:
-                this.#btnStart.className = 'start gameover'
-                break
+            c.resetPanel()             // 重置游戏面板相关，比如 <grid-panel>, <next-shape>
         }
     }
 }

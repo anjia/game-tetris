@@ -21,13 +21,13 @@ class GameContext extends Base {
     }
 
     // 私有属性
+    #people;
     #shapeCounter = 0    // shape 的消费计数
     #domLines = null
     #domNext = null
     #domPanel = null
     #domWin = null
     #btnHandler = null
-    #people;
 
     constructor() {
         super()
@@ -75,6 +75,12 @@ class GameContext extends Base {
         this.#next()
     }
 
+    set games(x) {
+        if (this.#people > 1) {
+            this.#domWin.max = x
+        }
+    }
+
     #addEventListener() {
         // 游戏面板
         this.#domPanel.addEventListener('next', () => {
@@ -103,12 +109,6 @@ class GameContext extends Base {
         this.#btnHandler.addEventListener('down', () => {
             this.#domPanel.down()
         })
-    }
-
-    set games(x) {
-        if (this.#people > 1) {
-            this.#domWin.max = x
-        }
     }
 
     start() {

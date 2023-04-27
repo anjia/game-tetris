@@ -15,10 +15,10 @@ customElements.define('clear-lines', class extends Base {
     }
 
     // 私有属性
+    #dataLines;
     #level;
-    #lines;
-    #domLines = null
     #people;
+    #domLines = null
 
     constructor() {
         super()
@@ -48,26 +48,26 @@ customElements.define('clear-lines', class extends Base {
         return this.#level
     }
 
+    set #lines(x) {
+        x = parseInt(x) || 0
+        if (x === this.#dataLines) return
+        this.#dataLines = x
+        this.#domLines.innerText = Base.padNumber(x, 3)
+
+        // 级别
+        if (this.#dataLines >= this.constructor.#LINES[this.#level] && (this.#level + 1 < this.constructor.#LINES.length)) {
+            this.#level++
+        }
+    }
+
     reset() {
         this.#level = 1
-        this.#setlines(0)
+        this.#lines = 0
     }
 
     clear(x) {
         if (x) {
-            this.#setlines(this.#lines + x)
-        }
-    }
-
-    #setlines(x) {
-        x = parseInt(x) || 0
-        if (x === this.#lines) return
-        this.#lines = x
-        this.#domLines.innerText = Base.padNumber(x, 3)
-
-        // 级别
-        if (this.#lines >= this.constructor.#LINES[this.#level] && (this.#level + 1 < this.constructor.#LINES.length)) {
-            this.#level++
+            this.#lines = this.#dataLines + x
         }
     }
 })

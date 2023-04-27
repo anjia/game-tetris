@@ -10,9 +10,6 @@ class Panel extends Base {
     static #GAMEOVER = 3
 
     // 私有属性
-    #rows = 20         // 行
-    #columns = 10      // 列
-    #container = null  // DOM
     #status = Panel.#PREPARING  // 状态
     #shape = null      // 当前形状
     #timer;            // 降落的计时器
@@ -43,20 +40,18 @@ class Panel extends Base {
         shadow.appendChild(Base.createLink('./custom-element/grid-panel/index.css'))
 
         // html
-        this.#container = Base.create('section', { 'class': 'grid' })
+        const container = Base.create('section', { 'class': 'grid' })
+        const rows = 20
+        const columns = 10
         let innerHTML = ''
-        for (let i = 0; i < this.#rows * this.#columns; i++) {
+        for (let i = 0; i < rows * columns; i++) {
             innerHTML += '<span></span>'
         }
-        this.#container.innerHTML = innerHTML
-        shadow.appendChild(this.#container)
+        container.innerHTML = innerHTML
+        shadow.appendChild(container)
 
         // 初始化数据
-        this.#render = new Render({
-            rows: this.#rows,
-            columns: this.#columns,
-            container: this.#container
-        })
+        this.#render = new Render({ rows, columns, container })
     }
 
     reset() {

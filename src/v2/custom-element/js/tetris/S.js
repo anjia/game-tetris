@@ -2,8 +2,8 @@ import Tetris from './Tetris.js'
 
 class S extends Tetris {
     static next = [
-        [0, 1, 1, 0],
-        [1, 1, 0, 0]
+        [false, true, true, false],
+        [true, true, false, false]
     ]
 
     constructor(col1 = 4) {

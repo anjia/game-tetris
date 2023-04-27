@@ -3,19 +3,19 @@ import Base from './CustomBase.js'
 
 class Score {
 
-    static people = 1;     // 可以被修改
+    static people = 1     // 可读可写
     static #list = []
-
-    static create(key) {
-        const element = Base.create('total-score', { 'people': this.people, 'key': key })
-        this.#list.push(element)
-        return element
-    }
 
     static get winner() {
         const score = this.#list[0].score
         const key = this.#list[0].key
         return score > 0 ? key : -1
+    }
+
+    static create(key) {
+        const element = Base.create('total-score', { 'people': this.people, 'key': key })
+        this.#list.push(element)
+        return element
     }
 
     static clear(element, lines) {
