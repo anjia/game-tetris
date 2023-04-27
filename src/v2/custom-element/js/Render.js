@@ -6,20 +6,35 @@ class Render {
     #rows = 20;
     #columns = 10;
     #container;
-    #data;
+    #data;     // 二维数组，20*10
     #highest;  // 楼盖的最高层
 
     constructor(options) {
         this.#rows = options.rows;
         this.#columns = options.columns;
         this.#container = options.container;
-        this.#data = options.data;
+
+        // 二维数组，申请空间
+        this.#data = new Array(this.#rows)
+        for (let i = 0; i < this.#rows; i++) {
+            this.#data[i] = new Array(this.#columns)
+        }
+        this.#init()
+    }
+
+    #init() {
+        // grid data 全部填充 false
+        for (let i = 0; i < this.#rows; i++) {
+            for (let j = 0; j < this.#columns; j++) {
+                this.#data[i][j] = false
+            }
+        }
         this.#highest = this.#rows - 1
     }
 
     reset() {
-        this.#highest = this.#rows - 1
         this.#startResetScreen(this.#rows - 1, -1, 'light')
+        this.#init()
     }
 
     #startResetScreen(row, dy, mode) {
@@ -50,7 +65,7 @@ class Render {
 
     merge(points) {
         for (let p of points) {
-            this.#data[p[0]][p[1]] = 1
+            this.#data[p[0]][p[1]] = true
         }
     }
 
@@ -95,7 +110,7 @@ class Render {
                         this.#data[i][j] = this.#data[srcI][j]
                         this.#container.children[toStart + j].className = this.#container.children[srcStart + j].className
                     } else {
-                        this.#data[i][j] = 0
+                        this.#data[i][j] = false
                         this.#container.children[toStart + j].className = ''
                     }
                 }
@@ -152,7 +167,7 @@ class Render {
     }
 
     isFilled(i, j) {
-        return i >= 0 && i < this.#rows && j >= 0 && j < this.#columns && this.#data[i][j] === 1
+        return i >= 0 && i < this.#rows && j >= 0 && j < this.#columns && this.#data[i][j] === true
     }
 
     isFloor(i) {

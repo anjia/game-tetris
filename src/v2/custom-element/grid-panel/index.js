@@ -12,9 +12,8 @@ class Panel extends Base {
     // 私有属性
     #rows = 20         // 行
     #columns = 10      // 列
-    #data = null       // 二维数组，20*10。TODO.改成类型数组（省空间）
     #container = null  // DOM
-    #status;           // 状态
+    #status = Panel.#PREPARING  // 状态
     #shape = null      // 当前形状
     #timer;            // 降落的计时器
     #speed;            // 降落的速度
@@ -52,37 +51,18 @@ class Panel extends Base {
         this.#container.innerHTML = innerHTML
         shadow.appendChild(this.#container)
 
-        // 二维数组，申请空间
-        this.#data = new Array(this.#rows)
-        for (let i = 0; i < this.#rows; i++) {
-            this.#data[i] = new Array(this.#columns)
-        }
-
         // 初始化数据
         this.#render = new Render({
             rows: this.#rows,
             columns: this.#columns,
-            data: this.#data,
             container: this.#container
         })
-        this.#init()
-    }
-
-    #init() {
-        // grid data 全部填充 0
-        for (let i = 0; i < this.#rows; i++) {
-            for (let j = 0; j < this.#columns; j++) {
-                this.#data[i][j] = 0
-            }
-        }
-        // 其它实例数据
-        this.#status = Panel.#PREPARING
     }
 
     reset() {
+        this.#status = Panel.#PREPARING
         this.#clearTimer()
         this.#render.reset()
-        this.#init()
     }
 
     start(shape, speed, level) {
