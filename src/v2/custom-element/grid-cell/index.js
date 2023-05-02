@@ -23,20 +23,30 @@ class Cell extends Base {
     get value() {
         return this.#_value
     }
+    get className() {
+        return this.#$cell.className
+    }
 
-    dark() {
+    reset() {
         this.#_value = false
         this.#$cell.className = ''
     }
 
-    light() {
+    merge() {
         this.#_value = true
-        this.#$cell.className = 's'
     }
 
     copy(obj) {
         this.#_value = obj.value
         this.#$cell.className = obj.className
+    }
+
+    dark() {
+        this.#$cell.className = ''
+    }
+
+    light() {
+        this.#$cell.className = 's'
     }
 
     blink() {

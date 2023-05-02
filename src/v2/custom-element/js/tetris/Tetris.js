@@ -26,20 +26,23 @@ class Tetris extends Shape {
                 break
             }
         }
+        if (result) {
+            panel.draw(this.points, this.type, this.level)
+        }
         return result
     }
 
-    draw(panel) {
-        panel.draw(this.points, this.type, this.level)
-    }
-
-    merge() {
+    merge(panel) {
         let result = true
         for (let p of this.points) {
             if (p[0] < 0) {
                 result = false
                 break
             }
+        }
+        if (result) {
+            panel.merge(this.points)
+            panel.draw(this.points, this.type, this.level)
         }
         return result
     }
@@ -141,7 +144,7 @@ class Tetris extends Shape {
 
     #to(next, panel) {
         // 在 this.current 中但不在 next 中的，置灰
-        panel.dark(Shape.minus(this.points, next))
+        panel.reset(Shape.minus(this.points, next))
         // 在 next 中但不在 this.current 中的，置亮
         panel.draw(Shape.minus(next, this.points), this.type, this.level)
         this.points = next

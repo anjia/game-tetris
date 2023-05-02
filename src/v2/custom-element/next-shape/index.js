@@ -51,7 +51,7 @@ customElements.define('next-shape', class extends Base {
                 const start = i * column
                 for (let j = 0; j < column; j++) {
                     if (matrix[i][j] === false) {
-                        this.#domCells[start + j].dark()
+                        this.#domCells[start + j].reset()
                     } else {
                         this.#domCells[start + j].draw(this.shape.type, '')
                     }

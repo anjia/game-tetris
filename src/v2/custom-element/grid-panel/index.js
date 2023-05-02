@@ -19,9 +19,9 @@ class Panel extends Base {
     #clearlines;       // 消除的行数
 
     #rows = 20
-    #columns = 10
+    #cols = 10
     #cellList = []
-    #highest;        // 楼盖的最高层
+    #highest = this.#rows - 1  // 楼盖的最高层
     #shapePanel;
 
     // 私有属性-事件相关
@@ -47,7 +47,7 @@ class Panel extends Base {
         shadow.appendChild(Base.createLink('./custom-element/grid-panel/index.css'))
 
         // html
-        for (let i = 0; i < this.#rows * this.#columns; i++) {
+        for (let i = 0; i < this.#rows * this.#cols; i++) {
             this.#cellList.push(Base.create('grid-cell'))
         }
         shadow.appendChild(Base.create('section', { 'class': 'grid' }, this.#cellList))
@@ -55,18 +55,16 @@ class Panel extends Base {
         // 初始化数据（TODO.应该是依赖注入）
         this.#shapePanel = new ShapePanel({
             rows: this.#rows,
-            columns: this.#columns,
+            cols: this.#cols,
             cellList: this.#cellList
         })
     }
 
     reset() {
         this.#status = Panel.#PREPARING
-        this.#clearTimer()
-        for (let cell of this.#cellList) {
-            cell.dark()
-        }
         this.#highest = this.#rows - 1
+        this.#clearTimer()
+        this.#cellList.forEach(cell => cell.reset())
         this.#startResetScreen(this.#rows - 1, -1, true)
     }
 
@@ -82,7 +80,6 @@ class Panel extends Base {
 
                 // 若 shape 可以入场开始，则绘制+继续下落，否则 gameover
                 if (this.#shape.start(this.#shapePanel)) {
-                    this.#shape.draw(this.#shapePanel)
                     this.#startTimer()
                 } else {
                     this.#gameover()
@@ -155,18 +152,17 @@ class Panel extends Base {
 
             // 2. 否则就定位在此处，合并 shape
             // 2.1 若合并成功，则判断是否有满行
-            if (this.#shape.merge()) {
-
-                this.#shape.draw(this.#shapePanel)
+            if (this.#shape.merge(this.#shapePanel)) {
 
                 // 计算是否有满行
                 let fullRows = this.#calculateFullRows(this.#shape.points)
 
                 if (fullRows.length) {
+                    // debugger
                     // 统一闪，耗时 0.6s
                     for (let row of fullRows) {
-                        const start = row * this.#columns
-                        for (let j = 0; j < this.#columns; j++) {
+                        const start = row * this.#cols
+                        for (let j = 0; j < this.#cols; j++) {
                             this.#cellList[start + j].blink()
                         }
                     }
@@ -197,13 +193,13 @@ class Panel extends Base {
             return
         }
 
-        const start = row * this.#columns
-        for (let j = 0; j < this.#columns; j++) {
+        const start = row * this.#cols
+        for (let j = 0; j < this.#cols; j++) {
             // TODO. 可优化
             if (mode) {
-                this.#cellList[i].light(start + j)
+                this.#cellList[start + j].light()
             } else {
-                this.#cellList[i].dark(start + j)
+                this.#cellList[start + j].dark()
             }
         }
 
@@ -232,8 +228,8 @@ class Panel extends Base {
         let fullRows = []
         for (let row of updatedRows) {
             let j = 0
-            while (j < this.#columns && this.#cellList[row * this.#columns + j].value === true) j++
-            if (j === this.#columns) {
+            while (j < this.#cols && this.#cellList[row * this.#cols + j].value === true) j++
+            if (j === this.#cols) {
                 fullRows.push(row)
             }
         }
@@ -252,13 +248,15 @@ class Panel extends Base {
         for (let row of fullRows) {
             for (let i = row; i >= this.#highest; i--) {
                 const srcI = i - 1
-                const srcStart = srcI * this.#columns
-                const toStart = i * this.#columns
-                for (let j = 0; j < this.#columns; j++) {
-                    if (srcI >= 0 && srcI >= this.#highest) {
+                const srcStart = srcI * this.#cols
+                const toStart = i * this.#cols
+                if (srcI >= 0 && srcI >= this.#highest) {
+                    for (let j = 0; j < this.#cols; j++) {
                         this.#cellList[toStart + j].copy(this.#cellList[srcStart + j])
-                    } else {
-                        this.#cellList[toStart + j].dark()
+                    }
+                } else {
+                    for (let j = 0; j < this.#cols; j++) {
+                        this.#cellList[toStart + j].reset()
                     }
                 }
             }

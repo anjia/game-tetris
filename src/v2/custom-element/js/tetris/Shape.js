@@ -73,23 +73,23 @@ class Shape {
 
     #getShapeDetail() {
         let rows = new Set()
-        let columns = new Set()
+        let cols = new Set()
         for (let p of this.points) {
             rows.add(p[0])
-            columns.add(p[1])
+            cols.add(p[1])
         }
 
-        const n = Math.max(rows.size, columns.size)
+        const n = Math.max(rows.size, cols.size)
         let r = Math.floor(n / 2)
-        let center = [Shape.#getCenterIndex(rows), Shape.#getCenterIndex(columns)]
+        let center = [Shape.#getCenterIndex(rows), Shape.#getCenterIndex(cols)]
 
         // 修正中心点 center 或半径 r
         if (n % 2) {
             // 奇数时，若行多（中点必然是个点）则修正列号，否则修正行号
-            if (rows.size > columns.size) {
-                this.#fixCenterIndex(center, [rows, columns], 1)
+            if (rows.size > cols.size) {
+                this.#fixCenterIndex(center, [rows, cols], 1)
             } else {
-                this.#fixCenterIndex(center, [rows, columns], 0)
+                this.#fixCenterIndex(center, [rows, cols], 0)
             }
         } else {
             r--
