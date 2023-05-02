@@ -8,7 +8,7 @@ customElements.define('clear-lines', class extends Base {
     static {
         // 每消除 20 行就升一级，同时增加降落速度 
         // 用数组的好处：可以用 `比大小` 替代取余 `Math.ceil(总行数 % 20)`
-        const clearLines = 4 // 20
+        const clearLines = 20 // 20
         for (let i = 1; i < this.#SPEED.length; i++) {
             this.#LINES[i] = this.#LINES[i - 1] + clearLines
         }
