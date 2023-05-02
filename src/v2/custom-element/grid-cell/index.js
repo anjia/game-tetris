@@ -5,8 +5,8 @@ import Base from '../js/CustomBase.js'
 class Cell extends Base {
 
     // 私有属性
-    #$cell;         // dom 以 $ 开头
-    #_v = false    // value，私有属性以_开头（以防后续有getter/setter，因为这在自定义组件中很常见）
+    #$cell;           // dom 以 $ 开头
+    #_value = false   // value，私有属性以_开头（以防后续有getter/setter，因为这在自定义组件中很常见）
 
     constructor() {
         super()
@@ -21,21 +21,21 @@ class Cell extends Base {
     }
 
     get value() {
-        return this.#_v
+        return this.#_value
     }
 
     dark() {
-        this.#_v = false
+        this.#_value = false
         this.#$cell.className = ''
     }
 
     light() {
-        this.#_v = true
+        this.#_value = true
         this.#$cell.className = 's'
     }
 
     copy(obj) {
-        this.#_v = obj.value
+        this.#_value = obj.value
         this.#$cell.className = obj.className
     }
 
