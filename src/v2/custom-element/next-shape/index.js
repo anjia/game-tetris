@@ -1,3 +1,5 @@
+import '../grid-cell/index.js'
+
 import Base from '../js/CustomBase.js'
 import all from '../js/tetris/all.js'
 
@@ -16,7 +18,7 @@ customElements.define('next-shape', class extends Base {
             this.#list.push(new shape())
         }
         for (let i = 0; i < 8; i++) {
-            this.#domCells.push(Base.create('span'))
+            this.#domCells.push(Base.create('grid-cell'))
         }
     }
 
@@ -49,9 +51,9 @@ customElements.define('next-shape', class extends Base {
                 const start = i * column
                 for (let j = 0; j < column; j++) {
                     if (matrix[i][j] === false) {
-                        this.#domCells[start + j].className = ''
+                        this.#domCells[start + j].dark()
                     } else {
-                        this.#domCells[start + j].className = 's' + (this.shape.type ? (' ' + this.shape.type) : '')
+                        this.#domCells[start + j].draw(this.shape.type, '')
                     }
                 }
             }

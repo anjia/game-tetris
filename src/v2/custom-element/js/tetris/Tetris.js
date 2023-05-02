@@ -30,24 +30,18 @@ class Tetris extends Shape {
     }
 
     draw(render) {
-        render.draw(this.points, 'draw', this.type, this.level)
+        render.draw(this.points, this.type, this.level)
     }
 
-    merge(render) {
+    merge() {
         let result = true
-        let fullRows = []
         for (let p of this.points) {
             if (p[0] < 0) {
                 result = false
                 break
             }
         }
-        if (result) {
-            render.merge(this.points)  // merge data
-            render.draw(this.points, 'draw', this.type, this.level)   // merge ui
-            fullRows = render.calculateFullRows(this.points)  // 计算是否有满行
-        }
-        return { result, fullRows }
+        return result
     }
 
     fall(render) {
@@ -147,9 +141,9 @@ class Tetris extends Shape {
 
     #to(next, render) {
         // 在 this.current 中但不在 next 中的，置灰
-        render.draw(Shape.minus(this.points, next), 'dark', this.type, this.level)
+        render.dark(Shape.minus(this.points, next))
         // 在 next 中但不在 this.current 中的，置亮
-        render.draw(Shape.minus(next, this.points), 'draw', this.type, this.level)
+        render.draw(Shape.minus(next, this.points), this.type, this.level)
         this.points = next
     }
 }

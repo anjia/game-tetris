@@ -1,6 +1,6 @@
-@import url('../style/grid.css');
-
 .grid {
+    display: grid;
+    gap: 2px;
     grid-template-rows: repeat(20, var(--size));
     grid-template-columns: repeat(10, var(--size));
     padding: 3px;

@@ -1,5 +1,7 @@
+import '../grid-cell/index.js'
+
 import Base from '../js/CustomBase.js'
-import Render from '../js/Render.js'
+import ShapePanel from '../js/ShapePanel.js'
 
 class Panel extends Base {
 
@@ -15,7 +17,12 @@ class Panel extends Base {
     #timer;            // 降落的计时器
     #speed;            // 降落的速度
     #clearlines;       // 消除的行数
-    #render;           // 负责 UI 渲染
+
+    #rows = 20
+    #columns = 10
+    #cellList = []
+    #highest;        // 楼盖的最高层
+    #shapePanel;
 
     // 私有属性-事件相关
     #eventGameover = new CustomEvent('gameover', { composed: true })
@@ -40,24 +47,71 @@ class Panel extends Base {
         shadow.appendChild(Base.createLink('./custom-element/grid-panel/index.css'))
 
         // html
-        const container = Base.create('section', { 'class': 'grid' })
-        const rows = 20
-        const columns = 10
-        let innerHTML = ''
-        for (let i = 0; i < rows * columns; i++) {
-            innerHTML += '<span></span>'
+        for (let i = 0; i < this.#rows * this.#columns; i++) {
+            this.#cellList.push(Base.create('grid-cell'))
         }
-        container.innerHTML = innerHTML
-        shadow.appendChild(container)
+        shadow.appendChild(Base.create('section', { 'class': 'grid' }, this.#cellList))
 
-        // 初始化数据
-        this.#render = new Render({ rows, columns, container })
+        // 初始化数据（TODO.应该是依赖注入）
+        this.#shapePanel = new ShapePanel({
+            rows: this.#rows,
+            columns: this.#columns,
+            cellList: this.#cellList
+        })
     }
 
     reset() {
         this.#status = Panel.#PREPARING
         this.#clearTimer()
-        this.#render.reset()
+
+        for (let cell of this.#cellList) {
+            cell.dark()
+        }
+        this.#highest = this.#rows - 1
+        this.#startResetScreen(this.#rows - 1, -1, true)
+    }
+
+    #startResetScreen(row, dy, mode) {
+        if (dy === 1 && row === this.#rows) {
+            return
+        }
+
+        const start = row * this.#columns
+        for (let j = 0; j < this.#columns; j++) {
+            // TODO. 可优化
+            if (mode) {
+                this.#cellList[i].light(start + j)
+            } else {
+                this.#cellList[i].dark(start + j)
+            }
+        }
+
+        setTimeout(() => {
+            let nextRow = row + dy
+            if (dy === -1 && nextRow < 0) {
+                this.#startResetScreen(0, 1, false)
+            } else {
+                this.#startResetScreen(nextRow, dy, mode)
+            }
+        }, 30)
+    }
+    #clearFullRows(fullRows) {
+        // 清除数据、更新UI
+        for (let row of fullRows) {
+            for (let i = row; i >= this.#highest; i--) {
+                const srcI = i - 1
+                const srcStart = srcI * this.#columns
+                const toStart = i * this.#columns
+                for (let j = 0; j < this.#columns; j++) {
+                    if (srcI >= 0 && srcI >= this.#highest) {
+                        this.#cellList[toStart + j].copy(this.#cellList[srcStart + j])
+                    } else {
+                        this.#cellList[toStart + j].dark()
+                    }
+                }
+            }
+            this.#highest++
+        }
     }
 
     start(shape, speed, level) {
@@ -71,8 +125,8 @@ class Panel extends Base {
                 this.#speed = speed
 
                 // 若 shape 可以入场开始，则绘制+继续下落，否则 gameover
-                if (this.#shape.start(this.#render)) {
-                    this.#shape.draw(this.#render)
+                if (this.#shape.start(this.#shapePanel)) {
+                    this.#shape.draw(this.#shapePanel)
                     this.#startTimer()
                 } else {
                     this.#gameover()
@@ -101,25 +155,25 @@ class Panel extends Base {
 
     left() {
         if (this.#status === Panel.#PLAYING) {
-            this.#shape.left(this.#render)
+            this.#shape.left(this.#shapePanel)
         }
     }
 
     right() {
         if (this.#status === Panel.#PLAYING) {
-            this.#shape.right(this.#render)
+            this.#shape.right(this.#shapePanel)
         }
     }
 
     down() {
         if (this.#status === Panel.#PLAYING) {
-            this.#shape.down(this.#render)
+            this.#shape.down(this.#shapePanel)
         }
     }
 
     rotate() {
         if (this.#status === Panel.#PLAYING) {
-            this.#shape.rotate(this.#render)
+            this.#shape.rotate(this.#shapePanel)
         }
     }
 
@@ -139,18 +193,27 @@ class Panel extends Base {
 
     #toFalling() {
         // 1. 若 shape 能继续走，则继续下落
-        if (this.#shape.fall(this.#render)) {
+        if (this.#shape.fall(this.#shapePanel)) {
             this.#startTimer()
         } else {
 
             // 2. 否则就定位在此处，合并 shape
-            const { result, fullRows } = this.#shape.merge(this.#render)
-
             // 2.1 若合并成功，则判断是否有满行
-            if (result) {
+            if (this.#shape.merge()) {
+
+                this.#shape.draw(this.#shapePanel)
+
+                // 计算是否有满行
+                let fullRows = this.#calculateFullRows(this.#shape.points)
 
                 if (fullRows.length) {
-                    this.#render.blinkRows(fullRows)  // 统一闪，耗时 0.6s
+                    // 统一闪，耗时 0.6s
+                    for (let row of fullRows) {
+                        const start = row * this.#columns
+                        for (let j = 0; j < this.#columns; j++) {
+                            this.#cellList[start + j].blink()
+                        }
+                    }
 
                     // 通知父容器有消行得分
                     this.#clearlines = fullRows.length
@@ -158,7 +221,7 @@ class Panel extends Base {
 
                     // 动画结束后，重新赋值
                     setTimeout(() => {
-                        this.#render.clearFullRows(fullRows)  // 统一清除
+                        this.#clearFullRows(fullRows)  // 统一清除
                         this.#next()
                     }, 600)
 
@@ -171,6 +234,35 @@ class Panel extends Base {
                 this.#gameover()
             }
         }
+    }
+
+    #calculateFullRows(points) {
+        // 更新的行
+        let updatedRows = new Set()
+        for (let p of points) {
+            if (p[0] >= 0) {
+                updatedRows.add(p[0])
+                if (p[0] < this.#highest) {
+                    this.#highest = p[0]
+                }
+            }
+        }
+        // 判断是否有满行
+        let fullRows = []
+        for (let row of updatedRows) {
+            let j = 0
+            while (j < this.#columns && this.#cellList[row * this.#columns + j].value === true) j++
+            if (j === this.#columns) {
+                fullRows.push(row)
+            }
+        }
+        // 原地排序，从小-大
+        fullRows.sort((a, b) => {
+            if (a > b) return 1
+            else if (a < b) return -1
+            return 0
+        })
+        return fullRows
     }
 
     #gameover() {
