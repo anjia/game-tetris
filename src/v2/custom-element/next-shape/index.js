@@ -14,6 +14,8 @@ customElements.define('next-shape', class extends Base {
     constructor() {
         super()
 
+        this.level = 1
+
         for (let shape of all) {
             this.#list.push(new shape())
         }
@@ -33,7 +35,6 @@ customElements.define('next-shape', class extends Base {
         shadow.appendChild(this.#container)
     }
 
-    // 获取 shape object
     get shape() {
         return this.#list[this.#cur]
     }
@@ -45,22 +46,19 @@ customElements.define('next-shape', class extends Base {
     set next(x) {
         if (x !== this.#cur) {
             this.#cur = x
-            const matrix = this.shape.constructor.next
+            const shape = this.#list[this.#cur]
+            const matrix = shape.constructor.next
             for (let i = 0; i < matrix.length; i++) {
                 const column = matrix[i].length
                 const start = i * column
                 for (let j = 0; j < column; j++) {
-                    if (matrix[i][j] === false) {
-                        this.#domCells[start + j].reset()
+                    if (matrix[i][j] === true) {
+                        this.#domCells[start + j].draw(shape.type, this.level)
                     } else {
-                        this.#domCells[start + j].draw(this.shape.type, '')
+                        this.#domCells[start + j].reset()
                     }
                 }
             }
         }
-    }
-
-    set level(x) {
-        this.#container.className = 'grid l' + x
     }
 })

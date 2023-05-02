@@ -1,4 +1,4 @@
-import { addClass } from '../js/CSSOM.js'
+import { addClass, removeClassStart } from '../js/CSSOM.js'
 
 import Base from '../js/CustomBase.js'
 
@@ -54,6 +54,7 @@ class Cell extends Base {
     }
 
     draw(type, level) {
+        removeClassStart(this.#$cell, 'l')
         addClass(this.#$cell, ['s', type, 'l' + level])
     }
 }

@@ -144,8 +144,8 @@ class GameContext extends Base {
     }
 
     #next() {
-        this.#domNext.next = ShapeProducer.next(this.#shapeCounter)
         this.#domNext.level = this.#domLines.level
+        this.#domNext.next = ShapeProducer.next(this.#shapeCounter)
         this.#shapeCounter++
     }
 }

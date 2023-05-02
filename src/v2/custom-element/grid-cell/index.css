@@ -33,13 +33,14 @@ div.blink {
     }
 }
 
-/* .l1 {
-    color: #F44336;
-} */
+.s.l1,
+.l1 .s {
+    color: #009688;
+}
 
 .s.l2,
 .l2 .s {
-    color: #009688;
+    color: #2196F3;
 }
 
 .s.l3,

@@ -29,6 +29,16 @@ export function removeClass(obj, name) {
     obj.className = arr.join(' ')
 }
 
+export function removeClassStart(obj, name) {
+    let arr = []
+    obj.classList.forEach(item => {
+        if (item.indexOf(name) === -1) {
+            arr.push(item)
+        }
+    })
+    obj.className = arr.join(' ')
+}
+
 export function toggleClass(obj, name) {
     let flag = false
     let newList = []
