@@ -18,10 +18,10 @@ class Tetris extends Shape {
         this.level = 1
     }
 
-    start(render) {
+    start(panel) {
         let result = true
         for (let p of this.points) {
-            if (p[0] === 0 && render.isFilled(0, p[1])) {
+            if (p[0] === 0 && panel.isFilled(0, p[1])) {
                 result = false
                 break
             }
@@ -29,8 +29,8 @@ class Tetris extends Shape {
         return result
     }
 
-    draw(render) {
-        render.draw(this.points, this.type, this.level)
+    draw(panel) {
+        panel.draw(this.points, this.type, this.level)
     }
 
     merge() {
@@ -44,7 +44,7 @@ class Tetris extends Shape {
         return result
     }
 
-    fall(render) {
+    fall(panel) {
         let result = false
         let next = []
         for (let p of this.points) {
@@ -52,19 +52,19 @@ class Tetris extends Shape {
             let nextJ = p[1]
 
             // 降落到底了或被卡住了，都不能再落了
-            if (render.isFloor(nextI) || render.isFilled(nextI, nextJ)) {
+            if (panel.isFloor(nextI) || panel.isFilled(nextI, nextJ)) {
                 break
             }
             next.push([nextI, nextJ])
         }
         if (next.length === 4) {
             result = true
-            this.#to(next, render)
+            this.#to(next, panel)
         }
         return result
     }
 
-    down(render) {
+    down(panel) {
         let result = []
         let cur = this.points
         while (true) {
@@ -72,8 +72,8 @@ class Tetris extends Shape {
             for (let p of cur) {
                 let nextI = p[0] + 1
                 let nextJ = p[1]
-                if (render.isUnderFloor(nextI) ||
-                    render.isFilled(nextI, nextJ)) {
+                if (panel.isUnderFloor(nextI) ||
+                    panel.isFilled(nextI, nextJ)) {
                     break
                 }
                 next.push([nextI, nextJ])
@@ -86,40 +86,40 @@ class Tetris extends Shape {
             }
         }
         if (result.length) {
-            this.#to(result, render)
+            this.#to(result, panel)
         }
         return result
     }
 
-    left(render) {
-        return this.#horizon(-1, render)
+    left(panel) {
+        return this.#horizon(-1, panel)
     }
 
-    right(render) {
-        return this.#horizon(1, render)
+    right(panel) {
+        return this.#horizon(1, panel)
     }
 
-    rotate(render) {
+    rotate(panel) {
         let result = super.rotate(this.points)
         let next = []
         for (let p of result) {
-            if (render.isUnderFloor(p[0]) ||
-                render.isOutWall(p[1]) ||
-                render.isFilled(p[0], p[1])) {
+            if (panel.isUnderFloor(p[0]) ||
+                panel.isOutWall(p[1]) ||
+                panel.isFilled(p[0], p[1])) {
                 break
             } else {
                 next.push([p[0], p[1]])
             }
         }
         if (next.length === 4) {
-            this.#to(next, render)
+            this.#to(next, panel)
             result = next
         }
         return result
     }
 
     // 私有方法
-    #horizon(dx, render) {
+    #horizon(dx, panel) {
         let result = []
         let next = []
         for (let p of this.points) {
@@ -127,23 +127,23 @@ class Tetris extends Shape {
             let nextJ = p[1] + dx
 
             // 若左右到边界了 或左右被卡住了，则左右位置不动
-            if (render.isOutWall(nextJ) || render.isFilled(nextI, nextJ)) {
+            if (panel.isOutWall(nextJ) || panel.isFilled(nextI, nextJ)) {
                 break
             }
             next.push([nextI, nextJ])
         }
         if (next.length === 4) {
             result = next
-            this.#to(next, render)
+            this.#to(next, panel)
         }
         return result
     }
 
-    #to(next, render) {
+    #to(next, panel) {
         // 在 this.current 中但不在 next 中的，置灰
-        render.dark(Shape.minus(this.points, next))
+        panel.dark(Shape.minus(this.points, next))
         // 在 next 中但不在 this.current 中的，置亮
-        render.draw(Shape.minus(next, this.points), this.type, this.level)
+        panel.draw(Shape.minus(next, this.points), this.type, this.level)
         this.points = next
     }
 }

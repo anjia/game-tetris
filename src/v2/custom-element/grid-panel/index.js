@@ -63,55 +63,11 @@ class Panel extends Base {
     reset() {
         this.#status = Panel.#PREPARING
         this.#clearTimer()
-
         for (let cell of this.#cellList) {
             cell.dark()
         }
         this.#highest = this.#rows - 1
         this.#startResetScreen(this.#rows - 1, -1, true)
-    }
-
-    #startResetScreen(row, dy, mode) {
-        if (dy === 1 && row === this.#rows) {
-            return
-        }
-
-        const start = row * this.#columns
-        for (let j = 0; j < this.#columns; j++) {
-            // TODO. 可优化
-            if (mode) {
-                this.#cellList[i].light(start + j)
-            } else {
-                this.#cellList[i].dark(start + j)
-            }
-        }
-
-        setTimeout(() => {
-            let nextRow = row + dy
-            if (dy === -1 && nextRow < 0) {
-                this.#startResetScreen(0, 1, false)
-            } else {
-                this.#startResetScreen(nextRow, dy, mode)
-            }
-        }, 30)
-    }
-    #clearFullRows(fullRows) {
-        // 清除数据、更新UI
-        for (let row of fullRows) {
-            for (let i = row; i >= this.#highest; i--) {
-                const srcI = i - 1
-                const srcStart = srcI * this.#columns
-                const toStart = i * this.#columns
-                for (let j = 0; j < this.#columns; j++) {
-                    if (srcI >= 0 && srcI >= this.#highest) {
-                        this.#cellList[toStart + j].copy(this.#cellList[srcStart + j])
-                    } else {
-                        this.#cellList[toStart + j].dark()
-                    }
-                }
-            }
-            this.#highest++
-        }
     }
 
     start(shape, speed, level) {
@@ -236,6 +192,31 @@ class Panel extends Base {
         }
     }
 
+    #startResetScreen(row, dy, mode) {
+        if (dy === 1 && row === this.#rows) {
+            return
+        }
+
+        const start = row * this.#columns
+        for (let j = 0; j < this.#columns; j++) {
+            // TODO. 可优化
+            if (mode) {
+                this.#cellList[i].light(start + j)
+            } else {
+                this.#cellList[i].dark(start + j)
+            }
+        }
+
+        setTimeout(() => {
+            let nextRow = row + dy
+            if (dy === -1 && nextRow < 0) {
+                this.#startResetScreen(0, 1, false)
+            } else {
+                this.#startResetScreen(nextRow, dy, mode)
+            }
+        }, 30)
+    }
+
     #calculateFullRows(points) {
         // 更新的行
         let updatedRows = new Set()
@@ -263,6 +244,26 @@ class Panel extends Base {
             return 0
         })
         return fullRows
+    }
+
+
+    #clearFullRows(fullRows) {
+        // 清除数据、更新UI
+        for (let row of fullRows) {
+            for (let i = row; i >= this.#highest; i--) {
+                const srcI = i - 1
+                const srcStart = srcI * this.#columns
+                const toStart = i * this.#columns
+                for (let j = 0; j < this.#columns; j++) {
+                    if (srcI >= 0 && srcI >= this.#highest) {
+                        this.#cellList[toStart + j].copy(this.#cellList[srcStart + j])
+                    } else {
+                        this.#cellList[toStart + j].dark()
+                    }
+                }
+            }
+            this.#highest++
+        }
     }
 
     #gameover() {
