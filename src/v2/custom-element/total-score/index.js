@@ -7,49 +7,49 @@ customElements.define('total-score', class extends Base {
     static #MAX = 999999                      // 最大得分
 
     // 私有属性
-    #people;
-    #key;
-    #score;
-    #vs;
-    #dataDiff;
-    #dataMax;
-    #domScore = null
-    #domDiff = null
-    #domMax = null
+    #_people;
+    #_key;
+    #_score;
+    #_vs;
+    #_diff;
+    #_max;
+    #$score = null
+    #$diff = null
+    #$max = null
 
     constructor() {
         super()
 
         // 私有属性
-        this.#dataMax = parseInt(localStorage.getItem('max')) || 0
+        this.#_max = parseInt(localStorage.getItem('max')) || 0
 
         // 构造 shadow DOM（不变的部分）
         let shadow = this.attachShadow({ mode: 'open' })
         shadow.appendChild(Base.createLink('./custom-element/total-score/index.css'))
-        this.#domScore = Base.create('div')
+        this.#$score = Base.create('div')
     }
 
     connectedCallback() {
         if (!this.isConnected) return
 
         // 获取属性参数
-        this.#people = parseInt(this.getAttribute('people')) || 1
-        this.#key = this.getAttribute('key')
+        this.#_people = parseInt(this.getAttribute('people')) || 1
+        this.#_key = this.getAttribute('key')
 
         // html
         const shadow = this.shadowRoot
-        if (this.#people > 1) {
+        if (this.#_people > 1) {
             const text = document.createTextNode('SCORE')
-            this.#domDiff = Base.create('div')
-            this.#domScore.className = ''
+            this.#$diff = Base.create('div')
+            this.#$score.className = ''
             shadow.appendChild(text)
-            shadow.appendChild(this.#domScore)
-            shadow.appendChild(this.#domDiff)
+            shadow.appendChild(this.#$score)
+            shadow.appendChild(this.#$diff)
         } else {
-            this.#domScore.className = 'cur'
-            this.#domMax = Base.create('div', { 'class': 'max', 'text': Base.padNumber(this.#dataMax, 6) })
-            shadow.appendChild(this.#domMax)
-            shadow.appendChild(this.#domScore)
+            this.#$score.className = 'cur'
+            this.#$max = Base.create('div', { 'class': 'max', 'text': Base.padNumber(this.#_max, 6) })
+            shadow.appendChild(this.#$max)
+            shadow.appendChild(this.#$score)
         }
 
         // 重置（初始化）数据
@@ -57,30 +57,30 @@ customElements.define('total-score', class extends Base {
     }
 
     get score() {
-        return this.#score
+        return this.#_score
     }
 
     get vs() {
-        return this.#vs
+        return this.#_vs
     }
 
     get diff() {
-        return this.#dataDiff
+        return this.#_diff
     }
 
     get key() {
-        return this.#key
+        return this.#_key
     }
 
     set score(x) {
         if (x > this.constructor.#MAX) {
             x = this.constructor.#MAX
         }
-        this.#score = x
-        this.#domScore.innerText = Base.padNumber(this.score, 6)
+        this.#_score = x
+        this.#$score.innerText = Base.padNumber(this.score, 6)
 
-        if (this.#people === 1) {
-            this.#max = this.#score
+        if (this.#_people === 1) {
+            this.#max = this.#_score
         } else {
             this.#diff = x - this.vs
         }
@@ -88,26 +88,26 @@ customElements.define('total-score', class extends Base {
 
     // 就类似数据驱动
     set vs(x) {
-        this.#vs = x
+        this.#_vs = x
         this.#diff = this.score - x
     }
 
     set #diff(dist) {
-        if (this.#people === 1 || dist === this.#dataDiff) return
+        if (this.#_people === 1 || dist === this.#_diff) return
         if (dist >= 0) {
-            this.#domDiff.className = 'diff'
+            this.#$diff.className = 'diff'
         } else {
-            this.#domDiff.className = 'diff less'
+            this.#$diff.className = 'diff less'
         }
-        this.#dataDiff = dist
-        this.#domDiff.innerText = Base.padNumber(Math.abs(dist), 6)
+        this.#_diff = dist
+        this.#$diff.innerText = Base.padNumber(Math.abs(dist), 6)
     }
 
     set #max(x) {
-        if (this.#people > 1 || x === this.#dataMax) return
-        if (x > this.#dataMax) {
-            this.#dataMax = x
-            this.#domMax.innerText = Base.padNumber(this.#dataMax, 6)
+        if (this.#_people > 1 || x === this.#_max) return
+        if (x > this.#_max) {
+            this.#_max = x
+            this.#$max.innerText = Base.padNumber(this.#_max, 6)
             localStorage.setItem('max', x)
         }
     }

@@ -5,7 +5,7 @@ import Base from '../js/CustomBase.js'
 class Cell extends Base {
 
     // 私有属性
-    #$div;         // dom 以 $ 开头
+    #$cell;         // dom 以 $ 开头
     #_v = false    // value，私有属性以_开头（以防后续有getter/setter，因为这在自定义组件中很常见）
 
     constructor() {
@@ -16,8 +16,8 @@ class Cell extends Base {
         if (!this.isConnected) return
         let shadow = this.attachShadow({ mode: 'open' })
         shadow.appendChild(Base.createLink('./custom-element/grid-cell/index.css'))
-        this.#$div = Base.create('div')
-        shadow.appendChild(this.#$div)
+        this.#$cell = Base.create('div')
+        shadow.appendChild(this.#$cell)
     }
 
     get value() {
@@ -26,25 +26,25 @@ class Cell extends Base {
 
     dark() {
         this.#_v = false
-        this.#$div.className = ''
+        this.#$cell.className = ''
     }
 
     light() {
         this.#_v = true
-        this.#$div.className = 's'
+        this.#$cell.className = 's'
     }
 
     copy(obj) {
         this.#_v = obj.value
-        this.#$div.className = obj.className
+        this.#$cell.className = obj.className
     }
 
     blink() {
-        addClass(this.#$div, 'blink')
+        addClass(this.#$cell, 'blink')
     }
 
     draw(type, level) {
-        addClass(this.#$div, ['s', type, 'l' + level])
+        addClass(this.#$cell, ['s', type, 'l' + level])
     }
 }
 
