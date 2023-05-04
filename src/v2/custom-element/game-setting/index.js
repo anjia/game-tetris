@@ -8,6 +8,7 @@ customElements.define('game-setting', class extends Base {
     #modeList;
     #people;
     #gameList;
+    #width;
     #night;
 
     #_setting = {}
@@ -57,6 +58,13 @@ customElements.define('game-setting', class extends Base {
                 'disabled': true
             })
         ]
+        this.#width = Base.create('input', {
+            'type': 'range',
+            'value': Store.width,
+            'min': '10',
+            'max': '90',
+            'disabled': true
+        })
         this.#night = Base.create('input', {
             'type': 'checkbox',
             'name': 'night',
@@ -75,6 +83,7 @@ customElements.define('game-setting', class extends Base {
         ]))
         this.options = Base.create('div', { 'id': 'options', 'class': 'disabled' }, [
             Base.create('div', {}, [this.#people, Base.createText('人')]),
+            Base.create('div', {}, [this.#width]),
             Base.create('div', {}, [
                 this.#gameList[0],
                 Base.create('label', {
@@ -108,6 +117,7 @@ customElements.define('game-setting', class extends Base {
         const disabled = !flag
         this.#people.disabled = disabled
         this.#gameList.forEach(item => item.disabled = disabled)
+        this.#width.disabled = disabled
     }
 
     #init() {
@@ -119,14 +129,13 @@ customElements.define('game-setting', class extends Base {
         }
         if (Store.games === '3') {
             this.#gameList[0].checked = true
-            // this.#gameList[0].click()
         } else if (Store.games === '5') {
             this.#gameList[1].checked = true
-            // this.#gameList[1].click()
         }
         if (Store.night === '1') {
             this.#night.click()
         }
+        this.#root.style.setProperty('--vs-width', this.#width.value + '%')
     }
 
     #addEventListener() {
@@ -141,6 +150,7 @@ customElements.define('game-setting', class extends Base {
                     this.#vs = true
                     this.#setting = { 'people': this.#people.value }
                 }
+                item.blur()
                 Store.mode = item.value
             })
         })
@@ -149,6 +159,12 @@ customElements.define('game-setting', class extends Base {
         this.#people.addEventListener('change', () => {
             this.#setting = { 'people': this.#people.value }
             Store.people = this.#people.value
+        })
+
+        // 宽度
+        this.#width.addEventListener('input', () => {
+            this.#root.style.setProperty('--vs-width', this.#width.value + '%')
+            Store.width = this.#width.value
         })
 
         // 对战场次

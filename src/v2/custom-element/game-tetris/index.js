@@ -19,12 +19,12 @@ class Tetris extends Base {
     static #RESET_KEY = 'Escape'
 
     // 私有变量
-    #people;
-    #context = [];    // <game-context>[]
-    #dataStatus = Tetris.#PREPARING;
+    #_people;
+    #_games;
+    #_status = Tetris.#PREPARING;
     #overCounter = 0
-    #games;
 
+    #context = [];    // <game-context>[]
     #domList;
     #btnStart;
     #btnReset;
@@ -51,8 +51,8 @@ class Tetris extends Base {
         this.#btnWrap = Base.create('div', {}, [this.#btnStart, this.#btnReset])
 
         // 初始化
-        this.people = this.getAttribute('people')
-        this.games = this.getAttribute('games')
+        this.#people = Store.mode === '1' ? 1 : (this.getAttribute('people') || Store.people)
+        this.#games = this.getAttribute('games') || Store.games
 
         // 监听事件
         this.#addEventListener()
@@ -63,38 +63,34 @@ class Tetris extends Base {
         // console.log(`<game-tetris> attributeChangedCallback() name=${name}, oldValue=${oldValue}, newValue=${newValue}`)
         switch (name) {
             case 'people':
-                this.people = newValue
+                this.#people = newValue
                 break
             case 'games':
-                this.games = newValue
+                this.#games = newValue
                 break
         }
     }
 
-    set people(x) {
-        if (Store.mode === '1') {
-            x = 1
-        } else {
-            x = parseInt(x) || parseInt(Store.people)
-        }
-        if (x === this.#people) return
-        this.#people = x
+    set #people(x) {
+        x = parseInt(x) || 1
+        if (x === this.#_people) return
+        this.#_people = x
         this.#btnReset.click()
 
         this.#context = []
-        for (let i = 0; i < this.#people; i++) {
-            this.#context.push(Base.create('game-context', { 'people': this.#people, 'games': this.#games, 'key': i }))
+        for (let i = 0; i < this.#_people; i++) {
+            this.#context.push(Base.create('game-context', { 'people': this.#_people, 'games': this.#_games, 'key': i }))
         }
 
         this.#domList.innerHTML = ''
-        if (this.#people === 1) {
+        if (this.#_people === 1) {
             this.#domList.parentElement.className = 'single'
             this.#domList.appendChild(this.#context[0])
             this.#domList.appendChild(Base.create('div', { 'class': 'gap' }, [this.#btnWrap]))
         } else {
             this.#domList.parentElement.className = 'vs'
             this.#domList.appendChild(this.#context[0])
-            for (let i = 1; i < this.#people; i++) {
+            for (let i = 1; i < this.#_people; i++) {
                 let text = Base.create('div', { 'text': 'VS' })
                 let children = [text]
                 if (i === 1) {
@@ -106,18 +102,18 @@ class Tetris extends Base {
         }
     }
 
-    set games(x) {
-        x = parseInt(x) || Store.games
-        if (x === this.#games) return
-        this.#games = x
+    set #games(x) {
+        x = parseInt(x) || 3
+        if (x === this.#_games) return
+        this.#_games = x
         for (let c of this.#context) {
             c.games = x
         }
     }
 
     set #status(x) {
-        this.#dataStatus = x
-        switch (this.#dataStatus) {
+        this.#_status = x
+        switch (this.#_status) {
             case Tetris.#PREPARING:
                 this.#btnStart.className = 'start'
                 break
@@ -136,7 +132,7 @@ class Tetris extends Base {
     #addEventListener() {
 
         this.#btnStart.addEventListener('click', () => {
-            switch (this.#dataStatus) {
+            switch (this.#_status) {
                 case Tetris.#PREPARING:
                     this.#status = Tetris.#PLAYING     // 状态：未开始 -> 游戏中
                     this.#start()                      // 动作：开始游戏
@@ -162,7 +158,7 @@ class Tetris extends Base {
 
         this.addEventListener('gameover', () => {
             this.#overCounter++
-            if (this.#overCounter === this.#people) {
+            if (this.#overCounter === this.#_people) {
                 this.#status = Tetris.#GAMEOVER
                 // 比分数（谁多谁赢），如果赢的场次等于最大场次了，游戏就结束了
                 const key = parseInt(GameContext.winner)

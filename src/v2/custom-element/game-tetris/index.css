@@ -69,6 +69,7 @@ button::after {
     justify-content: space-between;
     width: var(--vs-width);
     margin: 0 auto;
+    min-width: 380px;
 }
 
 .vs .gap {
