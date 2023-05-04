@@ -1,6 +1,7 @@
 import GameContext from '../game-context/index.js'
 
 import Base from '../js/CustomBase.js'
+import Store from '../js/Store.js'
 
 class Tetris extends Base {
 
@@ -22,7 +23,7 @@ class Tetris extends Base {
     #context = [];    // <game-context>[]
     #dataStatus = Tetris.#PREPARING;
     #overCounter = 0
-    #games = 3;
+    #games;
 
     #domList;
     #btnStart;
@@ -71,7 +72,11 @@ class Tetris extends Base {
     }
 
     set people(x) {
-        x = parseInt(x) || 1
+        if (Store.mode === '1') {
+            x = 1
+        } else {
+            x = parseInt(x) || parseInt(Store.people)
+        }
         if (x === this.#people) return
         this.#people = x
         this.#btnReset.click()
@@ -102,7 +107,7 @@ class Tetris extends Base {
     }
 
     set games(x) {
-        x = parseInt(x) || 3
+        x = parseInt(x) || Store.games
         if (x === this.#games) return
         this.#games = x
         for (let c of this.#context) {

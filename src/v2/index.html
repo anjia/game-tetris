@@ -22,47 +22,15 @@
             background-color: var(--bg);
             font-family: Courier, monospace;
         }
-
-        /* 设置区 */
-        #setting {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin: 1em 0 2em;
-            gap: 10px;
-        }
-
-        #options {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        #options.disabled {
-            color: gray;
-        }
     </style>
 
+    <script src="./custom-element/game-setting/index.js" type="module"></script>
     <script src="./custom-element/game-tetris/index.js" type="module"></script>
 </head>
 
 <body>
-    <header id="setting">
-        <div>
-            <input type="radio" name="mode" id="single" value="single" checked><label for="single">单人模式</label>
-            <input type="radio" name="mode" id="vs" value="vs"><label for="vs">对战模式</label>
-        </div>
-        <div id="options" class="disabled">
-            <div><input type="number" value="3" name="number" min="2" max="10" id="people" disabled>人</div>
-            <div>
-                <input type="radio" name="games" value="3" id="games3" checked disabled> <label
-                    for="games3">三局两胜</label><br />
-                <input type="radio" name="games" value="5" id="games5" disabled> <label for="games5">五局三胜</label>
-            </div>
-        </div>
-        <div>
-            <input type="checkbox" name="daynight" id="daynight"><label for="daynight">夜间</label>
-        </div>
+    <header>
+        <game-setting></game-setting>
     </header>
     <main>
         <game-tetris id="tetris"></game-tetris>

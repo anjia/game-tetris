@@ -25,6 +25,10 @@ class CustomBase extends HTMLElement {
         })
     }
 
+    static createText(text) {
+        return document.createTextNode(text)
+    }
+
     static padNumber(num, len) {
         return String(num).padStart(len, '0')
     }

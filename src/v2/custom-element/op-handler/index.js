@@ -2,7 +2,7 @@ import Base from '../js/CustomBase.js'
 
 class OP extends Base {
 
-    static #KEYS = ['↑←→↓', 'WASZ', 'IJKM', 'YGHB', 'RDFC']
+    static #KEYS = ['↑←→↓', 'WADS', 'IJLK', 'TFHG']
     static #counter = 0
 
     // 私有属性

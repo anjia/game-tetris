@@ -1,4 +1,5 @@
 import Base from '../js/CustomBase.js'
+import Store from '../js/Store.js'
 
 customElements.define('total-score', class extends Base {
 
@@ -21,7 +22,7 @@ customElements.define('total-score', class extends Base {
         super()
 
         // 私有属性
-        this.#_max = parseInt(localStorage.getItem('max')) || 0
+        this.#_max = Store.max
 
         // 构造 shadow DOM（不变的部分）
         let shadow = this.attachShadow({ mode: 'open' })
@@ -108,7 +109,7 @@ customElements.define('total-score', class extends Base {
         if (x > this.#_max) {
             this.#_max = x
             this.#$max.innerText = Base.padNumber(this.#_max, 6)
-            localStorage.setItem('max', x)
+            Store.max = x
         }
     }
 
