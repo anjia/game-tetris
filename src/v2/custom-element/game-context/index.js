@@ -55,7 +55,7 @@ class GameContext extends Base {
         this.#domLines = Base.create('clear-lines', { 'class': 'flex-item box', 'people': this.#people })
         this.#domNext = Base.create('next-shape', { 'class': 'flex-item box' })
         this.#domPanel = Base.create('grid-panel')
-        this.#btnHandler = Base.create('op-handler')
+        this.#btnHandler = Base.create('op-handler', { 'people': this.#people })
 
         container.appendChild(Base.create('div', { 'class': 'box' }, [this.domScore]))
         container.appendChild(Base.create('div', { 'class': 'flex' }, [this.#domLines, this.#domNext]))

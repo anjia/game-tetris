@@ -165,6 +165,7 @@ customElements.define('game-setting', class extends Base {
         this.#width.addEventListener('input', () => {
             this.#root.style.setProperty('--vs-width', this.#width.value + '%')
             Store.width = this.#width.value
+            this.#width.blur()
         })
 
         // 对战场次
