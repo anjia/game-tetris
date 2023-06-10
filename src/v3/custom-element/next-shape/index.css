@@ -1,0 +1,11 @@
+.grid {
+    display: grid;
+    gap: 2px;
+    grid-template-rows: repeat(2, var(--size));
+    grid-template-columns: repeat(4, var(--size));
+    justify-content: center;
+}
+
+.grid>span {
+    opacity: 0.1;
+}

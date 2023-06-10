@@ -1,0 +1,29 @@
+:host {
+    box-sizing: border-box;
+    display: flex;
+    justify-content: center;
+}
+
+.area {
+    display: grid;
+    grid-template-columns: repeat(2, var(--btn-size));
+    grid-template-rows: repeat(2, var(--btn-size));
+    font-size: small;
+    line-height: var(--btn-size);
+    text-align: center;
+    gap: 6px;
+    transform: rotate(45deg);
+    margin: calc(var(--btn-size) / 2) 0;
+}
+
+.area>button {
+    background-color: var(--bg);
+    color: var(--color);
+    border-radius: 50%;
+    transform: rotate(-45deg);
+}
+
+button::after {
+    content: attr(data-key);
+    display: block;
+}

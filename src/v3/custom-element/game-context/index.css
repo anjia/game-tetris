@@ -1,0 +1,20 @@
+.container {
+    width: 208px;
+}
+
+.box {
+    border: 2px solid gray;
+    margin-bottom: var(--gap);
+    text-align: center;
+    padding: var(--gap) 0;
+    border-radius: 4px;
+}
+
+.flex {
+    display: flex;
+    gap: var(--gap)
+}
+
+.flex-item {
+    flex: 1;
+}

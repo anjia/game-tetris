@@ -1,0 +1,40 @@
+:host {
+    position: relative;
+}
+
+ul {
+    display: flex;
+    justify-content: center;
+    gap: var(--gap);
+    padding: 5px 0;
+    list-style: none;
+    margin: 0;
+}
+
+ul>li {
+    width: var(--win-size);
+    height: var(--win-size);
+    border-radius: 50%;
+    background-color: currentColor;
+    opacity: 0.2;
+}
+
+ul>li.s {
+    opacity: 1;
+}
+
+.tip {
+    position: absolute;
+    color: red;
+    font-size: small;
+    bottom: -5px;
+    transform: translateY(100%);
+}
+
+.tip.finally::before {
+    content: '恭喜，获得最终胜利！！！';
+}
+
+.tip.round::before {
+    content: '恭喜，获得本轮比赛的胜利！';
+}
