@@ -1,57 +1,47 @@
-import GameContext from '../game-context/index.js'
-
 import TetrisStrategy from '../TetrisStrategy.js'
 
+import Base from '../../js/CustomBase.js'
+
 class SingleMode extends TetrisStrategy {
-    #context = [];    // <game-context>[]
+
+    #context;
 
     constructor() {
-        this.#domList.parentElement.className = 'single'
-        this.#domList.appendChild(this.#context[0])
-        this.#domList.appendChild(Base.create('div', { 'class': 'gap' }, [this.#btnWrap]))
+        super()
     }
 
+    connectedCallback() {
+        if (!this.isConnected) return
 
+        // debugger
+
+        const shadow = this.attachShadow({ mode: 'open' })
+
+        shadow.appendChild(Base.createLink('./custom-element/game-tetris/single-mode/index.css'))
+
+
+        this.#context = Base.create('game-context')
+        // TODO. 如何访问父元素的属性和方法？
+
+        shadow.appendChild(this.#context)
+        // shadow.appendChild(Base.create('div', { 'class': 'gap' }, [this.#btnWrap]))
+    }
 
     start() {
-        for (let c of this.#context) {
-            c.start()
-        }
+        this.#context.start()
     }
 
     pause() {
-        for (let c of this.#context) {
-            c.pause()
-        }
+        this.#context.pause()
     }
 
     continue() {
-        for (let c of this.#context) {
-            c.continue()
-        }
+        this.#context.continue()
     }
 
     reset() {
-        this.#status = GameTetris.#PREPARING
-        this.#overCounter = 0
-
-        GameContext.reset()  // 重置全局类
-        for (let c of this.#context) {
-            c.reset(GameTetris.#PK_OVER)   // 重置其它元素，比如 <clear-lines>, <win-counter>
-            c.resetPanel()             // 重置游戏面板相关，比如 <grid-panel>, <next-shape>
-        }
-    }
-
-    gameover() {
-        this.#overCounter++
-        if (this.#overCounter === this.#_people) {
-            this.#status = GameTetris.#GAMEOVER
-            // 比分数（谁多谁赢），如果赢的场次等于最大场次了，游戏就结束了
-            const key = parseInt(GameContext.winner)
-            if (key >= 0 && this.#context[key].win()) {
-                GameTetris.#PK_OVER = true
-            }
-        }
+        this.#context.reset()
+        this.#context.resetPanel()
     }
 }
 
