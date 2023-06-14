@@ -90,6 +90,9 @@ class VSMode extends TetrisStrategy {
     }
 
     reset() {
+        // TODO. 子类若想访问父类的同名方法？ 
+        // super()
+
         this.#overCounter = 0
         GameContext.reset()  // 重置全局类
 

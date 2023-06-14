@@ -2,6 +2,7 @@ import Base from '../../js/CustomBase.js'
 import TetrisStrategy from '../TetrisStrategy.js'
 import GameContext from '../../game-context/index.js'
 
+// TODO. JS 单继承 vs 多继承
 class SingleMode extends TetrisStrategy {
 
     // 私有变量

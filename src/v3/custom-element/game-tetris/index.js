@@ -18,6 +18,7 @@ class Tetris extends Base {
     #tetrisSingle;
     #tetrisVS;
 
+    // TODO. 状态模式
     // 状态
     static #PREPARING = 0
     static #PLAYING = 1
@@ -35,7 +36,6 @@ class Tetris extends Base {
     connectedCallback() {
         if (!this.isConnected) return
 
-        // Uncaught DOMException: Failed to execute 'attachShadow' on 'Element': Shadow root cannot be created on a host which already hosts a shadow tree.
         const shadow = this.attachShadow({ mode: 'open' })
         shadow.appendChild(Base.createLink('./custom-element/game-tetris/index.css'))
         shadow.appendChild(Base.create('h1', { 'text': '俄罗斯方块' }))
@@ -68,10 +68,10 @@ class Tetris extends Base {
         if (newValue === null) return
         switch (name) {
             case 'people':
+                // TODO.记录：更新了数据，需要刷新 UI
                 // 若两种模式之间有切换，则需要 remove 之后再 append
+                // Uncaught DOMException: Failed to execute 'attachShadow' on 'Element': Shadow root cannot be created on a host which already hosts a shadow tree.
                 const next = newValue > 1 ? this.#tetrisVS : this.#tetrisSingle
-
-                // BUG. 更新了数据，需要刷新 UI
                 if (next != this.#tetris) {
                     this.#tetris.remove()
                     this.#tetris = next
@@ -136,6 +136,8 @@ class Tetris extends Base {
             // this.#status = GameTetris.#GAMEOVER
         })
 
+        // TODO. 键盘事件通常的监听规则
+        // TODO. 按键的默认行为，eg. 回车（键盘可访问性/回车/选中等）、空格（滚动页面）
         window.addEventListener('keydown', (e) => {
             // console.log(e.key, e)
             // TODO. key, code, keycode 的区别
