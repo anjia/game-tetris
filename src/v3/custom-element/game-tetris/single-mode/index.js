@@ -1,5 +1,5 @@
-import TetrisStrategy from '../TetrisStrategy.js'
 import Base from '../../js/CustomBase.js'
+import TetrisStrategy from '../TetrisStrategy.js'
 import GameContext from '../../game-context/index.js'
 
 class SingleMode extends TetrisStrategy {

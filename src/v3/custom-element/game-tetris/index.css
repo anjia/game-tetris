@@ -42,38 +42,3 @@ button::after {
     display: flex;
     flex-direction: column;
 }
-
-
-/* 单人模式 */
-.single {
-    width: 410px;
-    margin: auto;
-    border-radius: 30px;
-    border: 3px solid currentColor;
-    padding: 30px 20px;
-}
-
-.single .wrap {
-    display: flex;
-    gap: 10px;
-}
-
-.single .gap {
-    justify-content: end;
-    height: 510px;
-}
-
-/* 对战模式 */
-.vs .wrap {
-    display: flex;
-    justify-content: space-between;
-    width: var(--vs-width);
-    margin: 0 auto;
-    min-width: 380px;
-}
-
-.vs .gap {
-    height: 560px;
-    justify-content: space-between;
-    align-items: center;
-}

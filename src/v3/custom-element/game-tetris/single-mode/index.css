@@ -1,0 +1,18 @@
+:host {
+    display: block;
+    width: 410px;
+    margin: auto;
+    border-radius: 30px;
+    border: 3px solid currentColor;
+    padding: 30px 20px;
+}
+
+.wrap {
+    display: flex;
+    gap: 10px;
+}
+
+.gap {
+    justify-content: end;
+    height: 510px;
+}

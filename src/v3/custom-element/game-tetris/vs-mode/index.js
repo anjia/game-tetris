@@ -1,4 +1,6 @@
+import Base from '../../js/CustomBase.js'
 import TetrisStrategy from '../TetrisStrategy.js'
+import GameContext from '../../game-context/index.js'
 
 class VSMode extends TetrisStrategy {
 
@@ -18,17 +20,22 @@ class VSMode extends TetrisStrategy {
     connectedCallback() {
         if (!this.isConnected) return
 
+        // 获取属性
+        this.people = this.getAttribute('people')
+        this.games = this.getAttribute('games')
+
         const shadow = this.attachShadow({ mode: 'open' })
         shadow.appendChild(Base.createLink('./custom-element/game-tetris/vs-mode/index.css'))
-        this.shadow.appendChild(super.context[0])
-        for (let i = 1; i < super.people; i++) {
+
+        shadow.appendChild(this.#context[0])
+        for (let i = 1; i < this.#_people; i++) {
             let text = Base.create('div', { 'text': 'VS' })
             let children = [text]
             // if (i === 1) {
             //     children.push(this.#btnWrap)
             // }
-            this.shadow.appendChild(Base.create('div', { 'class': 'gap' }, children))
-            this.shadow.appendChild(super.context[i])
+            shadow.appendChild(Base.create('div', { 'class': 'gap' }, children))
+            shadow.appendChild(this.#context[i])
         }
     }
 
@@ -47,7 +54,6 @@ class VSMode extends TetrisStrategy {
         }
     }
 
-    // set games(x) { }
     set games(x) {
         x = parseInt(x) || 3
         if (x === this.#_games) return
