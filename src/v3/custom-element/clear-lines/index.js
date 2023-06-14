@@ -22,10 +22,6 @@ customElements.define('clear-lines', class extends Base {
 
     constructor() {
         super()
-    }
-
-    connectedCallback() {
-        if (!this.isConnected) return
 
         // shadow DOM
         let shadow = this.attachShadow({ mode: 'open' })
@@ -33,6 +29,10 @@ customElements.define('clear-lines', class extends Base {
         shadow.appendChild(text)
         this.#domLines = Base.create('div')
         shadow.appendChild(this.#domLines)
+    }
+
+    connectedCallback() {
+        if (!this.isConnected) return
 
         this.#people = parseInt(this.getAttribute('people')) || 1
 

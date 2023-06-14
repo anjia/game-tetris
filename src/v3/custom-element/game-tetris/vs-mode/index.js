@@ -15,18 +15,21 @@ class VSMode extends TetrisStrategy {
 
     constructor() {
         super()
+
+        const shadow = this.attachShadow({ mode: 'open' })
+        shadow.appendChild(Base.createLink('./custom-element/game-tetris/vs-mode/index.css'))
     }
 
     connectedCallback() {
+        console.log('vs-mode: isConnected=', this.isConnected)
+
         if (!this.isConnected) return
 
         // 获取属性
         this.people = this.getAttribute('people')
         this.games = this.getAttribute('games')
 
-        const shadow = this.attachShadow({ mode: 'open' })
-        shadow.appendChild(Base.createLink('./custom-element/game-tetris/vs-mode/index.css'))
-
+        const shadow = this.shadowRoot
         shadow.appendChild(this.#context[0])
         for (let i = 1; i < this.#_people; i++) {
             let text = Base.create('div', { 'text': 'VS' })
@@ -41,6 +44,8 @@ class VSMode extends TetrisStrategy {
 
 
     set people(x) {
+        // console.log('vs-mode people=', x)
+
         x = parseInt(x) || 1
         if (x === this.#_people) return
         this.#_people = x
@@ -48,10 +53,13 @@ class VSMode extends TetrisStrategy {
         this.#PK_OVER = false
         this.reset()
 
+        // TODO. context 可在内存中缓存，对于多的
+        // BUG. 若多了少了，需要移除 DOM
         this.#context = []
         for (let i = 0; i < this.#_people; i++) {
             this.#context.push(Base.create('game-context', { 'people': this.#_people, 'games': this.#_games, 'key': i }))
         }
+        console.log('VS-MODE len=', this.#context.length)
     }
 
     set games(x) {

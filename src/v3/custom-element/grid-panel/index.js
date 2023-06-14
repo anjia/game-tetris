@@ -35,15 +35,9 @@ class Panel extends Base {
 
     constructor() {
         super()
-    }
-
-    connectedCallback() {
-        if (!this.isConnected) return
 
         // shadow DOM
         let shadow = this.attachShadow({ mode: 'open' })
-
-        // style
         shadow.appendChild(Base.createLink('./custom-element/grid-panel/index.css'))
 
         // html
@@ -58,6 +52,11 @@ class Panel extends Base {
             cols: this.#cols,
             cellList: this.#cellList
         })
+    }
+
+    connectedCallback() {
+        // TODO. 所以要如何利用 isConnected 字段？
+        if (!this.isConnected) return
     }
 
     reset() {

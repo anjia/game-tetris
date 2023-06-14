@@ -22,10 +22,6 @@ customElements.define('next-shape', class extends Base {
         for (let i = 0; i < 8; i++) {
             this.#domCells.push(Base.create('grid-cell'))
         }
-    }
-
-    connectedCallback() {
-        if (!this.isConnected) return
 
         // 构造 shadow DOM
         let shadow = this.attachShadow({ mode: 'open' })
@@ -34,6 +30,10 @@ customElements.define('next-shape', class extends Base {
         this.#container = Base.create('section', { 'class': 'grid' }, this.#domCells)
         shadow.appendChild(this.#container)
     }
+
+    // connectedCallback() {
+    //     if (!this.isConnected) return
+    // }
 
     get shape() {
         return this.#list[this.#cur]

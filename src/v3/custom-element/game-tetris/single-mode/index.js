@@ -9,15 +9,18 @@ class SingleMode extends TetrisStrategy {
 
     constructor() {
         super()
-    }
-
-    connectedCallback() {
-        if (!this.isConnected) return
 
         const shadow = this.attachShadow({ mode: 'open' })
         shadow.appendChild(Base.createLink('./custom-element/game-tetris/single-mode/index.css'))
+    }
+
+    connectedCallback() {
+        console.log('single-mode: isConnected=', this.isConnected)
+
+        if (!this.isConnected) return
+
         this.#context = Base.create('game-context')
-        shadow.appendChild(this.#context)
+        this.shadowRoot.appendChild(this.#context)
     }
 
     start() {

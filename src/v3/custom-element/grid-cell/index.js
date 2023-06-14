@@ -10,15 +10,20 @@ class Cell extends Base {
 
     constructor() {
         super()
+
+        // TODO. 所以这个应该写在 constructor() 还是 connectedCallback()？
+        // 又或者，在 connectedCallback() 里要判断
+        // Uncaught DOMException: Failed to execute 'attachShadow' on 'Element': Shadow root cannot be created on a host which already hosts a shadow tree.
+        const shadow = this.attachShadow({ mode: 'open' })
+        shadow.appendChild(Base.createLink('./custom-element/grid-cell/index.css'))
+
+        this.#$cell = Base.create('div')
+        this.shadowRoot.appendChild(this.#$cell)
     }
 
-    connectedCallback() {
-        if (!this.isConnected) return
-        let shadow = this.attachShadow({ mode: 'open' })
-        shadow.appendChild(Base.createLink('./custom-element/grid-cell/index.css'))
-        this.#$cell = Base.create('div')
-        shadow.appendChild(this.#$cell)
-    }
+    // connectedCallback() {
+    //     if (!this.isConnected) return
+    // }
 
     get value() {
         return this.#_value

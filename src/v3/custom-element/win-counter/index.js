@@ -11,10 +11,6 @@ customElements.define('win-counter', class extends Base {
 
     constructor() {
         super()
-    }
-
-    connectedCallback() {
-        if (!this.isConnected) return
 
         // shadow root
         let shadow = this.attachShadow({ mode: 'open' })
@@ -26,6 +22,10 @@ customElements.define('win-counter', class extends Base {
 
         this.#tip = Base.create('div', { class: 'tip' })
         shadow.appendChild(this.#tip)
+    }
+
+    connectedCallback() {
+        if (!this.isConnected) return
 
         // 初始化（通过数据改UI）, max=3
         this.max = parseInt(this.getAttribute('games')) || 3

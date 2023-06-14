@@ -6,7 +6,10 @@ class TetrisStrategy extends Base {
         super()
     }
 
-    set people(x) { }
+    set people(x) {
+        // 当继承的子，没有该方法时，会调用到父元素
+        // console.log('TetrisStrategy people=', x)
+    }
     set games(x) { }
 
     start() { }

@@ -35,6 +35,7 @@ class Tetris extends Base {
     connectedCallback() {
         if (!this.isConnected) return
 
+        // Uncaught DOMException: Failed to execute 'attachShadow' on 'Element': Shadow root cannot be created on a host which already hosts a shadow tree.
         const shadow = this.attachShadow({ mode: 'open' })
         shadow.appendChild(Base.createLink('./custom-element/game-tetris/index.css'))
         shadow.appendChild(Base.create('h1', { 'text': '俄罗斯方块' }))
@@ -68,12 +69,15 @@ class Tetris extends Base {
         switch (name) {
             case 'people':
                 // 若两种模式之间有切换，则需要 remove 之后再 append
-                if (newValue > 1) {
-                    this.#tetris = this.#tetrisVS
-                    this.#tetris.people = newValue
-                } else {
-                    this.#tetris = this.#tetrisSingle
+                const next = newValue > 1 ? this.#tetrisVS : this.#tetrisSingle
+
+                // BUG. 更新了数据，需要刷新 UI
+                if (next != this.#tetris) {
+                    this.#tetris.remove()
+                    this.#tetris = next
+                    this.shadowRoot.appendChild(this.#tetris)
                 }
+                this.#tetris.people = newValue
                 break
             case 'games':
                 this.#tetris.games = newValue

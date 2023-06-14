@@ -14,6 +14,10 @@ class OP extends Base {
 
     constructor() {
         super()
+
+        // shadow DOM
+        let shadow = this.attachShadow({ mode: 'open' })
+        shadow.appendChild(Base.createLink('./custom-element/op-handler/index.css'))
     }
 
     connectedCallback() {
@@ -34,10 +38,7 @@ class OP extends Base {
 
 
         // shadow DOM
-        let shadow = this.attachShadow({ mode: 'open' })
-
-        // style
-        shadow.appendChild(Base.createLink('./custom-element/op-handler/index.css'))
+        const shadow = this.shadowRoot
 
         // html
         const btnRotate = Base.create('button', { 'text': '旋转', 'data-key': this.#keys[0] })

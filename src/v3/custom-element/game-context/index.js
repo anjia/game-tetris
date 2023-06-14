@@ -34,6 +34,9 @@ class GameContext extends Base {
 
         // 实例属性
         this.domScore;
+
+        const shadow = this.attachShadow({ mode: 'open' })
+        shadow.appendChild(Base.createLink('./custom-element/game-context/index.css'))
     }
 
     connectedCallback() {
@@ -46,8 +49,7 @@ class GameContext extends Base {
         ScoreController.people = this.#people
 
         // shadow DOM
-        const shadow = this.attachShadow({ mode: 'open' })
-        shadow.appendChild(Base.createLink('./custom-element/game-context/index.css'))
+        const shadow = this.shadowRoot
 
         // html
         const container = Base.create('div', { 'class': 'container' })
