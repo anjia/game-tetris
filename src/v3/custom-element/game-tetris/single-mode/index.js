@@ -1,10 +1,11 @@
 import TetrisStrategy from '../TetrisStrategy.js'
-
 import Base from '../../js/CustomBase.js'
+import GameContext from '../../game-context/index.js'
 
 class SingleMode extends TetrisStrategy {
 
-    #context;
+    // 私有变量
+    #context;    // <game-context>
 
     constructor() {
         super()
@@ -13,18 +14,10 @@ class SingleMode extends TetrisStrategy {
     connectedCallback() {
         if (!this.isConnected) return
 
-        // debugger
-
         const shadow = this.attachShadow({ mode: 'open' })
-
         shadow.appendChild(Base.createLink('./custom-element/game-tetris/single-mode/index.css'))
-
-
         this.#context = Base.create('game-context')
-        // TODO. 如何访问父元素的属性和方法？
-
         shadow.appendChild(this.#context)
-        // shadow.appendChild(Base.create('div', { 'class': 'gap' }, [this.#btnWrap]))
     }
 
     start() {
@@ -40,9 +33,12 @@ class SingleMode extends TetrisStrategy {
     }
 
     reset() {
-        this.#context.reset()
-        this.#context.resetPanel()
+        GameContext.reset()  // 重置全局类
+        this.#context.reset(true)     // 重置其它元素，比如 <clear-lines>, <win-counter>
+        this.#context.resetPanel()             // 重置游戏面板相关，比如 <grid-panel>, <next-shape>
     }
+
+    gameover() { }
 }
 
 customElements.define('single-mode', SingleMode)

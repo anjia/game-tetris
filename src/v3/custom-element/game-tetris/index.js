@@ -45,19 +45,16 @@ class Tetris extends Base {
         shadow.appendChild(this.#btnStart)
         shadow.appendChild(this.#btnReset)
 
-        // 两种模式
-        this.#tetrisSingle = Base.create('single-mode')
-        this.#tetrisVS = Base.create('vs-mode')
-
+        // 获取属性
         const people = Store.mode === '1' ? 1 : (this.getAttribute('people') || Store.people)
         const games = this.getAttribute('games') || Store.games
-        if (people > 1) {
-            this.#tetris = this.#tetrisVS
-            this.#tetris.people = people
-            this.#tetris.games = games
-        } else {
-            this.#tetris = this.#tetrisSingle
-        }
+
+        // 两种模式
+        this.#tetrisSingle = Base.create('single-mode')
+        this.#tetrisVS = Base.create('vs-mode', { 'people': people, 'games': games })
+
+        // 根据 people 确定一种模式
+        this.#tetris = people > 1 ? this.#tetrisVS : this.#tetrisSingle
         shadow.appendChild(this.#tetris)
 
         // 监听事件
