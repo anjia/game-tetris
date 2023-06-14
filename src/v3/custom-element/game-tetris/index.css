@@ -16,7 +16,7 @@ button {
 button::after {
     content: ' ' attr(data-key);
     position: absolute;
-    color: black;
+    color: var(--color);
     left: 50%;
     transform: translate(-50%, -100%);
     top: -3px;

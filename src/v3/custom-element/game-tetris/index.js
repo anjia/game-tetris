@@ -23,7 +23,7 @@ class Tetris extends Base {
     static #PLAYING = 1
     static #PAUSING = 2
     static #GAMEOVER = 3
-    static #START_KEY = 'Enter'
+    static #START_KEY = 'Space'
     static #RESET_KEY = 'Escape'
 
     #_status = Tetris.#PREPARING;
@@ -67,6 +67,7 @@ class Tetris extends Base {
         if (newValue === null) return
         switch (name) {
             case 'people':
+                // 若两种模式之间有切换，则需要 remove 之后再 append
                 if (newValue > 1) {
                     this.#tetris = this.#tetrisVS
                     this.#tetris.people = newValue
@@ -132,7 +133,9 @@ class Tetris extends Base {
         })
 
         window.addEventListener('keydown', (e) => {
-            switch (e.key) {
+            // console.log(e.key, e)
+            // TODO. key, code, keycode 的区别
+            switch (e.code) {
                 case Tetris.#START_KEY:
                     this.#btnStart.click()
                     break
