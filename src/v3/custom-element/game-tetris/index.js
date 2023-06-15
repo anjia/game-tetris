@@ -83,9 +83,9 @@ class Tetris extends Base {
                 if (next != this.#tetris) {
                     this.#tetris.remove()
                     this.#tetris = next
-                    this.shadowRoot.appendChild(this.#tetris)
-                    // this.#container.innerHTML = ''
-                    // this.#container.appendChild(this.#tetris)
+                    // this.shadowRoot.appendChild(this.#tetris)
+                    this.#container.innerHTML = ''
+                    this.#container.appendChild(this.#tetris)
                 }
                 // BUG. 数据已变，为何UI未更新？
                 console.log('新值是：', this.#tetris)

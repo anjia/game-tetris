@@ -6,9 +6,7 @@ class VSMode extends TetrisStrategy {
 
     // 私有变量
     #container;
-    #data = [];
     #context = [];    // <game-context>[]
-
     #_people = 0;
     #_games;
     #overCounter = 0
@@ -41,26 +39,26 @@ class VSMode extends TetrisStrategy {
         x = parseInt(x) || 2
         if (x === this.#_people) return
 
-        // 更新数据
-        if (x > this.#_people) {
-            // 说明要 create 新的了
-            for (let i = this.#_people; i < x; i++) {
-                let item = Base.create('game-context', { 'people': this.#_people, 'games': this.#_games, 'key': i })
-                this.#data.push(item)
-                this.#context.push(item)
-
-                // 更新 UI
-                this.#container.appendChild(item)
-            }
-        } else if (x < this.#_people) {  // 则删除多余的
-            // this.#context.length = x
-            // 2, 5
+        if (x < this.#_people) {  // 则将多余的数据从 UI 中移除
             for (let i = x; i < this.#_people; i++) {
                 this.#context[i].remove()
             }
+        } else if (x <= this.#context.length) {  // 则直接显示现成的数据
+            for (let i = this.#_people; i < x; i++) {
+                this.#container.appendChild(this.#context[i])
+            }
+        } else {  // 则优先显示现成的，然后再新建
+            for (let i = this.#_people; i < this.#context.length; i++) {
+                this.#container.appendChild(this.#context[i])
+            }
+            for (let i = this.#context.length; i < x; i++) {
+                let item = Base.create('game-context', { 'people': this.#_people, 'games': this.#_games, 'key': i })
+                this.#context.push(item)
+                this.#container.appendChild(item)
+            }
         }
         this.#_people = x
-        console.log('VS-MODE len=', this.#context.length)
+        console.log('VS-MODE len=', this.#context.length, ' people=', this.#_people)
 
         this.#PK_OVER = false
         this.reset()
@@ -75,22 +73,21 @@ class VSMode extends TetrisStrategy {
         }
     }
 
-
     start() {
-        for (let c of this.#context) {
-            c.start()
+        for (let i = 0; i < this.#_people; i++) {
+            this.#context[i].start()
         }
     }
 
     pause() {
-        for (let c of this.#context) {
-            c.pause()
+        for (let i = 0; i < this.#_people; i++) {
+            this.#context[i].pause()
         }
     }
 
     continue() {
-        for (let c of this.#context) {
-            c.continue()
+        for (let i = 0; i < this.#_people; i++) {
+            this.#context[i].continue()
         }
     }
     reset() {
