@@ -5,23 +5,20 @@ import GameContext from '../../game-context/index.js'
 // TODO. JS 单继承 vs 多继承
 class SingleMode extends TetrisStrategy {
 
-    // 私有变量
-    #context;    // <game-context>
+    #context;
 
     constructor() {
         super()
 
+        // TODO. 如何访问父元素的私有变量
         const shadow = this.attachShadow({ mode: 'open' })
         shadow.appendChild(Base.createLink('./custom-element/game-tetris/single-mode/index.css'))
+        this.#context = Base.create('game-context')
+        shadow.appendChild(this.#context)
     }
 
     connectedCallback() {
-        console.log('single-mode: isConnected=', this.isConnected)
-
-        if (!this.isConnected) return
-
-        this.#context = Base.create('game-context')
-        this.shadowRoot.appendChild(this.#context)
+        console.log('signle-mode: isConnected=', this.isConnected)
     }
 
     start() {
@@ -35,7 +32,6 @@ class SingleMode extends TetrisStrategy {
     continue() {
         this.#context.continue()
     }
-
     reset() {
         GameContext.reset()  // 重置全局类
         this.#context.reset(true)     // 重置其它元素，比如 <clear-lines>, <win-counter>

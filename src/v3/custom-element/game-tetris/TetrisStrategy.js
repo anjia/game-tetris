@@ -4,6 +4,9 @@ import Base from '../js/CustomBase.js'
 // TODO. 测试两个子类的功能
 class TetrisStrategy extends Base {
 
+    // // 私有变量
+    // #context = [];    // <game-context>[]
+
     constructor() {
         super()
     }
@@ -13,6 +16,14 @@ class TetrisStrategy extends Base {
         // console.log('TetrisStrategy people=', x)
     }
     set games(x) { }
+
+    // // TODO. 继承的子元素使用
+    // push(x) {
+    //     this.#context.push(x)
+    // }
+    // get context() {
+    //     return this.#context
+    // }
 
     start() { }
     pause() { }

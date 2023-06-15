@@ -1,4 +1,4 @@
-:host {
+.wrap {
     display: flex;
     justify-content: space-between;
     width: var(--vs-width);
