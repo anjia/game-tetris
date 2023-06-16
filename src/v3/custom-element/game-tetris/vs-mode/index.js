@@ -8,7 +8,7 @@ class VSMode extends TetrisStrategy {
     #container;
     #context = [];    // <game-context>[]
     #_people = 0;
-    #_games;
+    #_games = 3;
     #overCounter = 0
     #PK_OVER = false
 
@@ -25,7 +25,7 @@ class VSMode extends TetrisStrategy {
 
         if (!this.isConnected) return
 
-        // 获取属性
+        // 获取属性，同时更新数据+UI
         this.people = this.getAttribute('people')
         this.games = this.getAttribute('games')
     }
@@ -52,7 +52,7 @@ class VSMode extends TetrisStrategy {
                 this.#container.appendChild(this.#context[i])
             }
             for (let i = this.#context.length; i < x; i++) {
-                let item = Base.create('game-context', { 'people': this.#_people, 'games': this.#_games, 'key': i })
+                let item = Base.create('game-context', { 'people': x, 'games': this.#_games, 'key': i })
                 this.#context.push(item)
                 this.#container.appendChild(item)
             }
@@ -68,8 +68,8 @@ class VSMode extends TetrisStrategy {
         x = parseInt(x) || 3
         if (x === this.#_games) return
         this.#_games = x
-        for (let c of this.#context) {
-            c.games = x
+        for (let i = 0; i < this.#_people; i++) {
+            this.#context[i].games = x
         }
     }
 

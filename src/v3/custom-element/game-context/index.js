@@ -37,10 +37,6 @@ class GameContext extends Base {
 
         const shadow = this.attachShadow({ mode: 'open' })
         shadow.appendChild(Base.createLink('./custom-element/game-context/index.css'))
-    }
-
-    connectedCallback() {
-        if (!this.isConnected) return
 
         // 获取属性
         this.#people = parseInt(this.getAttribute('people')) || 1
@@ -48,8 +44,8 @@ class GameContext extends Base {
         const key = this.getAttribute('key')
         ScoreController.people = this.#people
 
-        // shadow DOM
-        const shadow = this.shadowRoot
+        // // shadow DOM
+        // const shadow = this.shadowRoot
 
         // html
         const container = Base.create('div', { 'class': 'container' })
@@ -75,6 +71,11 @@ class GameContext extends Base {
 
         // 初始化数据
         this.#next()
+    }
+
+    connectedCallback() {
+        if (!this.isConnected) return
+        console.log('\n~~~~ <game-context> isConnected=', this.isConnected)
     }
 
     set games(x) {

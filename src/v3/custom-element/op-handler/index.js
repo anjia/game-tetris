@@ -18,11 +18,8 @@ class OP extends Base {
         // shadow DOM
         let shadow = this.attachShadow({ mode: 'open' })
         shadow.appendChild(Base.createLink('./custom-element/op-handler/index.css'))
-    }
 
-    connectedCallback() {
-        if (!this.isConnected) return
-
+        // BUG. 如何平衡 this.getAttribute('people') vs 移除再添加
         // 根据属性，确定快捷键
         const people = parseInt(this.getAttribute('people')) || 1
         const keyGroup = OP.#KEYS[Math.min(OP.#KEYS.length - 1, people)]
@@ -38,7 +35,7 @@ class OP extends Base {
 
 
         // shadow DOM
-        const shadow = this.shadowRoot
+        // const shadow = this.shadowRoot
 
         // html
         const btnRotate = Base.create('button', { 'text': '旋转', 'data-key': this.#keys[0] })

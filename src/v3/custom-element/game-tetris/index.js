@@ -71,24 +71,33 @@ class Tetris extends Base {
 
     attributeChangedCallback(name, oldValue, newValue) {
         // $0.setAttribute('people', '2') 即便值相等，回调也会执行
-        // console.log(`<game-tetris> attributeChangedCallback() name=${name}, oldValue=${oldValue}, newValue=${newValue}`)
-        if (newValue === null) return
+        console.log(`<game-tetris> attributeChangedCallback() name=${name}, oldValue=${oldValue}, newValue=${newValue}`)
+        // debugger
         switch (name) {
             case 'people':
                 // TODO.记录：更新了数据，需要刷新 UI
                 // 若两种模式之间有切换，则需要 remove 之后再 append
                 // Uncaught DOMException: Failed to execute 'attachShadow' on 'Element': Shadow root cannot be created on a host which already hosts a shadow tree.
-                const next = newValue > 1 ? this.#tetrisVS : this.#tetrisSingle
-                next.people = newValue
-                if (next != this.#tetris) {
-                    this.#tetris.remove()
-                    this.#tetris = next
-                    // this.shadowRoot.appendChild(this.#tetris)
-                    this.#container.innerHTML = ''
-                    this.#container.appendChild(this.#tetris)
+                let next;
+                if (newValue > 1) {
+                    next = this.#tetrisVS
+                    next.people = newValue
+                    if (next != this.#tetris) {
+                        this.#tetrisSingle.remove()
+                        this.#container.appendChild(this.#tetrisVS)
+                        this.#tetris = next
+                    }
+                } else {
+                    next = this.#tetrisSingle
+                    if (next != this.#tetris) {
+                        this.#tetrisVS.remove()
+                        // this.#container.innerHTML = ''
+                        this.#container.appendChild(this.#tetrisSingle)
+                        this.#tetris = next
+                    }
                 }
                 // BUG. 数据已变，为何UI未更新？
-                console.log('新值是：', this.#tetris)
+                // console.log('新值是：', this.#tetris)
                 break
             case 'games':
                 this.#tetris.games = newValue
