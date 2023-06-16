@@ -1,8 +1,8 @@
 import Base from '../../js/CustomBase.js'
 import TetrisStrategy from '../TetrisStrategy.js'
-import GameContext from '../../game-context/index.js'
+import '../../game-context/index.js'
 
-class VSMode extends TetrisStrategy {
+customElements.define('vs-mode', class extends TetrisStrategy {
 
     // 私有变量
     #container;
@@ -20,19 +20,8 @@ class VSMode extends TetrisStrategy {
         shadow.appendChild(this.#container)
     }
 
-    connectedCallback() {
-        console.log('vs-mode: isConnected=', this.isConnected)
-
-        if (!this.isConnected) return
-
-        // 获取属性，同时更新数据+UI
-        this.people = this.getAttribute('people')
-        this.games = this.getAttribute('games')
-    }
-
-
     set people(x) {
-        // console.log('vs-mode people=', x)
+        console.log('\n!!! vs-mode people=', x)
         // TODO. context 可在内存中缓存，对于多的
         // BUG. 若多了少了，需要移除 DOM
 
@@ -52,7 +41,7 @@ class VSMode extends TetrisStrategy {
                 this.#container.appendChild(this.#context[i])
             }
             for (let i = this.#context.length; i < x; i++) {
-                let item = Base.create('game-context', { 'people': x, 'games': this.#_games, 'key': i })
+                let item = Base.create('game-context', { 'key': i, 'people': x, 'games': this.#_games })
                 this.#context.push(item)
                 this.#container.appendChild(item)
             }
@@ -108,12 +97,10 @@ class VSMode extends TetrisStrategy {
         if (this.#overCounter === this.#_people) {
             // this.#status = GameTetris.#GAMEOVER
             // 比分数（谁多谁赢），如果赢的场次等于最大场次了，游戏就结束了
-            const key = parseInt(GameContext.winner)
-            if (key >= 0 && this.#context[key].win()) {
-                this.#PK_OVER = true
-            }
+            // const key = parseInt(GameContext.winner)
+            // if (key >= 0 && this.#context[key].win()) {
+            //     this.#PK_OVER = true
+            // }
         }
     }
-}
-
-customElements.define('vs-mode', VSMode)
+})

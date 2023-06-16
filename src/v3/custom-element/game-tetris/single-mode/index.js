@@ -1,6 +1,6 @@
 import Base from '../../js/CustomBase.js'
 import TetrisStrategy from '../TetrisStrategy.js'
-import GameContext from '../../game-context/index.js'
+import '../../game-context/index.js'
 
 // TODO. JS 单继承 vs 多继承
 class SingleMode extends TetrisStrategy {
@@ -33,7 +33,7 @@ class SingleMode extends TetrisStrategy {
         this.#context.continue()
     }
     reset() {
-        GameContext.reset()  // 重置全局类
+        // GameContext.reset()  // 重置全局类
         this.#context.reset(true)     // 重置其它元素，比如 <clear-lines>, <win-counter>
         this.#context.resetPanel()             // 重置游戏面板相关，比如 <grid-panel>, <next-shape>
     }

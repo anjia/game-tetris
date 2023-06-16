@@ -13,7 +13,7 @@ class Score {
     }
 
     static create(key) {
-        const element = Base.create('total-score', { 'people': this.people, 'key': key })
+        const element = Base.create('total-score')
         this.#list.push(element)
         return element
     }

@@ -8,7 +8,11 @@ import Base from '../js/CustomBase.js'
 import ShapeProducer from '../js/TetrisProducer.js'
 import ScoreController from '../js/ScoreController.js'
 
-class GameContext extends Base {
+customElements.define('game-context', class extends Base {
+
+    static get observedAttributes() {
+        return ['people', 'games', 'key']
+    }
 
     // 静态方法
     static reset() {
@@ -21,7 +25,9 @@ class GameContext extends Base {
     }
 
     // 私有属性
+    #container;
     #people;
+    #key;
     #shapeCounter = 0    // shape 的消费计数
     #domLines = null
     #domNext = null
@@ -38,33 +44,20 @@ class GameContext extends Base {
         const shadow = this.attachShadow({ mode: 'open' })
         shadow.appendChild(Base.createLink('./custom-element/game-context/index.css'))
 
-        // 获取属性
-        this.#people = parseInt(this.getAttribute('people')) || 1
-        const games = this.getAttribute('games')
-        const key = this.getAttribute('key')
-        ScoreController.people = this.#people
-
-        // // shadow DOM
-        // const shadow = this.shadowRoot
+        // 因为是 Base.create() 创建的，所以此时属性是 null
+        // console.log('\n~~~~ <game-context>, people = ', this.#people, this.getAttribute('people'))
 
         // html
-        const container = Base.create('div', { 'class': 'container' })
-        this.domScore = ScoreController.create(key)  // score 新增一个
-        this.#domLines = Base.create('clear-lines', { 'class': 'flex-item box', 'people': this.#people })
+        this.#container = Base.create('div', { 'class': 'container' })
+        this.domScore = ScoreController.create()
+        this.#domLines = Base.create('clear-lines', { 'class': 'flex-item box' })
         this.#domNext = Base.create('next-shape', { 'class': 'flex-item box' })
         this.#domPanel = Base.create('grid-panel')
-        this.#btnHandler = Base.create('op-handler', { 'people': this.#people })
-
-        container.appendChild(Base.create('div', { 'class': 'box' }, [this.domScore]))
-        container.appendChild(Base.create('div', { 'class': 'flex' }, [this.#domLines, this.#domNext]))
-        container.appendChild(Base.create('div', { 'class': 'box' }, [this.#domPanel]))
-
-        if (this.#people > 1) {
-            this.#domWin = Base.create('win-counter', { 'games': games })
-            container.appendChild(Base.create('div', { 'class': 'box' }, [this.#domWin]))
-        }
-        container.appendChild(this.#btnHandler)
-        shadow.appendChild(container)
+        this.#btnHandler = Base.create('op-handler')
+        this.#container.appendChild(Base.create('div', { 'class': 'box' }, [this.domScore]))
+        this.#container.appendChild(Base.create('div', { 'class': 'flex' }, [this.#domLines, this.#domNext]))
+        this.#container.appendChild(Base.create('div', { 'class': 'box' }, [this.#domPanel]))
+        shadow.appendChild(this.#container)
 
         // 监听子元素的事件
         this.#addEventListener()
@@ -73,11 +66,39 @@ class GameContext extends Base {
         this.#next()
     }
 
-    connectedCallback() {
-        console.log('\n~~~~ <game-context> isConnected=', this.isConnected)
+    attributeChangedCallback(name, oldValue, newValue) {
+        console.log(`<game-contex> attributeChangedCallback() name=${name}, oldValue=${oldValue}, newValue=${newValue}`)
+        // debugger
+        switch (name) {
+            case 'people':
+                this.people = newValue
+                break
+            case 'games':
+                this.games = newValue
+                break
+            case 'key':
+                this.#key = newValue
+                this.domScore.key = newValue
+                break
+        }
+    }
+
+    set people(x) {
+        this.#people = parseInt(x) || 1
+
+        this.domScore.people = this.#people
+        ScoreController.people = this.#people
+        this.#domLines.people = this.#people
+        this.#btnHandler.people = this.#people
+        if (this.#people > 1) {
+            this.#domWin = Base.create('win-counter')
+            this.#container.appendChild(Base.create('div', { 'class': 'box' }, [this.#domWin]))
+        }
+        this.#container.appendChild(this.#btnHandler)
     }
 
     set games(x) {
+        this.#domWin.games = x
         if (this.#people > 1) {
             this.#domWin.max = x
         }
@@ -150,8 +171,4 @@ class GameContext extends Base {
         this.#domNext.next = ShapeProducer.next(this.#shapeCounter)
         this.#shapeCounter++
     }
-}
-
-customElements.define('game-context', GameContext)
-
-export default GameContext
+})

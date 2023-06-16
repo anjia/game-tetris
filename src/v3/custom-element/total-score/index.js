@@ -30,26 +30,6 @@ customElements.define('total-score', class extends Base {
         this.#$score = Base.create('div')
 
         // 获取属性参数：在 constructor() 中可以获取到，因为是匿名类
-        this.#_people = parseInt(this.getAttribute('people')) || 1
-        this.#_key = this.getAttribute('key')
-
-        // html
-        if (this.#_people > 1) {
-            const text = document.createTextNode('SCORE')
-            this.#$diff = Base.create('div')
-            this.#$score.className = ''
-            shadow.appendChild(text)
-            shadow.appendChild(this.#$score)
-            shadow.appendChild(this.#$diff)
-        } else {
-            this.#$score.className = 'cur'
-            this.#$max = Base.create('div', { 'class': 'max', 'text': Base.padNumber(this.#_max, 6) })
-            shadow.appendChild(this.#$max)
-            shadow.appendChild(this.#$score)
-        }
-
-        // 重置（初始化）数据
-        this.reset()
     }
 
     get score() {
@@ -66,6 +46,29 @@ customElements.define('total-score', class extends Base {
 
     get key() {
         return this.#_key
+    }
+
+    set people(x) {
+        this.#_people = parseInt(x) || 1
+        const shadow = this.shadowRoot
+        if (this.#_people > 1) {
+            const text = document.createTextNode('SCORE')
+            this.#$diff = Base.create('div')
+            this.#$score.className = ''
+            shadow.appendChild(text)
+            shadow.appendChild(this.#$score)
+            shadow.appendChild(this.#$diff)
+        } else {
+            this.#$score.className = 'cur'
+            this.#$max = Base.create('div', { 'class': 'max', 'text': Base.padNumber(this.#_max, 6) })
+            shadow.appendChild(this.#$max)
+            shadow.appendChild(this.#$score)
+        }
+        // 重置（初始化）数据
+        this.reset()
+    }
+    set key(x) {
+        this.#_key = x
     }
 
     set score(x) {
