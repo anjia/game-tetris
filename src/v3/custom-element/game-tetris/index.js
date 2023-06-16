@@ -14,7 +14,6 @@ class Tetris extends Base {
     #btnStart;
     #btnReset;
 
-    #container;
     #tetris;
     #tetrisSingle;
     #tetrisVS;
@@ -50,9 +49,6 @@ class Tetris extends Base {
         shadow.appendChild(this.#btnStart)
         shadow.appendChild(this.#btnReset)
 
-        this.#container = Base.create('div')
-        shadow.appendChild(this.#container)
-
         // 获取属性
         const people = Store.mode === '1' ? 1 : (this.getAttribute('people') || Store.people)
         const games = this.getAttribute('games') || Store.games
@@ -63,7 +59,7 @@ class Tetris extends Base {
 
         // 根据 people 确定一种模式
         this.#tetris = people > 1 ? this.#tetrisVS : this.#tetrisSingle
-        this.#container.appendChild(this.#tetris)
+        shadow.appendChild(this.#tetris)
 
         // 监听事件
         this.#addEventListener()
@@ -78,26 +74,13 @@ class Tetris extends Base {
                 // TODO.记录：更新了数据，需要刷新 UI
                 // 若两种模式之间有切换，则需要 remove 之后再 append
                 // Uncaught DOMException: Failed to execute 'attachShadow' on 'Element': Shadow root cannot be created on a host which already hosts a shadow tree.
-                let next;
-                if (newValue > 1) {
-                    next = this.#tetrisVS
-                    next.people = newValue
-                    if (next != this.#tetris) {
-                        this.#tetrisSingle.remove()
-                        this.#container.appendChild(this.#tetrisVS)
-                        this.#tetris = next
-                    }
-                } else {
-                    next = this.#tetrisSingle
-                    if (next != this.#tetris) {
-                        this.#tetrisVS.remove()
-                        // this.#container.innerHTML = ''
-                        this.#container.appendChild(this.#tetrisSingle)
-                        this.#tetris = next
-                    }
+                let next = (newValue > 1) ? this.#tetrisVS : this.#tetrisSingle
+                next.people = newValue
+                if (next != this.#tetris) {
+                    this.#tetris.remove()
+                    this.#tetris = next
+                    this.shadowRoot.appendChild(this.#tetris)
                 }
-                // BUG. 数据已变，为何UI未更新？
-                // console.log('新值是：', this.#tetris)
                 break
             case 'games':
                 this.#tetris.games = newValue
