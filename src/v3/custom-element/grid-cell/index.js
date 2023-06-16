@@ -2,7 +2,7 @@ import { addClass, removeClassStart } from '../js/CSSOM.js'
 
 import Base from '../js/CustomBase.js'
 
-class Cell extends Base {
+customElements.define('grid-cell', class extends Base {
 
     // 私有属性
     #$cell;           // dom 以 $ 开头
@@ -20,10 +20,6 @@ class Cell extends Base {
         this.#$cell = Base.create('div')
         this.shadowRoot.appendChild(this.#$cell)
     }
-
-    // connectedCallback() {
-    //     if (!this.isConnected) return
-    // }
 
     get value() {
         return this.#_value
@@ -62,6 +58,4 @@ class Cell extends Base {
         removeClassStart(this.#$cell, 'l')
         addClass(this.#$cell, ['s', type, 'l' + level])
     }
-}
-
-customElements.define('grid-cell', Cell)
+})

@@ -1,6 +1,6 @@
 import Base from '../js/CustomBase.js'
 
-class OP extends Base {
+customElements.define('op-handler', class extends Base {
 
     static #KEYS = [[], ['↑←→↓'], ['WADS', '↑←→↓'], ['WADS', 'IJLK', '↑←→↓'], ['WADS', 'TFHG', 'IJLK', '↑←→↓']]
     static #counter = 0
@@ -22,16 +22,16 @@ class OP extends Base {
         // BUG. 如何平衡 this.getAttribute('people') vs 移除再添加
         // 根据属性，确定快捷键
         const people = parseInt(this.getAttribute('people')) || 1
-        const keyGroup = OP.#KEYS[Math.min(OP.#KEYS.length - 1, people)]
-        if (OP.#counter < keyGroup.length) {
-            this.#keys = keyGroup[OP.#counter]
-            if (OP.#counter === keyGroup.length - 1) {
+        const keyGroup = this.constructor.#KEYS[Math.min(this.constructor.#KEYS.length - 1, people)]
+        if (this.constructor.#counter < keyGroup.length) {
+            this.#keys = keyGroup[this.constructor.#counter]
+            if (this.constructor.#counter === keyGroup.length - 1) {
                 this.#addArrowListener()
             } else {
                 this.#addKeyListener()
             }
         }
-        OP.#counter++
+        this.constructor.#counter++
 
 
         // shadow DOM
@@ -108,7 +108,7 @@ class OP extends Base {
     }
 
     reset() {
-        OP.#counter = 0
+        this.constructor.#counter = 0
     }
 
     #rotate() {
@@ -126,6 +126,4 @@ class OP extends Base {
     #down() {
         this.dispatchEvent(this.#eventDown)
     }
-}
-
-customElements.define('op-handler', OP)
+})

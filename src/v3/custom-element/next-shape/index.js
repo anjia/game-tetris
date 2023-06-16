@@ -31,10 +31,6 @@ customElements.define('next-shape', class extends Base {
         shadow.appendChild(this.#container)
     }
 
-    // connectedCallback() {
-    //     if (!this.isConnected) return
-    // }
-
     get shape() {
         return this.#list[this.#cur]
     }

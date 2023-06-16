@@ -74,7 +74,6 @@ class GameContext extends Base {
     }
 
     connectedCallback() {
-        if (!this.isConnected) return
         console.log('\n~~~~ <game-context> isConnected=', this.isConnected)
     }
 

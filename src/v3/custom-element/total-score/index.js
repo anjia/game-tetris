@@ -28,20 +28,12 @@ customElements.define('total-score', class extends Base {
         let shadow = this.attachShadow({ mode: 'open' })
         shadow.appendChild(Base.createLink('./custom-element/total-score/index.css'))
         this.#$score = Base.create('div')
-        // }
 
-        // connectedCallback() {
-
-        //     console.log('\n====== <total-score>, this.isConnected=', this.isConnected)
-
-        //     if (!this.isConnected) return
-
-        // 获取属性参数
+        // 获取属性参数：在 constructor() 中可以获取到，因为是匿名类
         this.#_people = parseInt(this.getAttribute('people')) || 1
         this.#_key = this.getAttribute('key')
 
         // html
-        // const shadow = this.shadowRoot
         if (this.#_people > 1) {
             const text = document.createTextNode('SCORE')
             this.#$diff = Base.create('div')

@@ -29,10 +29,6 @@ customElements.define('clear-lines', class extends Base {
         shadow.appendChild(text)
         this.#domLines = Base.create('div')
         shadow.appendChild(this.#domLines)
-    }
-
-    connectedCallback() {
-        if (!this.isConnected) return
 
         this.#people = parseInt(this.getAttribute('people')) || 1
 

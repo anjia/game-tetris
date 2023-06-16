@@ -54,10 +54,10 @@ class Panel extends Base {
         })
     }
 
-    connectedCallback() {
-        // TODO. 所以要如何利用 isConnected 字段？
-        if (!this.isConnected) return
-    }
+    // connectedCallback() {
+    //     // TODO. 所以要如何利用 isConnected 字段？
+    //     if (!this.isConnected) return
+    // }
 
     reset() {
         this.#status = Panel.#PREPARING
