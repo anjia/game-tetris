@@ -1,6 +1,6 @@
 import Base from '../../js/CustomBase.js'
 import TetrisStrategy from '../TetrisStrategy.js'
-import '../../game-context/index.js'
+import '../../game-context/vs-context/index.js'
 
 customElements.define('vs-mode', class extends TetrisStrategy {
 
@@ -44,7 +44,7 @@ customElements.define('vs-mode', class extends TetrisStrategy {
                 this.#container.appendChild(this.context[i])
             }
             for (let i = this.context.length; i < x; i++) {
-                let item = Base.create('game-context', { 'key': i, 'people': x, 'games': this.#_games })
+                let item = Base.create('vs-context', { 'key': i, 'people': x, 'games': this.#_games })
                 this.context.push(item)
                 this.#container.appendChild(item)
             }
