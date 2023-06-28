@@ -9,25 +9,37 @@ class TetrisStrategy extends Base {
 
     constructor() {
         super()
+        // TODO. 如何让 context 封装起来，又保证它只能是子能使用。
+        this.context = [];    // <game-context>[]
     }
 
-    set people(x) {
-        // 当继承的子，没有该方法时，会调用到父元素
-        // console.log('TetrisStrategy people=', x)
-    }
+    /**
+     * 当继承的子，没有该方法时，会调用到父元素
+     * 当继承的子，同一属性，get和set需同时覆盖（即子要有都有，要没都没）
+     */
+    get people() { }
+    set people(x) { }
     set games(x) { }
 
-    // // TODO. 继承的子元素使用
-    // push(x) {
-    //     this.#context.push(x)
-    // }
-    // get context() {
-    //     return this.#context
-    // }
+    start() {
+        console.log(this.context)
+        for (let i = 0; i < this.people; i++) {
+            this.context[i].start()
+        }
+    }
 
-    start() { }
-    pause() { }
-    continue() { }
+    pause() {
+        for (let i = 0; i < this.people; i++) {
+            this.context[i].pause()
+        }
+    }
+
+    continue() {
+        for (let i = 0; i < this.people; i++) {
+            this.context[i].continue()
+        }
+    }
+
     reset() { }
     gameover() { }
 }

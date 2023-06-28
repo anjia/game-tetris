@@ -1,3 +1,5 @@
+import Base from '../js/CustomBase.js'
+
 import './single-mode/index.js'
 import './vs-mode/index.js'
 
@@ -6,13 +8,14 @@ class TetrisFactory {
     // 私有变量
     #strategies = new Map()
 
-    constructor() {
-        this.#strategies.set('single', Base.create('single-mode'))
-        this.#strategies.set('vs', Base.create('vs-mode'))
-    }
+    constructor() { }
 
     getStrategy(people) {
-        return (parseInt(people) > 1) ? this.#strategies.get('vs') : this.#strategies.get('single')
+        const key = (parseInt(people) > 1) ? 'vs' : 'single'
+        if (!this.#strategies.get(key)) {
+            this.#strategies.set(key, Base.create(key + '-mode'))
+        }
+        return this.#strategies.get(key)
     }
 }
 
