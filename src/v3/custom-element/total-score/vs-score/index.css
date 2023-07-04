@@ -1,4 +1,3 @@
-/* 双人模式 */
 .diff {
     position: relative;
     color: green;
@@ -16,13 +15,4 @@
 
 .diff.less::before {
     content: '-';
-}
-
-/* 单人模式 */
-.max::before {
-    content: '最高分 ';
-}
-
-.cur::before {
-    content: '当前分 ';
 }

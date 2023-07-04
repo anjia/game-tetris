@@ -1,0 +1,7 @@
+.max::before {
+    content: '最高分 ';
+}
+
+.cur::before {
+    content: '当前分 ';
+}
