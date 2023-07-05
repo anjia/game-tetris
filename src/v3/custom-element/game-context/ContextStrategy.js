@@ -34,7 +34,7 @@ export default class extends Base {
         this.clearElem = Base.create('clear-lines', { 'class': 'flex-item box' })
         this.nextElem = Base.create('next-shape', { 'class': 'flex-item box' })
         this.panelElem = Base.create('grid-panel')
-        this.#btnHandler = Base.create('op-handler')
+        this.btnHandler = Base.create('op-handler')
 
         // 因为是 Base.create() 创建的，所以此时属性是 null
         // console.log('\n~~~~ <game-context>, people = ', this.#people, this.getAttribute('people'))
@@ -64,16 +64,16 @@ export default class extends Base {
         })
 
         // 游戏手柄
-        this.#btnHandler.addEventListener('rotate', () => {
+        this.btnHandler.addEventListener('rotate', () => {
             this.panelElem.rotate()
         })
-        this.#btnHandler.addEventListener('right', () => {
+        this.btnHandler.addEventListener('right', () => {
             this.panelElem.right()
         })
-        this.#btnHandler.addEventListener('left', () => {
+        this.btnHandler.addEventListener('left', () => {
             this.panelElem.left()
         })
-        this.#btnHandler.addEventListener('down', () => {
+        this.btnHandler.addEventListener('down', () => {
             this.panelElem.down()
         })
     }
@@ -83,8 +83,8 @@ export default class extends Base {
         // this.scoreElem.people = this.#people
         ScoreController.people = this.#people
         this.clearElem.people = this.#people
-        this.#btnHandler.people = this.#people
-        this.container.appendChild(this.#btnHandler)
+        this.btnHandler.people = this.#people
+        this.container.appendChild(this.btnHandler)
     }
 
     start() {
@@ -101,7 +101,7 @@ export default class extends Base {
 
     reset() {
         this.clearElem.reset()
-        this.#btnHandler.reset()
+        this.btnHandler.reset()
     }
 
     win() { }

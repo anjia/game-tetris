@@ -15,6 +15,7 @@ class SingleContext extends ContextStrategy {
         this.container.appendChild(Base.create('div', { 'class': 'box' }, [this.scoreElem]))
         this.container.appendChild(Base.create('div', { 'class': 'flex' }, [this.clearElem, this.nextElem]))
         this.container.appendChild(Base.create('div', { 'class': 'box' }, [this.panelElem]))
+        this.container.appendChild(this.btnHandler)
         shadow.appendChild(this.container)
 
         this.init()
