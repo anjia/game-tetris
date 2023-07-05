@@ -1,10 +1,12 @@
-import Store from '../../js/Store.js'
 import ScoreStrategy from "../ScoreStrategy.js"
+
+import Store from '../../js/Store.js'
+import Base from '../../js/CustomBase.js'
 
 customElements.define('single-score', class extends ScoreStrategy {
 
-    #dataMax;
-    #$max = null
+    #maxData;
+    #maxElem = null
 
     constructor() {
         super()
@@ -12,23 +14,22 @@ customElements.define('single-score', class extends ScoreStrategy {
         let shadow = this.attachShadow({ mode: 'open' })
         shadow.appendChild(Base.createLink('./custom-element/total-score/single-score/index.css'))
 
-        this.#dataMax = Store.max
-        this.#$max = Base.create('div', { 'class': 'max', 'text': this.showScore(this.#dataMax) })
-        this.$score.className = 'cur'
-        shadow.appendChild(this.#$max)
-        shadow.appendChild(this.$score)
+        this.#maxData = Store.max
+        this.#maxElem = Base.create('div', { 'class': 'max', 'text': this.showScore(this.#maxData) })
+        this.scoreElem.className = 'cur'
+        shadow.appendChild(this.#maxElem)
+        shadow.appendChild(this.scoreElem)
     }
 
     set #max(x) {
-        if (this.#_people > 1 || x === this.#dataMax) return
-        if (x > this.#dataMax) {
-            this.#dataMax = x
-            this.#$max.innerText = this.showScore(this.#dataMax)
+        if (x > this.#maxData) {
+            this.#maxData = x
+            this.#maxElem.innerText = this.showScore(this.#maxData)
             Store.max = x
         }
     }
 
     update() {
-        this.#max = this.#dataScore
+        this.#max = this.score
     }
 })

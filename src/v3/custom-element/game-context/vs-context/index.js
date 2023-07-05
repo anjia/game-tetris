@@ -1,6 +1,7 @@
 import Base from '../../js/CustomBase.js'
 import ContextStrategy from '../ContextStrategy.js'
 
+import '../../total-score/vs-score/index.js'
 import '../../win-counter/index.js'
 
 customElements.define('vs-context', class extends ContextStrategy {
@@ -10,21 +11,34 @@ customElements.define('vs-context', class extends ContextStrategy {
     }
 
     #key;
-    #domWin = null
+    #winElem = null
 
     constructor() {
         super()
+
+        const shadow = this.shadowRoot
+
+        // html
+        this.scoreElem = Base.create('vs-score')
+        this.#winElem = Base.create('win-counter')
+
+        this.container.appendChild(Base.create('div', { 'class': 'box' }, [this.scoreElem]))
+        this.container.appendChild(Base.create('div', { 'class': 'flex' }, [this.clearElem, this.nextElem]))
+        this.container.appendChild(Base.create('div', { 'class': 'box' }, [this.panelElem]))
+        this.container.appendChild(Base.create('div', { 'class': 'box' }, [this.#winElem]))
+        shadow.appendChild(this.container)
+
+        this.init()
     }
 
     set people(x) {
         // TODO. 先调用父的同名方法
-        this.#domWin = Base.create('win-counter')
-        this.container.appendChild(Base.create('div', { 'class': 'box' }, [this.#domWin]))
+
     }
 
     set games(x) {
         // TODO. 先调用父的同名方法
-        this.#domWin.max = x
+        this.#winElem.max = x
     }
 
     attributeChangedCallback(name, oldValue, newValue) {
@@ -39,20 +53,20 @@ customElements.define('vs-context', class extends ContextStrategy {
                 break
             case 'key':
                 this.#key = newValue
-                this.domScore.key = newValue
+                // this.domScore.key = newValue
                 break
         }
     }
 
     set games(x) {
-        this.#domWin.games = x
+        this.#winElem.games = x
     }
 
     reset(flag) {
-        this.#domWin.reset(flag)
+        this.#winElem.reset(flag)
     }
 
     win() {
-        return this.#domWin.win()
+        return this.#winElem.win()
     }
 })

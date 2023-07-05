@@ -1,13 +1,13 @@
 import ScoreStrategy from "../ScoreStrategy.js"
+import Base from '../../js/CustomBase.js'
 
 customElements.define('vs-score', class extends ScoreStrategy {
 
     // 私有属性
-    #_people;
-    #_key;
-    #_vs;
-    #_diff;
-    #$diff = null
+    // #_people;
+    // #_vs;
+    // #diffData;
+    #diffElem = null
 
     constructor() {
         super()
@@ -16,52 +16,41 @@ customElements.define('vs-score', class extends ScoreStrategy {
         shadow.appendChild(Base.createLink('./custom-element/total-score/vs-score/index.css'))
 
         const text = document.createTextNode('SCORE')
-        this.#$diff = Base.create('div')
+        this.#diffElem = Base.create('div')
         shadow.appendChild(text)
-        shadow.appendChild(this.$score)
-        shadow.appendChild(this.#$diff)
+        shadow.appendChild(this.scoreElem)
+        shadow.appendChild(this.#diffElem)
     }
 
-    get vs() {
-        return this.#_vs
-    }
+    // // setter ≈ 数据驱动
+    // get vs() {
+    //     return this.#_vs
+    // }
+    // set vs(x) {
+    //     this.#_vs = x
+    //     this.#diff = this.score - x
+    // }
 
-    get diff() {
-        return this.#_diff
-    }
+    // get #diff() {
+    //     return this.#diffData
+    // }
+    // set #diff(dist) {
+    //     if (this.#_people === 1 || dist === this.#diffData) return
+    //     if (dist >= 0) {
+    //         this.#diffElem.className = 'diff'
+    //     } else {
+    //         this.#diffElem.className = 'diff less'
+    //     }
+    //     this.#diffData = dist
+    //     this.#diffElem.innerText = this.showScore(Math.abs(dist))
+    // }
 
-    get key() {
-        return this.#_key
-    }
-
-    set key(x) {
-        this.#_key = x
-    }
-
-
-    // 就类似数据驱动
-    set vs(x) {
-        this.#_vs = x
-        this.#diff = this.score - x
-    }
-
-    set #diff(dist) {
-        if (this.#_people === 1 || dist === this.#_diff) return
-        if (dist >= 0) {
-            this.#$diff.className = 'diff'
-        } else {
-            this.#$diff.className = 'diff less'
-        }
-        this.#_diff = dist
-        this.#$diff.innerText = this.showScore(Math.abs(dist))
-    }
-
-    update(x) {
-        this.#diff = x - this.vs
+    update() {
+        // this.#diff = this.score - this.vs
     }
 
     reset() {
+        // this.score = 0   // TODO. 如何调用继承的父元素的同名方法
         this.vs = 0
-        this.score = 0   // TODO. 如何调用继承的父元素的同名方法
     }
 })
