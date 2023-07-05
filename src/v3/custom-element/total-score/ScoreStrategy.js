@@ -7,7 +7,7 @@ class ScoreStrategy extends Base {
     static #MAX = 999999                      // 最大得分
 
     // 私有属性
-    #scoreData;
+    #scoreData = 0;
 
     constructor() {
         super()
@@ -16,18 +16,20 @@ class ScoreStrategy extends Base {
 
     // 对外的 API
     clear(lines) {
-        const x = this.#scoreData + ScoreStrategy.#SCORE[lines]
-        this.#score = x
+        this.score = this.#scoreData + ScoreStrategy.#SCORE[lines]
     }
     reset() {
-        this.#score = 0
+        console.log('ScoreStrategy reset()')
+        this.score = 0
     }
 
     // 对子元素的 API
     get score() {
         return this.#scoreData
     }
-    set #score(x) {
+    set score(x) {
+        console.log('ScoreStrategy set score = ', x)
+
         if (x > ScoreStrategy.#MAX) {
             x = ScoreStrategy.#MAX
         }

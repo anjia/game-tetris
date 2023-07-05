@@ -42,7 +42,7 @@ customElements.define('vs-context', class extends ContextStrategy {
     }
 
     attributeChangedCallback(name, oldValue, newValue) {
-        console.log(`<game-contex> attributeChangedCallback() name=${name}, oldValue=${oldValue}, newValue=${newValue}`)
+        // console.log(`<game-contex> attributeChangedCallback() name=${name}, oldValue=${oldValue}, newValue=${newValue}`)
         // debugger
         switch (name) {
             case 'people':
