@@ -10,7 +10,6 @@ customElements.define('vs-context', class extends ContextStrategy {
         return ['people', 'games', 'key']
     }
 
-    #key;
     #winElem = null
 
     constructor() {

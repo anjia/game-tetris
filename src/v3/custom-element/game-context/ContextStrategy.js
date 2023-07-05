@@ -16,7 +16,6 @@ export default class extends Base {
     // 私有属性
     #people;
     #shapeCounter = 0    // shape 的消费计数
-    #btnHandler = null
 
     constructor() {
         super()
