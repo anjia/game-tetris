@@ -37,9 +37,9 @@ class ScoreStrategy extends Base {
         this.scoreElem.innerText = this.showScore(this.score)
 
         // 策略接口，子类统一实现该接口
-        this.update()
+        this.scoreUpdate()
     }
-    update() { }
+    scoreUpdate() { }
     showScore(x) {
         return Base.padNumber(x, 6)
     }

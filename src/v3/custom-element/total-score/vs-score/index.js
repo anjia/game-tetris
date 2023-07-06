@@ -45,7 +45,7 @@ customElements.define('vs-score', class extends ScoreStrategy {
         this.vsElem.innerText = this.showScore(Math.abs(this.vsData))
     }
 
-    update() {
+    scoreUpdate() {
         console.log('<vs-score> update()')
         this.vs = this.score - this.vs
 
@@ -54,6 +54,15 @@ customElements.define('vs-score', class extends ScoreStrategy {
             this.scoreObservable.scoreChanged(this.orderData)
         }
     }
+
+    update() {
+        if (this.orderData === 0) {
+            this.vs = this.scoreObservable.second
+        } else {
+            this.vs = this.scoreObservable.first
+        }
+    }
+
     set scoreSubject(x) {
         this.scoreObservable = x
         this.order = this.scoreObservable.registerObserver(this)
