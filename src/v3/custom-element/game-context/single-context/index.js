@@ -7,18 +7,10 @@ class SingleContext extends ContextStrategy {
 
     constructor() {
         super()
+    }
 
-        const shadow = this.shadowRoot
-
-        // html
-        this.scoreElem = Base.create('single-score')
-        this.container.appendChild(Base.create('div', { 'class': 'box' }, [this.scoreElem]))
-        this.container.appendChild(Base.create('div', { 'class': 'flex' }, [this.clearElem, this.nextElem]))
-        this.container.appendChild(Base.create('div', { 'class': 'box' }, [this.panelElem]))
-        this.container.appendChild(this.btnHandler)
-        shadow.appendChild(this.container)
-
-        this.init()
+    createScoreElem() {
+        return Base.create('single-score')
     }
 }
 

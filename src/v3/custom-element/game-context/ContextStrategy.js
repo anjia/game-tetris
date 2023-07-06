@@ -20,31 +20,41 @@ export default class extends Base {
     constructor() {
         super()
 
-        // 实例属性
-        this.scoreElem;
-
         // TODO. 优化要封装
-        this.container;
-
         const shadow = this.attachShadow({ mode: 'open' })
         shadow.appendChild(Base.createLink('./custom-element/game-context/index.css'))
 
+        // 设计模式：模板模式
         this.container = Base.create('div', { 'class': 'container' })
+        this.scoreElem = this.createScoreElem()  // 回调1
         this.clearElem = Base.create('clear-lines', { 'class': 'flex-item box' })
         this.nextElem = Base.create('next-shape', { 'class': 'flex-item box' })
         this.panelElem = Base.create('grid-panel')
         this.btnHandler = Base.create('op-handler')
 
+        this.container.appendChild(Base.create('div', { 'class': 'box' }, [this.scoreElem]))
+        this.container.appendChild(Base.create('div', { 'class': 'flex' }, [this.clearElem, this.nextElem]))
+        this.container.appendChild(Base.create('div', { 'class': 'box' }, [this.panelElem]))
+        this.createAppendWinElem()  // 回调2
+        this.container.appendChild(this.btnHandler)
+        shadow.appendChild(this.container)
+
         // 因为是 Base.create() 创建的，所以此时属性是 null
         // console.log('\n~~~~ <game-context>, people = ', this.#people, this.getAttribute('people'))
-    }
 
-    init() {
         // 监听子元素的事件
         this.#addEventListener()
 
         // 初始化数据
         this.#next()
+    }
+
+    createScoreElem() {
+        // 由子元素实现
+        return null
+    }
+    createAppendWinElem() {
+        // 若有，则由子元素实现
     }
 
     #addEventListener() {

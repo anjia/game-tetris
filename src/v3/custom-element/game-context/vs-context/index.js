@@ -10,25 +10,18 @@ customElements.define('vs-context', class extends ContextStrategy {
         return ['people', 'games', 'key']
     }
 
+    // Uncaught TypeError: Cannot write private member #winElem to an object whose class did not declare it
     #winElem = null
 
     constructor() {
         super()
-
-        const shadow = this.shadowRoot
-
-        // html
-        this.scoreElem = Base.create('vs-score')
-        this.#winElem = Base.create('win-counter')
-
-        this.container.appendChild(Base.create('div', { 'class': 'box' }, [this.scoreElem]))
-        this.container.appendChild(Base.create('div', { 'class': 'flex' }, [this.clearElem, this.nextElem]))
-        this.container.appendChild(Base.create('div', { 'class': 'box' }, [this.panelElem]))
-        this.container.appendChild(Base.create('div', { 'class': 'box' }, [this.#winElem]))
-        this.container.appendChild(this.btnHandler)
-        shadow.appendChild(this.container)
-
-        this.init()
+    }
+    createScoreElem() {
+        return Base.create('vs-score')
+    }
+    createAppendWinElem() {
+        this.winElem = Base.create('win-counter')
+        this.container.appendChild(Base.create('div', { 'class': 'box' }, [this.winElem]))
     }
 
     set people(x) {
@@ -38,7 +31,7 @@ customElements.define('vs-context', class extends ContextStrategy {
 
     set games(x) {
         // TODO. 先调用父的同名方法
-        this.#winElem.max = x
+        this.winElem.max = x
     }
 
     attributeChangedCallback(name, oldValue, newValue) {
@@ -52,21 +45,21 @@ customElements.define('vs-context', class extends ContextStrategy {
                 this.games = newValue
                 break
             case 'key':
-                this.#key = newValue
+                // this.#key = newValue
                 // this.domScore.key = newValue
                 break
         }
     }
 
     set games(x) {
-        this.#winElem.games = x
+        this.winElem.games = x
     }
 
     reset(flag) {
-        this.#winElem.reset(flag)
+        this.winElem.reset(flag)
     }
 
     win() {
-        return this.#winElem.win()
+        return this.winElem.win()
     }
 })
