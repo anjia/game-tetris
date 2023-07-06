@@ -10,7 +10,7 @@ class SingleContext extends ContextStrategy {
     }
 
     createScoreElem() {
-        return Base.create('single-score')
+        this.scoreElem = Base.create('single-score')
     }
 }
 

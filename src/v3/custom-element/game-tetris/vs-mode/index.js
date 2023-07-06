@@ -1,6 +1,7 @@
 import Base from '../../js/CustomBase.js'
 import TetrisStrategy from '../TetrisStrategy.js'
 import '../../game-context/vs-context/index.js'
+import ScoreObservable from '../../total-score/ScoreObservable.js'
 
 customElements.define('vs-mode', class extends TetrisStrategy {
 
@@ -17,6 +18,9 @@ customElements.define('vs-mode', class extends TetrisStrategy {
         shadow.appendChild(Base.createLink('./custom-element/game-tetris/vs-mode/index.css'))
         this.#container = Base.create('div', { 'class': 'wrap' })
         shadow.appendChild(this.#container)
+
+        // TODO. 应该要依赖注入
+        this.scoreObservable = new ScoreObservable()
     }
 
     get people() {
@@ -45,6 +49,7 @@ customElements.define('vs-mode', class extends TetrisStrategy {
             }
             for (let i = this.context.length; i < x; i++) {
                 let item = Base.create('vs-context', { 'key': i, 'people': x, 'games': this.#_games })
+                item.scoreSubject = this.scoreObservable  // TODO. 此处暂时通过传参
                 this.context.push(item)
                 this.#container.appendChild(item)
             }

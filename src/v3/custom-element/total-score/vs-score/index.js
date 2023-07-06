@@ -21,6 +21,9 @@ customElements.define('vs-score', class extends ScoreStrategy {
         shadow.appendChild(this.scoreElem)
         shadow.appendChild(this.vsElem)
 
+        this.orderElem = Base.create('div', { 'text': '--' })
+        shadow.appendChild(this.orderElem)
+
         // 初始化
         this.reset()
     }
@@ -31,6 +34,7 @@ customElements.define('vs-score', class extends ScoreStrategy {
     }
     set vs(x) {
         const diff = this.score - x
+        console.log(`第${this.orderData}名 vs 分数${x}, diff=${diff}`)
         if (diff === this.vsData) return
         if (diff >= 0) {
             this.vsElem.className = 'diff'
@@ -38,12 +42,27 @@ customElements.define('vs-score', class extends ScoreStrategy {
             this.vsElem.className = 'diff less'
         }
         this.vsData = diff
-        this.vsElem.innerText = this.showScore(Math.abs(x))
+        this.vsElem.innerText = this.showScore(Math.abs(this.vsData))
     }
 
     update() {
         console.log('<vs-score> update()')
         this.vs = this.score - this.vs
+
+        // 通知 scoreSubject，分数有更新了
+        if (this.scoreObservable) {
+            this.scoreObservable.scoreChanged(this.orderData)
+        }
+    }
+    set scoreSubject(x) {
+        this.scoreObservable = x
+        this.order = this.scoreObservable.registerObserver(this)
+    }
+    set order(x) {
+        x = parseInt(x)
+        if (x === this.orderData) return
+        this.orderData = x
+        this.orderElem.innerText = this.orderData
     }
 
     reset() {

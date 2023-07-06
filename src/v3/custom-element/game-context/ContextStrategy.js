@@ -26,7 +26,7 @@ export default class extends Base {
 
         // 设计模式：模板模式
         this.container = Base.create('div', { 'class': 'container' })
-        this.scoreElem = this.createScoreElem()  // 回调1
+        this.createScoreElem()  // 回调1
         this.clearElem = Base.create('clear-lines', { 'class': 'flex-item box' })
         this.nextElem = Base.create('next-shape', { 'class': 'flex-item box' })
         this.panelElem = Base.create('grid-panel')
@@ -49,13 +49,8 @@ export default class extends Base {
         this.#next()
     }
 
-    createScoreElem() {
-        // 由子元素实现
-        return null
-    }
-    createAppendWinElem() {
-        // 若有，则由子元素实现
-    }
+    createScoreElem() { }       // 由子元素实现
+    createAppendWinElem() { }   // 若有，则由子元素实现
 
     #addEventListener() {
         // 游戏面板

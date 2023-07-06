@@ -11,17 +11,21 @@ customElements.define('vs-context', class extends ContextStrategy {
     }
 
     // Uncaught TypeError: Cannot write private member #winElem to an object whose class did not declare it
-    #winElem = null
+    // #winElem = null
 
     constructor() {
         super()
     }
     createScoreElem() {
-        return Base.create('vs-score')
+        this.scoreElem = Base.create('vs-score')
     }
     createAppendWinElem() {
         this.winElem = Base.create('win-counter')
         this.container.appendChild(Base.create('div', { 'class': 'box' }, [this.winElem]))
+    }
+
+    set scoreSubject(x) {
+        this.scoreElem.scoreSubject = x
     }
 
     set people(x) {
