@@ -1,4 +1,4 @@
-class ShapePanel {
+export default class ShapePanel {
 
     // 私有变量
     #rows = 20;
@@ -57,5 +57,3 @@ class ShapePanel {
         return j < 0 || j >= this.#cols
     }
 }
-
-export default ShapePanel

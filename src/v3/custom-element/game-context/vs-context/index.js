@@ -1,4 +1,4 @@
-import Base from '../../js/CustomBase.js'
+import Base from '../../Base.js'
 import ContextStrategy from '../ContextStrategy.js'
 
 import '../../total-score/vs-score/index.js'

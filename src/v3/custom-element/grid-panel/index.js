@@ -1,7 +1,7 @@
 import '../grid-cell/index.js'
 
-import Base from '../js/CustomBase.js'
-import ShapePanel from '../js/ShapePanel.js'
+import Base from '../Base.js'
+import ShapePanel from './ShapePanel.js'
 
 class Panel extends Base {
 

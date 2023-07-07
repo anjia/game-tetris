@@ -1,7 +1,7 @@
 import '../grid-cell/index.js'
 
-import Base from '../js/CustomBase.js'
-import all from '../js/tetris/all.js'
+import Base from '../Base.js'
+import all from '../next-shape/tetris/all.js'
 
 customElements.define('next-shape', class extends Base {
 

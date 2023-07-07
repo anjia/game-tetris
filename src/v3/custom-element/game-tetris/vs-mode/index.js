@@ -1,4 +1,4 @@
-import Base from '../../js/CustomBase.js'
+import Base from '../../Base.js'
 import TetrisStrategy from '../TetrisStrategy.js'
 import '../../game-context/vs-context/index.js'
 import ScoreObservable from '../../total-score/ScoreObservable.js'

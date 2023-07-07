@@ -3,8 +3,8 @@ import '../next-shape/index.js'
 import '../grid-panel/index.js'
 import '../op-handler/index.js'
 
-import Base from '../js/CustomBase.js'
-import ShapeProducer from '../js/TetrisProducer.js'
+import Base from '../Base.js'
+import ShapeProducer from '../next-shape/TetrisProducer.js'
 
 export default class extends Base {
 
@@ -85,7 +85,6 @@ export default class extends Base {
     set people(x) {
         this.#people = parseInt(x) || 1
         // this.scoreElem.people = this.#people
-        ScoreController.people = this.#people
         this.clearElem.people = this.#people
         this.btnHandler.people = this.#people
         this.container.appendChild(this.btnHandler)

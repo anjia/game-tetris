@@ -1,4 +1,4 @@
-import Base from '../js/CustomBase.js'
+import Base from '../Base.js'
 
 import './single-mode/index.js'
 import './vs-mode/index.js'

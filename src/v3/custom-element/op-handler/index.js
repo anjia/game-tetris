@@ -1,4 +1,4 @@
-import Base from '../js/CustomBase.js'
+import Base from '../Base.js'
 
 customElements.define('op-handler', class extends Base {
 

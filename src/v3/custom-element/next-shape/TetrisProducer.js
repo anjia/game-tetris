@@ -1,4 +1,4 @@
-import All from './tetris/all.js'
+import All from '../next-shape/tetris/all.js'
 
 class Producer {
     static #total = All.length

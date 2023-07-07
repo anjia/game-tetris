@@ -1,5 +1,5 @@
 import ContextStrategy from '../ContextStrategy.js'
-import Base from '../../js/CustomBase.js'
+import Base from '../../Base.js'
 
 import '../../total-score/single-score/index.js'
 

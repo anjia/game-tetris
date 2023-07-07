@@ -1,4 +1,4 @@
-class CustomBase extends HTMLElement {
+export default class extends HTMLElement {
 
     static create(name, options, children = []) {
         const attrs = {
@@ -33,5 +33,3 @@ class CustomBase extends HTMLElement {
         return String(num).padStart(len, '0')
     }
 }
-
-export default CustomBase

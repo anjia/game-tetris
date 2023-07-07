@@ -1,4 +1,4 @@
-import Base from '../js/CustomBase.js'
+import Base from '../Base.js'
 
 class ScoreStrategy extends Base {
 

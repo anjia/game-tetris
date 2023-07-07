@@ -1,4 +1,4 @@
-import Base from '../js/CustomBase.js'
+import Base from '../Base.js'
 
 customElements.define('clear-lines', class extends Base {
 

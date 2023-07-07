@@ -1,6 +1,6 @@
 import { addClass, removeClassStart } from '../js/CSSOM.js'
 
-import Base from '../js/CustomBase.js'
+import Base from '../Base.js'
 
 customElements.define('grid-cell', class extends Base {
 

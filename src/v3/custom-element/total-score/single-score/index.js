@@ -1,7 +1,7 @@
 import ScoreStrategy from "../ScoreStrategy.js"
 
 import Store from '../../js/Store.js'
-import Base from '../../js/CustomBase.js'
+import Base from '../../Base.js'
 
 customElements.define('single-score', class extends ScoreStrategy {
 

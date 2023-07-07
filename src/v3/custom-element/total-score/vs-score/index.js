@@ -1,5 +1,5 @@
 import ScoreStrategy from "../ScoreStrategy.js"
-import Base from '../../js/CustomBase.js'
+import Base from '../../Base.js'
 
 customElements.define('vs-score', class extends ScoreStrategy {
 
