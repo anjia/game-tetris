@@ -1,62 +1,60 @@
-
 // TODO. 观察者模式，是否需要搞个统一的“接口”？
 export default class ScoreObservable {
-    constructor() {
-        this.observers = []
-    }
+
+    // 私有变量
+    #observers = []  // 被观察者列表
+    #ordered = []    // 辅助数组：有序的下标数组，由大到小
+
+    constructor() { }
 
     registerObserver(o) {
-        console.log('\n~~~ ScoreObservable, [].push()', o, ' score=', o.score)
-        // 插入排序：大-小，由后向前遍历
-        this.observers.push(o)
-        const index = this.insertOrder(0, this.observers.length - 1)
-        console.log('this.observers = ', this.observers, ' length=', this.observers.length)
-        return index
+        this.#observers.push(o)
+        this.#ordered.push(this.#ordered.length)
+        return this.insertedOrder(0, this.#observers.length - 1)
     }
 
     removeObserver(o) {
-        // this.observers.delete(o)
+        // this.#observers.delete(o)
     }
 
     notifyObserver() {
-        for (let o of this.observers) {
-            o.update()
+        for (let i in this.#ordered) {
+            const observer = this.#observers[this.#ordered[i]]
+            observer.update(i)
         }
     }
-    scoreChanged(index) {
+
+    dataChanged(index) {
         console.log(`第${index}名值有变`)
-        // 先排序
-        this.insertOrder(0, index)
-        this.notifyObserver()
+        this.insertedOrder(0, index)  // 先排序
+        this.notifyObserver()         // 后通知
     }
 
     get first() {
-        return this.observers[0].score
-    }
-    get second() {
-        return this.observers[1].score
+        return this.#observers[this.#ordered[0]].score
     }
 
-    insertOrder(left, right) {
-        // TODO. 原地排序成本太高，可以搞个 orderedIndex[]
-        let index = right
-        while (index > left) {
-            let target = this.observers[index]
-            let item = this.observers[index - 1]
+    get second() {
+        return this.#observers[this.#ordered[1]].score
+    }
+
+    /**
+     * 插入排序：从大到小，插入元素为[right]
+     */
+    insertedOrder(left, right) {
+        let pos = right
+        while (pos > left) {
+            const target = this.#observers[this.#ordered[pos]]
+            const item = this.#observers[this.#ordered[pos - 1]]
             if (target.score > item.score) {
-                // 换位
-                let temp = this.observers[index - 1]
-                this.observers[index - 1] = target
-                this.observers[index] = temp
-                // 赋值
-                this.observers[index - 1].order = index - 1
-                this.observers[index].order = index
-                // --
-                index--
+                let temp = this.#ordered[pos - 1]
+                this.#ordered[pos - 1] = this.#ordered[pos]
+                this.#ordered[pos] = temp
+                pos--
             } else {
                 break
             }
         }
-        return index
+        return pos
     }
 }

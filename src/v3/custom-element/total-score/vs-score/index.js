@@ -51,11 +51,13 @@ customElements.define('vs-score', class extends ScoreStrategy {
 
         // 通知 scoreSubject，分数有更新了
         if (this.scoreObservable) {
-            this.scoreObservable.scoreChanged(this.orderData)
+            this.scoreObservable.dataChanged(this.orderData)
         }
     }
 
-    update() {
+    update(order) {
+        this.orderData = order
+        this.orderElem.innerText = this.orderData
         if (this.orderData === 0) {
             this.vs = this.scoreObservable.second
         } else {
@@ -65,13 +67,7 @@ customElements.define('vs-score', class extends ScoreStrategy {
 
     set scoreSubject(x) {
         this.scoreObservable = x
-        this.order = this.scoreObservable.registerObserver(this)
-    }
-    set order(x) {
-        x = parseInt(x)
-        if (x === this.orderData) return
-        this.orderData = x
-        this.orderElem.innerText = this.orderData
+        this.scoreObservable.registerObserver(this)
     }
 
     reset() {
