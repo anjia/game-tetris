@@ -1,3 +1,4 @@
+// TODO. import 的路径，如何写更灵活？以及 import 的规则
 import All from '../next-shape/tetris/all.js'
 
 class Producer {

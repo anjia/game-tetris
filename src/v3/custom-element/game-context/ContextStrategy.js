@@ -4,7 +4,7 @@ import '../grid-panel/index.js'
 import '../op-handler/index.js'
 
 import Base from '../Base.js'
-import ShapeProducer from '../next-shape/TetrisProducer.js'
+import ShapeProducer from '../next-shape/ShapeProducer.js'
 
 export default class extends Base {
 
