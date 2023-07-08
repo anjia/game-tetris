@@ -1,37 +1,37 @@
 // TODO. import 的路径，如何写更灵活？以及 import 的规则
 import All from '../next-shape/tetris/all.js'
 
-class Producer {
-    static #total = All.length
-    static #list = []
+export default class Producer {
 
-    static reset() {
-        this.#list.length = 0
+    // 私有变量
+    #total = All.length
+    #queue = []     // TODO. 理论上是个队列，且被消费完了的可以删除
+
+    constructor() { }
+
+    reset() {
+        this.#queue.length = 0
     }
 
-    static next(start) {
-        const list = this.#list
-        if (typeof start === undefined) {
-            start = list.length ? (list.length - 1) : 0
-        } else if (start < 0) {
-            start = 0
-        } else if (start > list.length) {
-            start = list.length
+    consume(index) {
+        const queue = this.#queue
+        if (typeof index === undefined) {
+            index = queue.length ? (queue.length - 1) : 0
+        } else if (index < 0) {
+            index = 0
+        } else if (index > queue.length) {
+            index = queue.length
         }
 
-        if (start === list.length) {
-            const num = this.#getRandomInt(this.#total)
-            list.push(num)
+        if (index === queue.length) {
+            const num = this.#getRandomInt(this.#total)  // 只存了形状的下标
+            queue.push(num)
         }
-        return list[start]
+        return queue[index]
     }
 
-    static #getRandomInt(max) {
+    #getRandomInt(max) {
         // Math.random() [0, 1)
         return Math.floor(Math.random() * max)
     }
-
-    constructor() { }
 }
-
-export default Producer

@@ -1,57 +1,64 @@
 import '../grid-cell/index.js'
 
 import Base from '../Base.js'
-import all from '../next-shape/tetris/all.js'
+import All from '../next-shape/tetris/all.js'
 
 customElements.define('next-shape', class extends Base {
 
     // 私有属性
-    #list = []         // 形状对象列表
+    #cellList = []     // <grid-cell> list
+    #shapeList = []    // 形状对象列表
     #cur;              // 形状的当前下标
-    #container = null  // DOM
-    #domCells = []
+    #counter = 0       // shape 的消费计数
 
     constructor() {
         super()
 
-        this.level = 1
-
-        for (let shape of all) {
-            this.#list.push(new shape())
+        for (let shape of All) {
+            this.#shapeList.push(new shape())
         }
         for (let i = 0; i < 8; i++) {
-            this.#domCells.push(Base.create('grid-cell'))
+            this.#cellList.push(Base.create('grid-cell'))
         }
 
         // 构造 shadow DOM
         let shadow = this.attachShadow({ mode: 'open' })
         shadow.appendChild(Base.createLink('./custom-element/next-shape/index.css'))
 
-        this.#container = Base.create('section', { 'class': 'grid' }, this.#domCells)
-        shadow.appendChild(this.#container)
+        const container = Base.create('section', { 'class': 'grid' }, this.#cellList)
+        shadow.appendChild(container)
+
+        // 初始化形状
+        // this.refresh()
+    }
+
+    set shapeSubject(x) {
+        this.shapeProducer = x
     }
 
     get shape() {
-        return this.#list[this.#cur]
+        return this.#shapeList[this.#cur]
     }
 
-    get next() {
-        return this.#cur
+    reset() {
+        this.#counter = 0
     }
 
-    set next(x) {
-        if (x !== this.#cur) {
-            this.#cur = x
-            const shape = this.#list[this.#cur]
+    refresh(level = 1) {
+        const next = this.shapeProducer.consume(this.#counter)
+        this.#counter++
+        if (next !== this.#cur) {
+            this.#cur = next
+            const shape = this.#shapeList[this.#cur]
             const matrix = shape.constructor.next
             for (let i = 0; i < matrix.length; i++) {
                 const column = matrix[i].length
                 const start = i * column
                 for (let j = 0; j < column; j++) {
                     if (matrix[i][j] === true) {
-                        this.#domCells[start + j].draw(shape.type, this.level)
+                        this.#cellList[start + j].draw(shape.type, level)
                     } else {
-                        this.#domCells[start + j].reset()
+                        this.#cellList[start + j].reset()
                     }
                 }
             }

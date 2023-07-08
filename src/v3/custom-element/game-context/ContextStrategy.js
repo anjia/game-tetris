@@ -8,17 +8,13 @@ import ShapeProducer from '../next-shape/ShapeProducer.js'
 
 export default class extends Base {
 
-    // 静态方法
-    static reset() {
-        ShapeProducer.reset()
-    }
-
     // 私有属性
     #people;
-    #shapeCounter = 0    // shape 的消费计数
 
     constructor() {
         super()
+
+        this.shapeProducer = new ShapeProducer()
 
         // TODO. 优化要封装
         const shadow = this.attachShadow({ mode: 'open' })
@@ -29,6 +25,9 @@ export default class extends Base {
         this.createScoreElem()  // 回调1
         this.clearElem = Base.create('clear-lines', { 'class': 'flex-item box' })
         this.nextElem = Base.create('next-shape', { 'class': 'flex-item box' })
+        this.nextElem.shapeSubject = this.shapeProducer  // TODO. 如何依赖注入？如此变可避免传参...
+        this.nextElem.refresh()    // TODO. 如果是依赖注入，就不用写两条语句了....
+
         this.panelElem = Base.create('grid-panel')
         this.btnHandler = Base.create('op-handler')
 
@@ -44,9 +43,6 @@ export default class extends Base {
 
         // 监听子元素的事件
         this.#addEventListener()
-
-        // 初始化数据
-        this.#next()
     }
 
     createScoreElem() { }       // 由子元素实现
@@ -56,7 +52,7 @@ export default class extends Base {
         // 游戏面板
         this.panelElem.addEventListener('next', () => {
             this.start()
-            this.#next()
+            this.nextElem.refresh(this.clearElem.level)
         })
         this.panelElem.addEventListener('clear', (e) => {
             const lines = e.detail.lines()
@@ -103,6 +99,7 @@ export default class extends Base {
     }
 
     reset() {
+        this.shapeProducer.reset()
         this.clearElem.reset()
         this.btnHandler.reset()
     }
@@ -111,13 +108,6 @@ export default class extends Base {
 
     resetPanel() {
         this.panelElem.reset()
-        this.#shapeCounter = 0
-        this.#next()
-    }
-
-    #next() {
-        this.nextElem.level = this.clearElem.level
-        this.nextElem.next = ShapeProducer.next(this.#shapeCounter)
-        this.#shapeCounter++
+        this.nextElem.refresh(this.clearElem.level)
     }
 }
