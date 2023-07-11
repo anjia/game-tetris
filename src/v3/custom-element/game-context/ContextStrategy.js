@@ -9,7 +9,7 @@ import ShapeProducer from '../next-shape/ShapeProducer.js'
 export default class extends Base {
 
     // 私有属性
-    #people;
+    // #people;
 
     constructor() {
         super()
@@ -22,7 +22,7 @@ export default class extends Base {
 
         // 设计模式：模板模式
         this.container = Base.create('div', { 'class': 'container' })
-        this.createScoreElem()  // 回调1
+        this.scoreElem = this.createScoreElem()  // 回调1
         this.clearElem = Base.create('clear-lines', { 'class': 'flex-item box' })
         this.nextElem = Base.create('next-shape', { 'class': 'flex-item box' })
         this.nextElem.shapeSubject = this.shapeProducer  // TODO. 如何依赖注入？如此变可避免传参...
@@ -34,7 +34,12 @@ export default class extends Base {
         this.container.appendChild(Base.create('div', { 'class': 'box' }, [this.scoreElem]))
         this.container.appendChild(Base.create('div', { 'class': 'flex' }, [this.clearElem, this.nextElem]))
         this.container.appendChild(Base.create('div', { 'class': 'box' }, [this.panelElem]))
-        this.createAppendWinElem()  // 回调2
+
+        const winElem = this.createWinElem()  // 回调2
+        if (winElem) {
+            this.container.appendChild(Base.create('div', { 'class': 'box' }, [winElem]))
+        }
+
         this.container.appendChild(this.btnHandler)
         shadow.appendChild(this.container)
 
@@ -46,7 +51,7 @@ export default class extends Base {
     }
 
     createScoreElem() { }       // 由子元素实现
-    createAppendWinElem() { }   // 若有，则由子元素实现
+    createWinElem() { }   // 若有，则由子元素实现
 
     #addEventListener() {
         // 游戏面板
@@ -78,24 +83,24 @@ export default class extends Base {
         })
     }
 
-    set people(x) {
-        this.#people = parseInt(x) || 1
-        // this.scoreElem.people = this.#people
-        this.clearElem.people = this.#people
-        this.btnHandler.people = this.#people
-        this.container.appendChild(this.btnHandler)
-    }
+    // set people(x) {
+    //     this.#people = parseInt(x) || 1
+    //     // this.scoreElem.people = this.#people
+    //     this.clearElem.people = this.#people
+    //     this.btnHandler.people = this.#people
+    //     this.container.appendChild(this.btnHandler)
+    // }
 
     start() {
         this.panelElem.start(this.nextElem.shape, this.clearElem.speed, this.clearElem.level)
     }
 
-    continue() {
-        this.panelElem.continue()
-    }
-
     pause() {
         this.panelElem.pause()
+    }
+
+    continue() {
+        this.panelElem.continue()
     }
 
     reset() {
@@ -104,10 +109,10 @@ export default class extends Base {
         this.btnHandler.reset()
     }
 
-    win() { }
-
     resetPanel() {
         this.panelElem.reset()
         this.nextElem.refresh(this.clearElem.level)
     }
+
+    win() { }
 }

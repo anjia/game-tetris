@@ -7,7 +7,7 @@ import '../../win-counter/index.js'
 customElements.define('vs-context', class extends ContextStrategy {
 
     static get observedAttributes() {
-        return ['people', 'games', 'key']
+        return ['people', 'games']
     }
 
     // Uncaught TypeError: Cannot write private member #winElem to an object whose class did not declare it
@@ -16,12 +16,18 @@ customElements.define('vs-context', class extends ContextStrategy {
     constructor() {
         super()
     }
-    createScoreElem() {
-        this.scoreElem = Base.create('vs-score')
-    }
-    createAppendWinElem() {
-        this.winElem = Base.create('win-counter')
-        this.container.appendChild(Base.create('div', { 'class': 'box' }, [this.winElem]))
+
+    attributeChangedCallback(name, oldValue, newValue) {
+        // console.log(`<game-contex> attributeChangedCallback() name=${name}, oldValue=${oldValue}, newValue=${newValue}`)
+        // debugger
+        switch (name) {
+            case 'people':
+                this.people = newValue
+                break
+            case 'games':
+                this.games = newValue
+                break
+        }
     }
 
     set scoreSubject(x) {
@@ -36,27 +42,16 @@ customElements.define('vs-context', class extends ContextStrategy {
     set games(x) {
         // TODO. 先调用父的同名方法
         this.winElem.max = x
-    }
-
-    attributeChangedCallback(name, oldValue, newValue) {
-        // console.log(`<game-contex> attributeChangedCallback() name=${name}, oldValue=${oldValue}, newValue=${newValue}`)
-        // debugger
-        switch (name) {
-            case 'people':
-                this.people = newValue
-                break
-            case 'games':
-                this.games = newValue
-                break
-            case 'key':
-                // this.#key = newValue
-                // this.domScore.key = newValue
-                break
-        }
-    }
-
-    set games(x) {
         this.winElem.games = x
+    }
+
+    createScoreElem() {
+        return Base.create('vs-score')
+    }
+
+    createWinElem() {
+        this.winElem = Base.create('win-counter')
+        return this.winElem
     }
 
     reset(flag) {

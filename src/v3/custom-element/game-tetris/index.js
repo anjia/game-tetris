@@ -25,7 +25,7 @@ class Tetris extends Base {
     static #START_KEY = 'Space'
     static #RESET_KEY = 'Escape'
 
-    #_status = Tetris.#PREPARING;
+    #statusData = Tetris.#PREPARING;
 
     constructor() {
         super()
@@ -86,8 +86,8 @@ class Tetris extends Base {
     }
 
     set #status(x) {
-        this.#_status = x
-        switch (this.#_status) {
+        this.#statusData = x
+        switch (this.#statusData) {
             case Tetris.#PREPARING:
                 this.#btnStart.className = 'start'
                 break
@@ -106,18 +106,18 @@ class Tetris extends Base {
     #addEventListener() {
 
         this.#btnStart.addEventListener('click', () => {
-            switch (this.#_status) {
+            switch (this.#statusData) {
                 case Tetris.#PREPARING:
                     this.#status = Tetris.#PLAYING     // 状态：未开始 -> 游戏中
-                    this.#tetris.start()                               // 动作：开始游戏
+                    this.#tetris.start()               // 动作：开始游戏
                     break
                 case Tetris.#PLAYING:
                     this.#status = Tetris.#PAUSING     // 状态：游戏中 -> 暂停
-                    this.#tetris.pause()                      // 动作：暂停游戏
+                    this.#tetris.pause()               // 动作：暂停游戏
                     break
                 case Tetris.#PAUSING:
                     this.#status = Tetris.#PLAYING     // 状态：暂停 -> 游戏中
-                    this.#tetris.continue()                   // 动作：继续游戏
+                    this.#tetris.continue()            // 动作：继续游戏
                     break
                 case Tetris.#GAMEOVER:
                     this.#status = Tetris.#PREPARING

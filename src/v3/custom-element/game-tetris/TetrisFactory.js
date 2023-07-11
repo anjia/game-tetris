@@ -3,7 +3,7 @@ import Base from '../Base.js'
 import './single-mode/index.js'
 import './vs-mode/index.js'
 
-class TetrisFactory {
+export default class TetrisFactory {
 
     // 私有变量
     #strategies = new Map()
@@ -18,5 +18,3 @@ class TetrisFactory {
         return this.#strategies.get(key)
     }
 }
-
-export default TetrisFactory
