@@ -14,9 +14,6 @@ customElements.define('next-shape', class extends Base {
     constructor() {
         super()
 
-        for (let shape of All) {
-            this.#shapeList.push(new shape())
-        }
         for (let i = 0; i < 8; i++) {
             this.#cellList.push(Base.create('grid-cell'))
         }
@@ -34,6 +31,7 @@ customElements.define('next-shape', class extends Base {
 
     set shapeSubject(x) {
         this.shapeProducer = x
+        this.#shapeList = this.shapeProducer.createShapeList()
     }
 
     get shape() {

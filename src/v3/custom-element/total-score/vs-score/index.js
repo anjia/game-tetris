@@ -32,6 +32,7 @@ customElements.define('vs-score', class extends ScoreStrategy {
     get vs() {
         return this.vsData
     }
+
     set vs(x) {
         const diff = this.score - x
         console.log(`第${this.orderData}名 vs 分数${x}, diff=${diff}`)
@@ -45,7 +46,12 @@ customElements.define('vs-score', class extends ScoreStrategy {
         this.vsElem.innerText = this.showScore(Math.abs(this.vsData))
     }
 
-    scoreUpdate() {
+    set scoreSubject(x) {
+        this.scoreObservable = x
+        this.scoreObservable.registerObserver(this)
+    }
+
+    scoreUpdated() {
         console.log('<vs-score> update()')
         this.vs = this.score - this.vs
 
@@ -53,6 +59,12 @@ customElements.define('vs-score', class extends ScoreStrategy {
         if (this.scoreObservable) {
             this.scoreObservable.dataChanged(this.orderData)
         }
+    }
+
+    reset() {
+        console.log('<vs-score> reset()')
+        this.score = 0  // TODO. 如何调用父元素的
+        this.vs = 0
     }
 
     update(order) {
@@ -63,16 +75,5 @@ customElements.define('vs-score', class extends ScoreStrategy {
         } else {
             this.vs = this.scoreObservable.first
         }
-    }
-
-    set scoreSubject(x) {
-        this.scoreObservable = x
-        this.scoreObservable.registerObserver(this)
-    }
-
-    reset() {
-        console.log('<vs-score> reset()')
-        this.score = 0  // TODO. 如何调用父元素的
-        this.vs = 0
     }
 })

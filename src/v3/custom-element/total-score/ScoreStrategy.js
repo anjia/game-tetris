@@ -1,6 +1,6 @@
 import Base from '../Base.js'
 
-class ScoreStrategy extends Base {
+export default class ScoreStrategy extends Base {
 
     // 静态属性
     static #SCORE = [0, 100, 300, 700, 1500]  // 一次性消 1-2-3-4 行时的得分
@@ -37,12 +37,10 @@ class ScoreStrategy extends Base {
         this.scoreElem.innerText = this.showScore(this.score)
 
         // 策略接口，子类统一实现该接口
-        this.scoreUpdate()
+        this.scoreUpdated()
     }
-    scoreUpdate() { }
+    scoreUpdated() { }
     showScore(x) {
         return Base.padNumber(x, 6)
     }
 }
-
-export default ScoreStrategy

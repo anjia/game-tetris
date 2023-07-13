@@ -36,7 +36,7 @@ customElements.define('single-score', class extends ScoreStrategy {
         return this.maxData
     }
 
-    scoreUpdate() {
+    scoreUpdated() {
         console.log('<signle-score> update()')
         this.max = this.score
     }

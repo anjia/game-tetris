@@ -1,6 +1,6 @@
-import Tetris from './Tetris.js'
+import ShapeBase from './Base.js'
 
-class I extends Tetris {
+export default class extends ShapeBase {
     static next = [
         [false, false, false, false],
         [true, true, true, true]
@@ -10,5 +10,3 @@ class I extends Tetris {
         super([[0, col1 - 1], [0, col1], [0, col1 + 1], [0, col1 + 2]])
     }
 }
-
-export default I

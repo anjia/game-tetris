@@ -1,21 +1,29 @@
-import Shape from './Shape.js'
-
-class Tetris extends Shape {
-
+export default class {
     // 静态属性
     static next;  // 形状的 next 矩阵
 
-    constructor(points) {
-        super(points)
+    // 私有属性
+    #init = null   // 初始位置
 
-        // 形状类型：''空心, 'solid'实心
-        this.type = ''
+
+    constructor(points) {
+        createShape()  // 工厂方法
+
+        this.#init = points
+
+        // 实例属性
+        this.points = points
+        this.type = ''  // ''空心, 'solid'实心
         this.level = 1
     }
 
     reset() {
-        super.reset()
+        this.points = this.#init
         this.level = 1
+    }
+
+    reset() {
+        this.shape.reset()
     }
 
     start(panel) {
@@ -27,21 +35,6 @@ class Tetris extends Shape {
             }
         }
         if (result) {
-            panel.draw(this.points, this.type, this.level)
-        }
-        return result
-    }
-
-    merge(panel) {
-        let result = true
-        for (let p of this.points) {
-            if (p[0] < 0) {
-                result = false
-                break
-            }
-        }
-        if (result) {
-            panel.merge(this.points)
             panel.draw(this.points, this.type, this.level)
         }
         return result
@@ -63,6 +56,48 @@ class Tetris extends Shape {
         if (next.length === 4) {
             result = true
             this.#to(next, panel)
+        }
+        return result
+    }
+
+    merge(panel) {
+        let result = true
+        for (let p of this.points) {
+            if (p[0] < 0) {
+                result = false
+                break
+            }
+        }
+        if (result) {
+            panel.merge(this.points)
+            panel.draw(this.points, this.type, this.level)
+        }
+        return result
+    }
+
+    left(panel) {
+        return this.#horizon(-1, panel)
+    }
+
+    right(panel) {
+        return this.#horizon(1, panel)
+    }
+
+    rotate(panel) {
+        let result = RotateBehavior.rotate(this.points)
+        let next = []
+        for (let p of result) {
+            if (panel.isUnderFloor(p[0]) ||
+                panel.isOutWall(p[1]) ||
+                panel.isFilled(p[0], p[1])) {
+                break
+            } else {
+                next.push([p[0], p[1]])
+            }
+        }
+        if (next.length === 4) {
+            this.#to(next, panel)
+            result = next
         }
         return result
     }
@@ -94,33 +129,6 @@ class Tetris extends Shape {
         return result
     }
 
-    left(panel) {
-        return this.#horizon(-1, panel)
-    }
-
-    right(panel) {
-        return this.#horizon(1, panel)
-    }
-
-    rotate(panel) {
-        let result = super.rotate(this.points)
-        let next = []
-        for (let p of result) {
-            if (panel.isUnderFloor(p[0]) ||
-                panel.isOutWall(p[1]) ||
-                panel.isFilled(p[0], p[1])) {
-                break
-            } else {
-                next.push([p[0], p[1]])
-            }
-        }
-        if (next.length === 4) {
-            this.#to(next, panel)
-            result = next
-        }
-        return result
-    }
-
     // 私有方法
     #horizon(dx, panel) {
         let result = []
@@ -144,11 +152,9 @@ class Tetris extends Shape {
 
     #to(next, panel) {
         // 在 this.current 中但不在 next 中的，置灰
-        panel.reset(Shape.minus(this.points, next))
+        panel.reset(DiffBehavior.diff(this.points, next))
         // 在 next 中但不在 this.current 中的，置亮
-        panel.draw(Shape.minus(next, this.points), this.type, this.level)
+        panel.draw(DiffBehavior.diff(next, this.points), this.type, this.level)
         this.points = next
-    }
+        }
 }
-
-export default Tetris
