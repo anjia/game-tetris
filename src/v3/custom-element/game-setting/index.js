@@ -1,4 +1,4 @@
-import Store from '../js/Store.js'
+import Store from '../Store.js'
 import Base from '../Base.js'
 
 customElements.define('game-setting', class extends Base {

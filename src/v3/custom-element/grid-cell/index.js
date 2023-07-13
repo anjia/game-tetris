@@ -1,4 +1,4 @@
-import { addClass, removeClassStart } from '../js/CSSOM.js'
+import { addClass, removeClassStart } from '../CSSOM.js'
 
 import Base from '../Base.js'
 

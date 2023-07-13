@@ -1,5 +1,5 @@
 import Base from '../Base.js'
-import Store from '../js/Store.js'
+import Store from '../Store.js'
 
 import TetrisFactory from './TetrisFactory.js'
 
