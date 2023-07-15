@@ -1,8 +1,10 @@
 export default class ShapeFactory {
 
+    #list;
+
     constructor() {
-        this.list = this.setList()
-        this.length = this.list.length
+        this.#list = this.setList()
+        this.length = this.#list.length
     }
 
     // 须子类覆盖
@@ -12,7 +14,7 @@ export default class ShapeFactory {
 
     createShapeList() {
         let result = []
-        for (let shape of this.list) {
+        for (let shape of this.#list) {
             result.push(new shape())
         }
         return result
@@ -32,7 +34,7 @@ export default class ShapeFactory {
     // }
     // createShape(name) {
     //     let shape = null
-    //     if (this.list.includes(name)) {
+    //     if (this.#list.includes(name)) {
     //         shape = new name()  // 其它语言不能这么写么？
     //     }
     //     return shape

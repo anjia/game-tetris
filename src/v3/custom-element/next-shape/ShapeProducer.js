@@ -4,20 +4,27 @@ import TrickFactory from './factory/TrickFactory.js'
 export default class ShapeProducer {
 
     // 私有变量
-    #queue = []     // TODO. 队列被消费完了的项，可以删除
+    #queue;     // TODO. 队列被消费完了的项，可以删除
     #GROUP = 10     // 每10次，生成一个 TrickShape
-    #trickIndex = -1
-    #trickCounter = 0
+    #trickIndex;
+    #trickCounter;
 
     constructor() {
         this.tetrisFactory = new TetrisFactory()
         this.trickFactory = new TrickFactory()
+        this.reset()
     }
 
     reset() {
-        this.#queue.length = 0
+        this.#queue = []
         this.#trickIndex = -1
         this.#trickCounter = 0
+    }
+
+    createShapeList() {
+        const list1 = this.tetrisFactory.createShapeList()
+        const list2 = this.trickFactory.createShapeList()
+        return list1.concat(list2)
     }
 
     consume(index = 0) {
@@ -29,22 +36,16 @@ export default class ShapeProducer {
         }
 
         if (index === queue.length) {
-            const num = this.getRandomShapeIndex()
+            const num = this.#getRandomShapeIndex()
             queue.push(num)
         }
         return queue[index]
     }
 
-    createShapeList() {
-        const list1 = this.tetrisFactory.createShapeList()
-        const list2 = this.trickFactory.createShapeList()
-        return list1.concat(list2)
-    }
-
-    getRandomShapeIndex() {
+    #getRandomShapeIndex() {
         // 确定下一组出 trickShape 的下标
         if (this.#queue.length % this.#GROUP === 0) {
-            this.#trickIndex = this.#trickCounter * this.#GROUP + this.getRandom()
+            this.#trickIndex = this.#trickCounter * this.#GROUP + this.#getRandom()
             this.#trickCounter++
         }
 
@@ -57,7 +58,7 @@ export default class ShapeProducer {
         }
     }
 
-    getRandom() {
+    #getRandom() {
         return Math.floor(Math.random() * this.#GROUP)  // [0, this.#GROUP)
     }
 }
