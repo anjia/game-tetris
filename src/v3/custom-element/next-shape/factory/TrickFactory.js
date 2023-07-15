@@ -1,6 +1,6 @@
 import ShapeFactory from './Factory.js'
 
-import Triangle from './shape/trick/Triangle.js'
+// import Triangle from './shape/trick/Triangle.js'
 
 export default class TrickFactory extends ShapeFactory {
     constructor() {
@@ -8,6 +8,6 @@ export default class TrickFactory extends ShapeFactory {
     }
 
     setList() {
-        return [Triangle]
+        return []
     }
 }

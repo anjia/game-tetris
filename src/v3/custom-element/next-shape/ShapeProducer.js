@@ -3,16 +3,11 @@ import TrickFactory from './factory/TrickFactory.js'
 
 export default class ShapeProducer {
 
-    static #getRandomInt(max) {
-        // [0, max)
-        return Math.floor(Math.random() * max)  // [0, 1)   Math.random() 
-    }
-
     // 私有变量
     #queue = []     // TODO. 队列被消费完了的项，可以删除
-    #counter = 0
-    #group = 10     // 每10次，生成一个 TrickShape
-    #hadTrick = false
+    #GROUP = 10     // 每10次，生成一个 TrickShape
+    #trickIndex = -1
+    #trickCounter = 0
 
     constructor() {
         this.tetrisFactory = new TetrisFactory()
@@ -21,7 +16,8 @@ export default class ShapeProducer {
 
     reset() {
         this.#queue.length = 0
-        this.#counter = 0
+        this.#trickIndex = -1
+        this.#trickCounter = 0
     }
 
     consume(index = 0) {
@@ -33,12 +29,8 @@ export default class ShapeProducer {
         }
 
         if (index === queue.length) {
-            if (this.#counter % this.#group === 0) {
-                this.#hadTrick = false
-            }
             const num = this.getRandomShapeIndex()
             queue.push(num)
-            this.#counter++
         }
         return queue[index]
     }
@@ -50,13 +42,22 @@ export default class ShapeProducer {
     }
 
     getRandomShapeIndex() {
-        // 如果没有 trick，且 1/group 的概率出 trick
-        // 是否意味着...有可能会不出了
-        if (!this.#hadTrick && ShapeProducer.#getRandomInt(this.#group) === 0) {
-            this.#hadTrick = true
-            return this.tetrisFactory.length + ShapeProducer.#getRandomInt(this.trickFactory.length)
-        } else {
-            return ShapeProducer.#getRandomInt(this.tetrisFactory.length)
+        // 确定下一组出 trickShape 的下标
+        if (this.#queue.length % this.#GROUP === 0) {
+            this.#trickIndex = this.#trickCounter * this.#GROUP + this.getRandom()
+            this.#trickCounter++
         }
+
+        // 再委托给相应的 Factory
+        if (this.#trickIndex > -1 && this.#trickIndex === this.#queue.length) {
+            this.#trickIndex = -1
+            return this.tetrisFactory.length + this.trickFactory.getRandom()
+        } else {
+            return this.tetrisFactory.getRandom()
+        }
+    }
+
+    getRandom() {
+        return Math.floor(Math.random() * this.#GROUP)  // [0, this.#GROUP)
     }
 }
