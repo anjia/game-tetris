@@ -1,4 +1,4 @@
-export default class DiffBehavior {
+export class DiffBehavior {
     // points1 - points2
     static diff(points1, points2) {
         let result = []

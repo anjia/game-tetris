@@ -1,4 +1,4 @@
-export default class RotateBehavior {
+export class RotateBehavior {
 
     // 旋转矩阵，逆时针旋转 90°
     static #rotateMatrix = [[], [1, 1]]

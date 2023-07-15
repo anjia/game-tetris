@@ -1,7 +1,6 @@
 import '../grid-cell/index.js'
 
 import Base from '../Base.js'
-import All from '../next-shape/tetris/all.js'
 
 customElements.define('next-shape', class extends Base {
 

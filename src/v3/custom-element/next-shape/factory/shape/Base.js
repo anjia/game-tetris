@@ -1,29 +1,18 @@
-export default class {
-    // 静态属性
-    static next;  // 形状的 next 矩阵
+import { RotateBehavior } from './behavior/Rotate.js'
+import { DiffBehavior } from './behavior/Diff.js'
 
-    // 私有属性
-    #init = null   // 初始位置
-
+export default class ShapeBase {
+    // 私有变量
+    #init = []
 
     constructor(points) {
-        createShape()  // 工厂方法
-
         this.#init = points
-
-        // 实例属性
-        this.points = points
-        this.type = ''  // ''空心, 'solid'实心
-        this.level = 1
+        this.reset()
     }
 
     reset() {
         this.points = this.#init
         this.level = 1
-    }
-
-    reset() {
-        this.shape.reset()
     }
 
     start(panel) {
@@ -83,24 +72,6 @@ export default class {
         return this.#horizon(1, panel)
     }
 
-    rotate(panel) {
-        let result = RotateBehavior.rotate(this.points)
-        let next = []
-        for (let p of result) {
-            if (panel.isUnderFloor(p[0]) ||
-                panel.isOutWall(p[1]) ||
-                panel.isFilled(p[0], p[1])) {
-                break
-            } else {
-                next.push([p[0], p[1]])
-            }
-        }
-        if (next.length === 4) {
-            this.#to(next, panel)
-            result = next
-        }
-        return result
-    }
 
     down(panel) {
         let result = []
@@ -129,6 +100,26 @@ export default class {
         return result
     }
 
+
+    rotate(panel) {
+        let result = RotateBehavior.rotate(this.points)
+        let next = []
+        for (let p of result) {
+            if (panel.isUnderFloor(p[0]) ||
+                panel.isOutWall(p[1]) ||
+                panel.isFilled(p[0], p[1])) {
+                break
+            } else {
+                next.push([p[0], p[1]])
+            }
+        }
+        if (next.length === 4) {
+            this.#to(next, panel)
+            result = next
+        }
+        return result
+    }
+
     // 私有方法
     #horizon(dx, panel) {
         let result = []
@@ -150,11 +141,14 @@ export default class {
         return result
     }
 
+
     #to(next, panel) {
         // 在 this.current 中但不在 next 中的，置灰
         panel.reset(DiffBehavior.diff(this.points, next))
         // 在 next 中但不在 this.current 中的，置亮
         panel.draw(DiffBehavior.diff(next, this.points), this.type, this.level)
         this.points = next
-        }
+    }
+
+
 }
