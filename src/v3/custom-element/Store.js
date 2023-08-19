@@ -1,4 +1,4 @@
-
+// TODO. Vue 里的是怎么实现的？
 class Store {
     static set(key, val) {
         localStorage.setItem(key, val)

@@ -1,6 +1,6 @@
 import Base from '../../Base.js'
 import TetrisStrategy from '../TetrisStrategy.js'
-import '../../game-context/single-context/index.js'
+import '../../tetris-context/single-context/index.js'
 
 // TODO. JS 单继承 vs 多继承
 customElements.define('single-mode', class extends TetrisStrategy {

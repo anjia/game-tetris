@@ -5,12 +5,12 @@ import Base from '../Base.js'
 export default class TetrisStrategy extends Base {
 
     // // 私有变量
-    // #context = [];    // <game-context>[]
+    // #context = [];    // <tetris-context>[]
 
     constructor() {
         super()
         // TODO. 如何让 context 封装起来，又保证它只能是子能使用。
-        this.context = [];    // <game-context>[]
+        this.context = [];    // <tetris-context>[]
     }
 
     /**

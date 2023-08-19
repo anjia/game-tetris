@@ -18,7 +18,7 @@ export default class extends Base {
 
         // TODO. 优化要封装
         const shadow = this.attachShadow({ mode: 'open' })
-        shadow.appendChild(Base.createLink('./custom-element/game-context/index.css'))
+        shadow.appendChild(Base.createLink('./custom-element/tetris-context/index.css'))
 
         // 设计模式：模板模式
         this.container = Base.create('div', { 'class': 'container' })
@@ -44,7 +44,7 @@ export default class extends Base {
         shadow.appendChild(this.container)
 
         // 因为是 Base.create() 创建的，所以此时属性是 null
-        // console.log('\n~~~~ <game-context>, people = ', this.#people, this.getAttribute('people'))
+        // console.log('\n~~~~ <tetris-context>, people = ', this.#people, this.getAttribute('people'))
 
         // 监听子元素的事件
         this.#addEventListener()

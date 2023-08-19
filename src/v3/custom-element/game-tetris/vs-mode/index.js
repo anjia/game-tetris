@@ -1,6 +1,6 @@
 import Base from '../../Base.js'
 import TetrisStrategy from '../TetrisStrategy.js'
-import '../../game-context/vs-context/index.js'
+import '../../tetris-context/vs-context/index.js'
 import ScoreObservable from '../../total-score/ScoreObservable.js'
 
 customElements.define('vs-mode', class extends TetrisStrategy {
