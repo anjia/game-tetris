@@ -1,7 +1,7 @@
 import Base from '../Base.js'
 import Store from '../Store.js'
 
-import TetrisFactory from './TetrisFactory.js'
+import TetrisSingleton from './TetrisSingleton.js'
 
 class Tetris extends Base {
 
@@ -14,7 +14,6 @@ class Tetris extends Base {
     #btnReset;
 
     #tetris;
-    #tetrisFactory;
 
     // TODO. 状态模式
     // 状态
@@ -29,7 +28,6 @@ class Tetris extends Base {
 
     constructor() {
         super()
-        this.#tetrisFactory = new TetrisFactory()
     }
 
     connectedCallback() {
@@ -52,8 +50,8 @@ class Tetris extends Base {
         const people = Store.mode === '1' ? 1 : (this.getAttribute('people') || Store.people)
         const games = this.getAttribute('games') || Store.games
 
-        // 策略模式：两种模式，根据 people 确定一种
-        this.#tetris = this.#tetrisFactory.getStrategy(people)
+        // 单例模式：根据 people 确定一种
+        this.#tetris = TetrisSingleton.getTetris(people)
         this.#tetris.people = people
         this.#tetris.games = games
         shadow.appendChild(this.#tetris)
@@ -68,16 +66,13 @@ class Tetris extends Base {
         // debugger
         switch (name) {
             case 'people':
-                // TODO.记录：更新了数据，需要刷新 UI
-                // 若两种模式之间有切换，则需要 remove 之后再 append
-                // Uncaught DOMException: Failed to execute 'attachShadow' on 'Element': Shadow root cannot be created on a host which already hosts a shadow tree.
-                let next = this.#tetrisFactory.getStrategy(newValue)
-                next.people = newValue
-                if (next != this.#tetris) {
+                const next = TetrisSingleton.getTetris(newValue)
+                if (this.#tetris !== next) {
                     this.#tetris.remove()
+                    this.shadowRoot.appendChild(next)
                     this.#tetris = next
-                    this.shadowRoot.appendChild(this.#tetris)
                 }
+                this.#tetris.people = newValue
                 break
             case 'games':
                 this.#tetris.games = newValue

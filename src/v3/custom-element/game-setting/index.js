@@ -11,10 +11,10 @@ customElements.define('game-setting', class extends Base {
     #width;
     #night;
 
-    #_setting = {}
-    #eventSetting = new CustomEvent('setting', {
+    #settingData = {}
+    #eventSetting = new CustomEvent('attributesChanged', {
         bubbles: true,
-        detail: () => this.#_setting
+        detail: () => this.#settingData
     })
 
     constructor() {
@@ -108,7 +108,7 @@ customElements.define('game-setting', class extends Base {
     }
 
     set #setting(obj) {
-        this.#_setting = obj
+        this.#settingData = obj
         this.dispatchEvent(this.#eventSetting)
     }
 
