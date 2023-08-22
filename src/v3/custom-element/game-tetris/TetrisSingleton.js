@@ -1,7 +1,7 @@
 import Base from '../Base.js'
 
-import './factory/single-mode/index.js'
-import './factory/vs-mode/index.js'
+import './single-mode/index.js'
+import './vs-mode/index.js'
 
 export default class TetrisSingleton {
 

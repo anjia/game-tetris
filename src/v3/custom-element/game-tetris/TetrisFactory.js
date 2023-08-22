@@ -2,6 +2,7 @@ import Base from '../Base.js'
 
 // TODO. 这就相当于接口或抽象类？确保不能被 new
 // TODO. 测试两个子类的功能
+// 抽象工厂模式
 export default class TetrisStrategy extends Base {
 
     // // 私有变量
