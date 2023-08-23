@@ -2,7 +2,12 @@ import Base from '../Base.js'
 
 // TODO. 这就相当于接口或抽象类？确保不能被 new
 // TODO. 测试两个子类的功能
-// 抽象工厂模式
+// TODO. 严格来说不算抽象工厂，因为除了一系列 createXXX 不同之外，还有一些行为也是不同的
+//       这就意味着，没法“面向抽象编程”了，也就是没法依赖倒置了
+//       所以还是策略模式更合适...（策略模式更小巧更灵活，粒度也细）
+// TODO. 严格来说也不算工厂方法，因为 createContextList() 拆不纯
+//       一是涉及shadow的样式+自定义元素，二是列表个数可以动态修改（多人时people）
+// TODO. 所以就是：单例模式，配上n个策略模式
 export default class TetrisStrategy extends Base {
 
     // // 私有变量
