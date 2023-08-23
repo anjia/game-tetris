@@ -11,8 +11,14 @@ export default class TetrisStrategy extends Base {
     constructor() {
         super()
         // TODO. 如何让 context 封装起来，又保证它只能是子能使用。
-        this.context = [];    // <tetris-context>[]
+        // TODO. 如何访问父元素的私有变量
+        this.context = []    // <tetris-context>[]
     }
+
+    // // 工厂方法 vs 直接在构造函数里写
+    // createContextList() {
+    //     return []
+    // }
 
     /**
      * 当继承的子，没有该方法时，会调用到父元素

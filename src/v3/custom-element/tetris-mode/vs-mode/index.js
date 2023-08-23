@@ -13,7 +13,7 @@ customElements.define('vs-mode', class extends TetrisStrategy {
     constructor() {
         super()
         const shadow = this.attachShadow({ mode: 'open' })
-        shadow.appendChild(Base.createLink('./custom-element/game-tetris/vs-mode/index.css'))
+        shadow.appendChild(Base.createLink('./custom-element/tetris-mode/vs-mode/index.css'))
         this.#container = Base.create('div', { 'class': 'wrap' })
         shadow.appendChild(this.#container)
 
@@ -37,7 +37,7 @@ customElements.define('vs-mode', class extends TetrisStrategy {
             for (let i = x; i < this.#peopleData; i++) {
                 this.context[i].remove()
             }
-        } else if (x <= this.context.length) {  // 则直接显示现成的数据
+        } else if (x <= this.context.length) {  // 则直接显示现成的数据（TODO.测试之前 games 变了）
             for (let i = this.#peopleData; i < x; i++) {
                 this.#container.appendChild(this.context[i])
             }
